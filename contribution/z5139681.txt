@@ -1,0 +1,4 @@
+Week 1
+Group formed. All group members have chosen and agreed to doing Task Master for the project. Following our weekly 
+meeting, it was decided that Yue Qi and I will be working on the frontend of the project. We have chosen Reactjs
+as our programming language of choice.
