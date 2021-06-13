@@ -1,0 +1,31 @@
+.container{
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    margin-top: 10vh;
+}
+.containerBox{
+    width: 500px;
+    border: 1px solid #6d6a6a;
+}
+.alertName{
+    color: red;
+    margin-top: 1vh;
+    margin-bottom: 0;
+}
+.form-signin{
+    margin: 1vw;
+}
+.btnSign{
+    width: 100%;
+    margin-top: 2vh;
+}
+.form-signin-heading{
+    text-align: center;
+}
+.loginDes{
+    margin: 2vh 0vh;
+}
+.tips{
+    font-size: 12px;
+}
