@@ -1,3 +1,6 @@
 Week1
 Group formed. Me and Wayne will be responsible for the frontend. I recommand that we can use React.js to build
 our frontend. I also write some user stories. 
+
+Week2
+Drawing out some part of the flow diagrams. I and Wayne set up the front pages. I also write out the register and login page.
