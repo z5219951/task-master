@@ -1,0 +1,8 @@
+Week 1:
+Added some user stories, decided that I will be working on the backend framework (python, with sql database).
+
+Week 2:
+Organised jira board, wrote some user stories.
+
+Week 3:
+Created the flow diagram for the report, got started on backend development.
