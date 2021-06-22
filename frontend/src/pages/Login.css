@@ -29,3 +29,22 @@
 .tips{
     font-size: 12px;
 }
+.hide{
+    display: none;
+}
+.show{
+    display: block;
+}
+
+.login_text{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 0 10px;
+}
+.handMouse{
+    cursor: pointer;
+}
+.back{
+    color: #fff;
+}

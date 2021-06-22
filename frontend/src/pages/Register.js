@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
 import axios from 'axios'
-import {Link} from 'react-router-dom'
 
 class Register extends Component{
   constructor(props) {
@@ -37,7 +36,7 @@ class Register extends Component{
       let pass = true;
       // password must be number or alphabet,at least one lower case
       // one upper case, one number
-      const testForm = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/
+      const testForm = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{6,16}$/
       if(!testForm.test(passWord)) {
         this.setState(()=>({
           passWord:'',
@@ -72,7 +71,8 @@ class Register extends Component{
       if(!pass) {
         return;
       }
-      axios.post('http://localhost:5000/userInform', {data:{email:email,passWord:passWord,userName:user}}).then((res)=>{
+      const data = {email:email,passWord:passWord,userName:user};
+      axios.post('http://localhost:5000/userInform', data).then((res)=>{
           console.log("send inform");
           this.props.history.push('./login')
       })
@@ -93,7 +93,7 @@ class Register extends Component{
           <input type="text" id="inputUserName" className="form-control" placeholder="User name" onChange={this.handleInput} name="user" value = {this.state.user}required/>
           <p className="alertName">{this.state.userAlert}</p>
           <label htmlFor="inputPassword" className="sr-only loginDes">Password</label>
-          <p className='tips'>password must be number or alphabet,at least one lower case one upper case, one number</p>
+          <p className='tips'>password must be number or alphabet,at least one lower case one upper case, one number(6-16 length)</p>
           <input type="password" id="inputPassword" className="form-control" placeholder="Password" onChange={this.handleInput} name="passWord" value = {this.state.passWord}required/>
           <p className="alertName">{this.state.passWordAlert}</p>
           <label htmlFor="inputConfirm" className="sr-only loginDes">Confirm password</label>
