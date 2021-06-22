@@ -14,6 +14,7 @@ Looked into chatbots and webhooks for easy event triggering and to check viabili
 Added some of the user stories to Jira from Google Doc.
 
 Week 3:
+
 Wrote Design Rationale
 Pitched condensed list of core "guaranteed" extensions to team.
 Wrote material clarifying how 'groups' would function in final application and the rationale behind this.
