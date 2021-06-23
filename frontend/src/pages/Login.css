@@ -48,3 +48,17 @@
 .back{
     color: #fff;
 }
+.redStar{
+    color: red;
+}
+.checkCode_box{
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.checkCode_email_box{
+    display: flex;
+    align-items: center;
+}

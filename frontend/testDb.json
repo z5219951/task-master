@@ -1,5 +1,26 @@
 {
-  "userInform": [],
+  "userInform": [
+    {
+      "email": "qicharles03@gmail.com",
+      "passWord": "1234567Qq",
+      "userName": "z5219951",
+      "firstName": "Charles",
+      "lastName": "Qi",
+      "phone": "0414558951",
+      "company": "",
+      "id": 1
+    },
+    {
+      "email": "qicharles03@gmail.com",
+      "passWord": "1234567Qq",
+      "userName": "z5219951",
+      "firstName": "Charles",
+      "lastName": "Qi",
+      "phone": "0414558951",
+      "company": "1121",
+      "id": 2
+    }
+  ],
   "login": [],
   "newPass": [],
   "forgetCode": [],
