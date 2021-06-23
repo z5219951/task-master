@@ -2,3 +2,10 @@ Week 1
 Group formed. All group members have chosen and agreed to doing Task Master for the project. Following our weekly 
 meeting, it was decided that Yue Qi and I will be working on the frontend of the project. We have chosen Reactjs
 as our programming language of choice.
+
+Week 2
+Initialised React frontend on Git and created a simple navbar with routes for the home, login and register page.
+
+Week 3
+Added on to storyboards created by Yue Qi. I separated Yue Qi's storyboard into chunks and added more detail to each one.
+Also written descriptions to those storyboards. Added a couple of user stories and acceptance criteria on Jira.
