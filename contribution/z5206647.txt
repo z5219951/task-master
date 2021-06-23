@@ -1,0 +1,12 @@
+Work Diary: Gavin Wang (z5206647)
+
+Week 1:
+Formed groups and introduced ourselves at the weekly tutorial. From the meeting
+I was assigned to produce a weekly meeting minutes report to keep a record of 
+what was dicussed in the meeting, and potential problems to be addressed.
+Joined the webCMS group, and made the gitHub repository. I had a look at the
+proposed user stories, made minor edits as most was already complete.
+
+Week 2:
+Participated in the weekly meeting, and wrote a minutes report for the meeting.
+Primarily worked on the project proposal - formatting, background research. 

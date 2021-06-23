@@ -6,6 +6,14 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `yarn install`
+
+Get all modules we use in this project
+
+### `yarn server`
+
+Launch the json-server which will provide the mock to help the frontend get the data
+
 ### `yarn start`
 
 Runs the app in the development mode.\
