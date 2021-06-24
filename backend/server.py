@@ -61,13 +61,13 @@ class Users(Resource):
     @api.expect(register_payload)
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('username', required=True, location='form')
-        parser.add_argument('password', required=True, location='form')
-        parser.add_argument('email', required=True, location='form')
-        parser.add_argument('first name', required=True, location='form')
-        parser.add_argument('last name', required=True, location='form')
-        parser.add_argument('phone number', required=True, location='form')
-        parser.add_argument('company', required=False, default=None, location='form')
+        parser.add_argument('username', required=True)
+        parser.add_argument('password', required=True)
+        parser.add_argument('email', required=True)
+        parser.add_argument('first name', required=True)
+        parser.add_argument('last name', required=True)
+        parser.add_argument('phone number', required=True)
+        parser.add_argument('company', required=False, default=None)
 
         username = request.args.get('username')
         password = request.args.get('password')
@@ -97,8 +97,9 @@ class Users(Resource):
         conn.close()
 
         return True
-    
 
+
+# TODO: add email system
 # Forgot password
 forgot_payload = api.model('forgot password', {
     "email": fields.String
@@ -112,7 +113,7 @@ class Users(Resource):
     @api.expect(forgot_payload)
     def get(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('email', required=True, location='form')
+        parser.add_argument('email', required=True)
 
         email = request.args.get('email')
 
@@ -144,6 +145,7 @@ class Users(Resource):
 
         return True
 
+
 # reset password
 recovery_payload = api.model('recovery code', {
     "recovery": fields.Integer
@@ -161,7 +163,7 @@ class Users(Resource):
     @api.expect(recovery_payload)
     def get(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('recovery', required=True, location='form')
+        parser.add_argument('recovery', required=True)
 
         recovery = request.args.get('recovery')
         
@@ -185,12 +187,12 @@ class Users(Resource):
 
     @api.response(200, 'Successfully reset password')
     @api.response(400, 'Bad request')
-    @api.doc(description="Enter recovery code")
+    @api.doc(description="Enter new password")
     @api.expect(new_pass_payload)
     def put(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('email', required=True, location='form')
-        parser.add_argument('new_password', required=True, location='form')
+        parser.add_argument('email', required=True)
+        parser.add_argument('new_password', required=True)
 
         email = request.args.get('email')
         new_password = request.args.get('new_password')
@@ -198,7 +200,7 @@ class Users(Resource):
         conn = psycopg2.connect(config())
         c = conn.cursor()
 
-        # found user with matching email, change the password and reset code
+        # change the password and reset code
         query = f"""
                 UPDATE  users
                 SET     password = {new_password}, recovery = null
@@ -208,6 +210,73 @@ class Users(Resource):
 
         c.close()
         conn.close()
+
+        return True
+
+
+# TODO: redo function with proper login system
+# login
+login_payload = api.model('login info', {
+    "email": fields.String,
+    "password": fields.String
+})
+
+@api.route('/clickdown/login', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully logged in')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Enter email and password")
+    @api.expect(login_payload)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('email', required=True)
+        parser.add_argument('password', required=True)
+
+        email = request.args.get('email')
+        password = request.args.get('password')
+
+        conn = psycopg2.connect(config())
+        c = conn.cursor()
+        
+        # retrieve id using email and password
+        query = f"""
+                SELECT  id
+                FROM    users
+                WHERE   email = {email} and password = {password};
+                """
+        c.execute(query)
+        id = c.fetchone()
+
+        if (id is None):
+            # return {'message': f'Incorrect email or password'}, 400
+            return False
+        
+        # return jsonify(f"'id': {id}")
+        return True
+
+
+# TODO: redo function with proper logout system
+# logout
+logout_payload = api.model('logout info', {
+    "id": fields.Integer
+})
+
+@api.route('/clickdown/logout', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully logged out')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Automatically logs out")
+    @api.expect(login_payload)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', required=True)
+
+        id = request.args.get('id')
+
+        conn = psycopg2.connect(config())
+        c = conn.cursor()
+        
+        # HOW TO IMPLEMENT LOGOUT???
 
         return True
 
