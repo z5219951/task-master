@@ -8,8 +8,7 @@ const SignedInNav = () => {
     <Navbar.Toggle aria-controls="basic-navbar-nav" />
     <Navbar.Collapse id="basic-navbar-nav">
       <Nav className="ml-auto">
-        <Nav.Link href="login">Profile</Nav.Link>
-        <Nav.Link href="register">Users</Nav.Link>
+        <Nav.Link href="profile">Profile</Nav.Link>
       </Nav>
     </Navbar.Collapse>
   </Navbar>
