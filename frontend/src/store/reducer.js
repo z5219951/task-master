@@ -3,7 +3,7 @@
 // email store the email that user want to set new password
 const defaultState = {
     id:'',
-    email:''
+    email:'',
 };
 
 // make sure your action.type  is unique

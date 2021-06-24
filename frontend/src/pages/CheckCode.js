@@ -1,7 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
-import axios from 'axios'
 
 
 class CheckCode extends Component{

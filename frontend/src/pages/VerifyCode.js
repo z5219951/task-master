@@ -9,12 +9,13 @@ class VerifyCode extends Component{
     super(props);
     this.state = {
       code:'',
-      codeAlert:''
+      codeAlert:'',
+      email:store.getState().email
     }
     // user must enter their email
     const email= store.getState().email;
     if(email === '') {
-        this.props.history.push('./forget');
+      this.props.history.push('./forget');
     }
   }
 
@@ -36,8 +37,12 @@ class VerifyCode extends Component{
             codeAlert:'Please enter Code'
           }))
       }
+      const data = {
+        code:code,
+        email:this.state.email
+      }
       // use axios for post data
-      axios.post('http://localhost:5000/forgetCode', {code:this.state.code}).then((res)=>{
+      axios.post('http://localhost:5000/forgetCode', data).then((res)=>{
           // check the return information, if true it will enter the code page else 
           // it should request to enter again
           const result = true;
