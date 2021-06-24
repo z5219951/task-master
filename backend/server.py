@@ -28,9 +28,13 @@ def valid_email(email):
 # Register an account
 # Assumes info is sent in POST body through a form
 parser = reqparse.RequestParser()
-parser.add_argument('first name', required=True, help='First name', location='form')
-parser.add_argument('last name', required=True, help='Last name', location='form')
-parser.add_argument('email', required=True, help='Email address', location='form')
+parser.add_argument('username', required=True, location='form')
+parser.add_argument('password', required=True, location='form')
+parser.add_argument('email', required=True, location='form')
+parser.add_argument('first name', required=True, location='form')
+parser.add_argument('last name', required=True, location='form')
+parser.add_argument('phone number', required=True, location='form')
+parser.add_argument('company', required=False, default=None, location='form')
 # add more arguments when necessary
 
 @api.route('/clickdown/register', methods=['POST'])
@@ -41,13 +45,21 @@ class Account(Resource):
     @api.doc(description="Register a new account")
     @api.expect(parser)
     def post(self):
+        username = request.args.get('username')
+        password = request.args.get('password')
+        email = request.args.get('email')
         first_name = request.args.get('first name')
         last_name = request.args.get('last name')
-        email = request.args.get('email')
+        phone_number = request.args.get('phone number')
+        company = request.args.get('company')
 
         # if email is not valid, return error message
+        # DELETE THIS IF FRONTEND ALREADY CHECKS VALIDITY
         if (not valid_email(email)):
             return {'message': f'You have not entered a valid email'}, 400
+
+        # at this point, all inputs should be valid
+        # enter it all into the database
 
         conn = psycopg2.connect(config())
         c = conn.cursor()
@@ -87,7 +99,47 @@ def connect():
 
 if __name__ == '__main__':
     conn = psycopg2.connect(config())
-    # do stuff
+    c = conn.cursor()
+    # create table users
+    query = """
+            CREATE TABLE IF NOT EXISTS users (
+                id              serial      primary key,
+                username        varchar(32) unique not null,
+                password        text        not null,
+                email           text        unique not null,
+                first_name      text        not null,
+                last_name       text        not null,
+                phone_number    text        not null,
+                company         text        
+            );
+            """
+    c.execute(query)
+
+    # can delete this if enum is enforced by frontend, if so, change state to text
+    # create state type first
+    query = """
+            CREATE TYPE state AS ENUM (
+                "not started", "in progress", "blocked", "completed"
+            );
+            """
+    c.execute(query)
+    # create table tasks
+    query = """
+            CREATE TABLE IF NOT EXISTS tasks (
+                id              serial      primary key,
+                owner           int         foreign key references users(id),
+                title           varchar(20) not null,
+                description     text        not null,
+                creation_date   timestamp   not null,
+                deadline        timestamp   ,
+                labels          text        ,
+                current_state   state       ,
+                progress        int         
+            );
+            """
+    c.execute(query)
+    
+    c.close()
     conn.close()
 
     app.run(debug=True)
