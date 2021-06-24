@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Navigation from './components/Navigation'
+import Taskboard from './pages/Taskboard'
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
       <Switch>
         <Route path='/login' component={Login} />
         <Route path='/register' component={Register} />
-        <Route path='/' component={Home}/>
+        <Route path='/' component={Taskboard}/>
       </Switch>
     </>
   );
