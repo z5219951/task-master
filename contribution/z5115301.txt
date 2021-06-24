@@ -1,0 +1,22 @@
+Week 1:
+
+Synthesised list of core feature requirements from brief. 
+Did competitior research into ClickUp and Mondays to identify common features to a taskmaster application that were not included in said brief.
+Wrote initial draft of both user stories and extensions. 
+Pitched to team members.
+
+Week 2:
+
+Initially was proposing a React / Django / MongoDB stack.
+Did initial feasability testing and found that this may be difficult given both level of familiarity in the team and time constraints.
+Began exploring hooking Flask and React together as an alternative.
+Looked into chatbots and webhooks for easy event triggering and to check viability. - Recalled IFTTT service.
+Added some of the user stories to Jira from Google Doc.
+
+Week 3:
+
+Wrote Design Rationale
+Pitched condensed list of core "guaranteed" extensions to team.
+Wrote material clarifying how 'groups' would function in final application and the rationale behind this.
+Composed both software architecture diagrams and provided justification for our chosen technology stack.
+
