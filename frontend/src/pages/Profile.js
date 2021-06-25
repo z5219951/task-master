@@ -16,15 +16,16 @@ const Profile = () => {
   return (
     <>
     <div className='padding'> 
-      <h1> Your Profile</h1>
-      <div class="mb-3 text-end">
-        <button class="btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
-    </div>
+      <div class="row">
+        <h1 class="col">Your Profile</h1>
+        <button class="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
+      </div>
+      <br/>
       <div  class="d-grid gap-2">
         <button type="button" class="btn btn-secondary btn-block" onClick={() => updateProfile()}> Update Profile </button>
       </div>
       <br/>
-      <div class="align-middle">
+      <div>
         <div class="table table-striped table-secondary table-hover table-bordered border-dark" >    
           <tbody>
             <tr>

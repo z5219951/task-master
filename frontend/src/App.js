@@ -8,6 +8,7 @@ import Taskboard from './pages/Taskboard'
 import SignedInNav from './components/SignedInNav'
 import Profile from './pages/Profile'
 import UpdateProfile from './pages/UpdateProfile'
+import CreateTask from './pages/CreateTask'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path='/register' component={Register} />
         <Route path='/profile' component={Profile} />
         <Route path='/updateprofile' component={UpdateProfile} />
+        <Route path='/createtask' component={CreateTask} />
         <Route path='/' component={Taskboard}/>
       </Switch>
     </>

@@ -11,10 +11,11 @@ const Profile = () => {
   return (
     <>
     <div className='padding'> 
-    <h1> Update your Profile</h1> 
-    <div class="mb-3 text-end">
-      <button class="btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
-    </div>
+      <div class="row">
+          <h1 class="col">Update your Profile</h1>
+          <button class="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
+      </div>
+      <br/>
       <div class="btn-group mr-2" role="group" aria-label="Button group example">
         <button class="btn btn-primary btn-lg">Change email</button>
         <button class="btn btn-primary btn-lg">Change password</button>
