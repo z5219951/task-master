@@ -29,7 +29,7 @@ function App() {
         <Route path='/verify' exact component={VerifyCode} />
         <Route path='/newPass' exact component={RePassWord} />
         <Route path='/checkCode' exact component={CheckCode} />
-        <Route path='/home' exact component={Home}/>
+        <Route path='/home' exact component={Taskboard}/>
       </Switch>
     </>
   );
