@@ -17,7 +17,7 @@ import CheckCode from './pages/CheckCode';
 function App() {
   return (
     <>
-      <SignedInNav />
+      <Navigation />
       <Switch>
         <Route path='/profile' component={Profile} />
         <Route path='/updateprofile' component={UpdateProfile} />
