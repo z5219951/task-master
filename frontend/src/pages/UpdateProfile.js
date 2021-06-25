@@ -1,11 +1,20 @@
 import './Padding.css'
+import UpdateDetail from './UpdateDetail.js'
 import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 
 const Profile = () => {
   const history = useHistory();
+  const [showDetail, setShowDetail] = useState(false)
+  const [detailProp, setDetailProp] = useState('')
   
   function backClick () {
     history.push('./profile')
+  }
+
+  function handleChange (detail) {
+    setShowDetail(true)
+    setDetailProp(detail)
   }
 
   return (
@@ -17,15 +26,16 @@ const Profile = () => {
       </div>
       <br/>
       <div class="btn-group mr-2" role="group" aria-label="Button group example">
-        <button class="btn btn-primary btn-lg">Change email</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('email')}>Change email</button>
         <button class="btn btn-primary btn-lg">Change password</button>
-        <button class="btn btn-primary btn-lg">Change username</button>
-        <button class="btn btn-primary btn-lg">Change first name</button>
-        <button class="btn btn-primary btn-lg">Change last name</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('username')}>Change username</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('first name')}>Change first name</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('last name')}>Change last name</button>
         <button class="btn btn-primary btn-lg">Change phone number</button>
-        <button class="btn btn-primary btn-lg">Change company name</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('company name')}>Change company name</button>
       </div>
       <br/>
+      { showDetail ? <UpdateDetail detail={detailProp}/>: null}
     </div>
     </>
   )
