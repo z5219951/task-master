@@ -15,6 +15,8 @@ import RePassWord from './pages/RePassWord';
 import CheckCode from './pages/CheckCode';
 
 function App() {
+  // Wayne:
+  // Replace Navigation with SignedInNav and component={Home} -> component={Taskboard} to test out the parts I did
   return (
     <>
       <Navigation />
@@ -29,7 +31,7 @@ function App() {
         <Route path='/verify' exact component={VerifyCode} />
         <Route path='/newPass' exact component={RePassWord} />
         <Route path='/checkCode' exact component={CheckCode} />
-        <Route path='/home' exact component={Taskboard}/>
+        <Route path='/home' exact component={Home}/>
       </Switch>
     </>
   );
