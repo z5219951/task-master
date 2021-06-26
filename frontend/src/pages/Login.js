@@ -67,6 +67,8 @@ class Login extends Component{
             value:"test"
           }
           store.dispatch(action);
+          // move to task board
+          this.props.history.push('./taskboard');
       })
     } catch (error) {
         console.log(error);
