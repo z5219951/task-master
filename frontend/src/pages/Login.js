@@ -64,7 +64,7 @@ class Login extends Component{
           // store the user id in store
           const action = {
             type:'login_id',
-            value:"test"
+            value:"testId"
           }
           store.dispatch(action);
           // move to task board
