@@ -1,6 +1,9 @@
 import CreateTask from './CreateTask';
 import './Padding.css'
 import { useHistory } from 'react-router-dom';
+import store from '../store';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Taskboard = () => {
   const history = useHistory();
@@ -8,6 +11,13 @@ const Taskboard = () => {
   function createTask() {
     history.push('/createTask')
   }
+
+  const [tasks, setTasks] = useState('');
+
+  useEffect(() => {
+    //axios.get(localhost:5000/tasks)
+    console.log('a')
+  })
 
   return (
     <>

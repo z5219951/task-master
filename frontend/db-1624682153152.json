@@ -1,32 +1,4 @@
 {
-  "tasks": [
-    {
-      "task": {
-        "name": "a",
-        "description": "a",
-        "startD": "2021-06-11",
-        "dueD": "2021-06-24",
-        "progress": "5",
-        "timeEst": "1",
-        "difficulty": "Very Easy",
-        "cState": "Not Started"
-      },
-      "id": 1
-    },
-    {
-      "task": {
-        "name": "b",
-        "description": "b",
-        "startD": "2021-06-11",
-        "dueD": "2021-06-26",
-        "progress": "5",
-        "timeEst": "5",
-        "difficulty": "Very Easy",
-        "cState": "Not Started"
-      },
-      "id": 2
-    }
-  ],
   "userInform": [
     {
       "email": "qicharles03@gmail.com",

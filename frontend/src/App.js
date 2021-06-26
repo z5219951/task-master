@@ -1,4 +1,5 @@
 import './App.css';
+import React, { useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -13,13 +14,15 @@ import ForgetPass from './pages/ForgetPass';
 import VerifyCode from './pages/VerifyCode';
 import RePassWord from './pages/RePassWord';
 import CheckCode from './pages/CheckCode';
+import NavbarControl from './components/NavbarControl'
 
 function App() {
-  // Wayne:
-  // Replace Navigation with SignedInNav and component={Home} -> component={Taskboard} to test out the parts I did
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
   return (
     <>
-      <Navigation />
+      <NavbarControl loggedIn={loggedIn}/>
       <Switch>
         <Route path='/profile' component={Profile} />
         <Route path='/updateprofile' component={UpdateProfile} />
@@ -32,6 +35,7 @@ function App() {
         <Route path='/newPass' exact component={RePassWord} />
         <Route path='/checkCode' exact component={CheckCode} />
         <Route path='/home' exact component={Home}/>
+        <Route path='/' component={Home} />
       </Switch>
     </>
   );

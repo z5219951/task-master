@@ -2,6 +2,7 @@ import './Padding.css'
 import './CreateTask.css'
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import axios from 'axios'
 
 
 const CreateTask = () => {
@@ -55,8 +56,13 @@ const CreateTask = () => {
     const task = {task: {name: name, description: description, startD: startD, dueD: dueD, progress: progress,
     timeEst: timeEst, difficulty: difficulty, cState: cState}}
     console.log(task)
+    axios.post('http://localhost:5000/tasks', task).then((res)=>{
+      console.log("Task Created");
+      history.push('./taskboard');
+    })
   }
 
+  // Validates date inputs
   useEffect(() => {
     setDueDAlert('')
     if (startD === '' && dueD !== '') {

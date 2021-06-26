@@ -1,4 +1,6 @@
 import { Navbar, Nav } from 'react-bootstrap';
+import LogoutButton from '../pages/LogoutButton'
+
 
 const SignedInNav = () => {
   return(
@@ -10,6 +12,7 @@ const SignedInNav = () => {
       <Nav className="ml-auto">
         <Nav.Link href="profile">Profile</Nav.Link>
       </Nav>
+      <LogoutButton/>
     </Navbar.Collapse>
   </Navbar>
     </>
