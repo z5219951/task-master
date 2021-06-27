@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 const NavbarControl = () => {
 
   if (store.getState() === undefined) {
-    console.log('judy')
     const action = {
       type:'loggedIn',
       value: false
