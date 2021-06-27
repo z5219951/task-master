@@ -5,9 +5,6 @@ import store from '../store';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-// get user id
-import store from '../store';
-
 const Taskboard = () => {
   const history = useHistory();
   
