@@ -7,3 +7,6 @@ Drawing out some part of the flow diagrams. I and Wayne set up the front pages. 
 
 Week3
 Drawing out some part of the flow diagrams. Adding story points to user stories. Write some contents about Technical Diagrams and Models in proposal.
+
+Week4
+Me and Wayne finish the frontend part in Sprint1. I finish user story CWC-36,37,38,67 which include the login page, forget paswword page, register page and logout component. Besides, I add some acceptance criteria in user stories
