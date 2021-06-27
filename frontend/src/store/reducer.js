@@ -25,4 +25,5 @@ export default (state = defaultState, action) =>{
         newState.loggedIn = action.value;
         return newState;
     }
+    return state;
 }

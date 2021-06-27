@@ -3,7 +3,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
 import axios from 'axios'
 import store from '../store';
-import LogoutButton from './LogoutButton';
+
+
 
 class Login extends Component{
   constructor(props) {
