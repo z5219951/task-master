@@ -7,14 +7,16 @@ const Profile = () => {
   const history = useHistory();
   const [showDetail, setShowDetail] = useState(false)
   const [detailProp, setDetailProp] = useState('')
+  const [labelProp, setLabelProp] = useState('')
   
   function backClick () {
     history.push('./profile')
   }
 
-  function handleChange (detail) {
+  function handleChange (detail, label) {
     setShowDetail(true)
     setDetailProp(detail)
+    setLabelProp(label)
   }
 
   return (
@@ -26,16 +28,16 @@ const Profile = () => {
       </div>
       <br/>
       <div class="btn-group mr-2" role="group" aria-label="Button group example">
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('email')}>Change email</button>
-        <button class="btn btn-primary btn-lg">Change password</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('username')}>Change username</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('first name')}>Change first name</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('last name')}>Change last name</button>
-        <button class="btn btn-primary btn-lg">Change phone number</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('company name')}>Change company name</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('email', 'Email')}>Change email</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('passWord', 'Password')}>Change password</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('userName', 'Username')}>Change username</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('firstName', 'First Name')}>Change first name</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('lastName', 'Last Name')}>Change last name</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('phone', 'Phone Number')}>Change phone number</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('company', 'Company Name')}>Change company name</button>
       </div>
       <br/>
-      { showDetail ? <UpdateDetail detail={detailProp}/>: null}
+      { showDetail ? <UpdateDetail detail={detailProp} label={labelProp}/>: null}
     </div>
     </>
   )

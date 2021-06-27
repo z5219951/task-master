@@ -7,6 +7,11 @@ import axios from 'axios';
 
 const Taskboard = () => {
   const history = useHistory();
+
+  console.log(store.getState())
+  if (store.getState() === undefined || store.getState().id === "") {
+    history.push('/home')
+  }
   
   // Yue just a example
   console.log(store.getState().id);
