@@ -1,8 +1,10 @@
 import { Navbar, Nav } from 'react-bootstrap';
 import LogoutButton from '../pages/LogoutButton'
-
+import { useHistory } from 'react-router-dom';
 
 const SignedInNav = () => {
+
+  const history = useHistory();
   return(
     <>
     <Navbar bg="dark" variant="dark">
@@ -12,7 +14,7 @@ const SignedInNav = () => {
       <Nav className="ml-auto">
         <Nav.Link href="profile">Profile</Nav.Link>
       </Nav>
-      <LogoutButton/>
+      <LogoutButton  history = {history}/>
     </Navbar.Collapse>
   </Navbar>
     </>

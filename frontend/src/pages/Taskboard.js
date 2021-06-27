@@ -15,8 +15,9 @@ const Taskboard = () => {
   const [tasks, setTasks] = useState('');
 
   useEffect(() => {
-    //axios.get(localhost:5000/tasks)
-    console.log('a')
+    axios.get('http://localhost:5000/tasks').then((res) => {
+      
+    })
   })
 
   return (
@@ -30,6 +31,7 @@ const Taskboard = () => {
         <div class="card">
           <h5 class="card-title">My Tasks:</h5>
           <br/>
+          {tasks}
         </div>
       </div>
     </>

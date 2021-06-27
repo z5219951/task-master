@@ -15,14 +15,14 @@ import VerifyCode from './pages/VerifyCode';
 import RePassWord from './pages/RePassWord';
 import CheckCode from './pages/CheckCode';
 import NavbarControl from './components/NavbarControl'
+import store from './store';
+import { connect } from 'react-redux';
 
 function App() {
 
-  const [loggedIn, setLoggedIn] = useState(false);
-
   return (
     <>
-      <NavbarControl loggedIn={loggedIn}/>
+      <NavbarControl/>
       <Switch>
         <Route path='/profile' component={Profile} />
         <Route path='/updateprofile' component={UpdateProfile} />

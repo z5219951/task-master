@@ -68,6 +68,11 @@ class Login extends Component{
           }
           store.dispatch(action);
           // move to task board
+          const logged_in = {
+            type: 'loggedIn',
+            value: "true"
+          }
+          store.dispatch(logged_in);
           this.props.history.push('./taskboard');
       })
     } catch (error) {

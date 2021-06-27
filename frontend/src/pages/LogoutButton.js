@@ -21,7 +21,13 @@ class LogoutButton extends Component{
                 type:'login_id',
                 value:""
             }
+            const loggedIn = {
+                type:'loggedIn',
+                value: false
+            }
+            console.log(store.getState())
             store.dispatch(action);
+            store.dispatch(loggedIn)
             // after logout, it will go to home page
             this.props.history.push('./home');
             })
