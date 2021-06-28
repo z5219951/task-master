@@ -1,0 +1,12 @@
+#basic-navbar-nav{
+    justify-content: space-between;
+}
+.list_box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.logout_btn{
+    float:right;
+    margin-right: 20px;
+}
