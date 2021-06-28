@@ -14,10 +14,10 @@ class LogoutButton extends Component{
     handleClick = ()=>{
         // logout current account
         try {
-            const email = store.getState().email;
-            // give the current email address
+            const id = store.getState().id;
+            // give the current id address
             // attention, we didn't think about multi-login accounts
-            axios.post('http://localhost:5000/logout', {email:email}).then((res)=>{
+            axios.post('http://localhost:5000/logout', {id:id}).then((res)=>{
             const action = {
                 type:'login_id',
                 value:""
