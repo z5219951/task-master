@@ -58,10 +58,18 @@ class RePassWord extends Component{
       const email = this.state.email;
       // use axios for post data
       axios.post('http://localhost:5000/newPass', {email:email,passWord:passWord}).then((res)=>{
-        this.props.history.push('./login');
-          // this.setState(()=>({
-          //     list:[...res.data]
-          // }))
+        const result = true;
+        if(result) {
+          this.props.history.push('./login');
+        } else {
+          this.setState(()=>({
+            passWord:'',
+            passWordAlert:'Please enter correct password',
+            confirm:'',
+            confirmAlert:''
+          }))
+        }
+          
       })
     } catch (error) {
         console.log(error);

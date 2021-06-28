@@ -7,7 +7,7 @@ import storageSession from 'redux-persist/lib/storage/session';
 const storageConfig = {
         key: 'root', 
         storage:storageSession, 
-        blacklist: ['email']  // data that need not to keep
+        blacklist: []  // data that need not to keep
 }
 const myPersistReducer = persistReducer(storageConfig, reducer);
 

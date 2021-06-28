@@ -66,7 +66,7 @@ class VerifyCode extends Component{
         <div className="containerBox">
           <form className="form-signin">
             <p className="form-signin-heading">Please Enter Your Code</p>
-            <label htmlFor="inputcode" className="sr-only loginDes">Code Address</label>
+            <label htmlFor="inputcode" className="sr-only loginDes">Verify Code</label>
             <input id="inputcode" className="form-control" placeholder="code" value = {this.state.code} onChange={this.handleCode} required autoFocus/>
             <p className="alertName">{this.state.codeAlert}</p>
             <button className="btn btn-lg btn-primary btn-block btnSign" onClick={this.handleSubmit} type="button" >Check Code</button>

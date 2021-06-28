@@ -98,7 +98,15 @@ class Register extends Component{
       const data = {email:email,passWord:passWord,userName:user,firstName:firstName,lastName:lastName,phone:phone,company:comp};
       axios.post('http://localhost:5000/userInform', data).then((res)=>{
           console.log("send inform");
-          this.props.history.push('./CheckCode')
+          const result = true;
+          if(result) {
+            this.props.history.push('./CheckCode')
+          } else {
+            this.setState(()=>({
+              email:'',
+              emailAlert:'This email has been used'
+            }))
+          }
       })
     } catch (error) {
         console.log(error);
