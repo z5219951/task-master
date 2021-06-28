@@ -121,8 +121,8 @@ const CreateTask = () => {
         <div class="form-group">
           <label for="progress">Progress</label>
           <br/>
-          <div class="col-md-1">
-            <input class="form-control input-lg" value={progress} type="number" onChange={(e) => setProgress(e.target.value)}></input>
+          <div class="col-md-3">
+            <input class="form-control input-lg" value={progress} type="number" min="0" max="100" onChange={(e) => setProgress(e.target.value)}></input>
             <span>% Complete</span>
           </div>
           <progress value={progress} max="100"> </progress>
@@ -130,7 +130,7 @@ const CreateTask = () => {
         <div class="form-group">
           <div class="col-md-3">
             <label for="time">Time Estimate (Number of Hours)</label>
-            <input class="form-control input-lg" value={timeEst} type="number" onChange={(e) => setTimeEst(e.target.value)}></input>
+            <input class="form-control input-lg" value={timeEst} type="number" min="0" onChange={(e) => setTimeEst(e.target.value)}></input>
           </div>
         </div>
         <div class="form-group">

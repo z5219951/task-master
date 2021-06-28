@@ -23,8 +23,6 @@ const TaskCard = (props) => {
           Start Date: {tasks.startD}
           <br />
           Due Date: {tasks.dueD}
-          <br />
-          {tasks.cState}
         </p>
       </div>
     </div>
