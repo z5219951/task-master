@@ -53,6 +53,8 @@ const CreateTask = () => {
     } else {
       setDueDAlert('');
     }
+
+    // Create task object and push it to server
     const task = {name: name, description: description, startD: startD, dueD: dueD, progress: progress,
     timeEst: timeEst, difficulty: difficulty, cState: cState, owner: owner}
     console.log(task)

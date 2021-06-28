@@ -16,23 +16,25 @@ const UpdateDetail = (props) => {
   const [newPassword, setNewPassword] = useState('');
   const [passwordAlert, setPasswordAlert] = useState('');
 
-  // Find current user
+  // Find current user 
   const currentUser = store.getState().id;
   useEffect(() => {
     axios.get('http://localhost:5000/userInform').then((res) => {
     const users = res.data
     for (let i=0; i < users.length; i++) {
-      // If user ID in database matches current user
+      // If user ID in database matches current user, set 'user' to include all of a user's info
       if (String(users[i].id) === String(currentUser)) {
         setUser(users[i])
       }
     }
     }).then(() => {
+      // detail prop = field
       setDetailProp(props.detail)
     })
   },[props])
 
-  function verifyInfo (detailProp, detail) {
+  // Checks user input before submission
+  function validateInfo (detailProp, detail) {
     // Handles input for email field
     setUpdateDetAlert('')
     if (detailProp === 'email') {
@@ -42,7 +44,7 @@ const UpdateDetail = (props) => {
         return false;
       }
     }
-
+    // Checks username field
     if (detailProp === 'userName') {
       if (detail === '') {
         setUpdateDetAlert('Please enter a username!')
@@ -50,6 +52,7 @@ const UpdateDetail = (props) => {
       }
     }
 
+    // Checks first name field
     if (detailProp === 'firstName') {
       const testWord = /^(\w+){1,30}$/
       if (detail === '') {
@@ -58,6 +61,7 @@ const UpdateDetail = (props) => {
       }
     }
 
+    // Checks last name field
     if (detailProp === 'lastName') {
       const testWord = /^(\w+){1,30}$/
       if (detail === '') {
@@ -70,7 +74,8 @@ const UpdateDetail = (props) => {
   }
 
   function handleSubmit (detailProp, detail) {
-    if (!verifyInfo(detailProp, detail)) {
+    // If validation fails, return
+    if (!validateInfo(detailProp, detail)) {
       return;
     }
     const updateDet = {...user}; // Copy user into updateDet
@@ -78,6 +83,7 @@ const UpdateDetail = (props) => {
     setUser(updateDet); //Set user
   }
 
+  // Special case for password handling
   function handlePassword(oldPassword, newPassword, confirmPass) {
     setUpdateDetAlert('')
     console.log(user['passWord'])
@@ -97,7 +103,7 @@ const UpdateDetail = (props) => {
     }
 
     const updateDet = {...user}; // Copy user into updateDet
-    updateDet['passWord'] = newPassword; // Change selected field
+    updateDet['passWord'] = newPassword; // Change password field
     setUser(updateDet); //Set user
     setPasswordAlert('Password Changed!')
   }
@@ -109,6 +115,7 @@ const UpdateDetail = (props) => {
     }
   }, [user])
 
+  // If field selected is password, set passwordBool to true
   useEffect(() => {
     if (detailProp === 'passWord') {
       setPasswordBool(true)

@@ -7,6 +7,7 @@ import TaskCard from '../components/TaskCard'
 
 const Taskboard = () => {
   const history = useHistory();
+  const [tasks, setTasks] = useState('');
 
   if (store.getState() === undefined || store.getState().id === "") {
     history.push('/home')
@@ -15,16 +16,16 @@ const Taskboard = () => {
   function createTask() {
     history.push('/createTask')
   }
-
-  const [tasks, setTasks] = useState('');
+  
+  // Return statement cycles through tasks in each completion state while rendering
   const cState = ['Not Started','In Progress', 'Completed', 'Blocked' ];
 
+  // Get tasks created by the logged in user
   useEffect(() => {
     axios.get('http://localhost:5000/tasks').then((res) => {
       const taskList = res.data;
       for (let i = 0; taskList.length > i; i++) {
         if (store.getState().id === taskList[i].owner) {
-          console.log(taskList[i])
           setTasks(tasks => [...tasks, taskList[i]])
         }     
       }
