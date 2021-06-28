@@ -3,7 +3,7 @@ import random
 import re
 
 # third-party imports
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
 import psycopg2
 
@@ -16,6 +16,17 @@ api = Api(app,
           title="Assignment 2",  # Documentation Title
           description="This page contains all of the HTTP requests that we service.")  # Documentation Description
 
+mail_settings = {
+    "MAIL_SERVER": 'smtp.gmail.com',
+    "MAIL_PORT": 465,
+    "MAIL_USE_TLS": False,
+    "MAIL_USE_SSL": True,
+    "MAIL_USERNAME": 'clickdown3900@gmail.com',
+    "MAIL_PASSWORD": 'capstone123'
+}
+
+app.config.update(mail_settings)
+mail = Mail(app)
 
 #### HELPER FUNCTIONS ####
 def email_exists(email):
@@ -80,8 +91,8 @@ class Users(Resource):
         # if email is already registered, return false
         # DELETE THIS IF FRONTEND ALREADY CHECKS VALIDITY
         if (email_exists(email)):
-            # return {'message': f'A user with that email already exists'}, 400
-            return False
+            return {'message': f'A user with that email already exists',
+                    'value': False}, 400
 
         # at this point, all inputs should be valid
         # insert values into users table
@@ -93,10 +104,12 @@ class Users(Resource):
                 VALUES (DEFAULT, {username}, {password}, {email}, {first_name}, {last_name}, {phone_number}, {company}, null);
                 """
         c.execute(query)
+        conn.commit()
+
         c.close()
         conn.close()
 
-        return True
+        return {'value': False}
 
 
 # TODO: add email system
@@ -118,8 +131,8 @@ class Users(Resource):
         email = request.args.get('email')
 
         if (not email_exists(email)):
-            # return {'message': f'A user with that email does not exist'}, 400
-            return False
+            return {'message': f'A user with that email does not exist',
+                    'value': False}, 400
         
         conn = psycopg2.connect(config())
         c = conn.cursor()
@@ -141,9 +154,26 @@ class Users(Resource):
             if (count == 0):
                 break
         
-        # CODE FOR SENDING EMAIL GOES HERE
+        query = f"""
+                UPDATE  users
+                SET     recovery = {recovery}
+                WHERE   email = {email}
+                """
+        c.execute()
+        conn.commit()
 
-        return True
+        # send email with code
+        with app.app_context():
+            msg = Message(subject="Forgot your password?",
+                        sender='clickdown3900@gmail.com',
+                        recipients=f"{email}", 
+                        body=f"Recovery code is {recovery}")
+            mail.send(msg)
+
+        c.close()
+        conn.close()
+
+        return {'value': True}
 
 
 # reset password
@@ -181,9 +211,10 @@ class Users(Resource):
         print(count)
 
         if (count != 1):
-            return False
+            return {'message': f'Incorrect recovery code',
+                    'value': False}, 400
 
-        return True
+        return {'value': True}
 
     @api.response(200, 'Successfully reset password')
     @api.response(400, 'Bad request')
@@ -206,12 +237,13 @@ class Users(Resource):
                 SET     password = {new_password}, recovery = null
                 WHERE   email = {email}
                 """
-        c.execute(query)
+        c.execute()
+        conn.commit()
 
         c.close()
         conn.close()
 
-        return True
+        return {'value': True}
 
 
 # TODO: redo function with proper login system
@@ -248,11 +280,12 @@ class Users(Resource):
         id = c.fetchone()
 
         if (id is None):
-            # return {'message': f'Incorrect email or password'}, 400
-            return False
+            return {'message': f'Incorrect email or password'}, 400
         
-        # return jsonify(f"'id': {id}")
-        return True
+        c.close()
+        conn.close()
+
+        return {f"'id': {id}"}
 
 
 # TODO: redo function with proper logout system
@@ -277,8 +310,9 @@ class Users(Resource):
         c = conn.cursor()
         
         # HOW TO IMPLEMENT LOGOUT???
+        # store JWT in db maybe?
 
-        return True
+        return {'value': True}
 
 if __name__ == '__main__':
     # conn = psycopg2.connect(config())
