@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Test - Nich
 from configparser import ConfigParser
 
 def config(filename='database.ini', section='postgresql'):
