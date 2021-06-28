@@ -1,12 +1,13 @@
 #!/usr/bin/python
 from configparser import ConfigParser
 
-def config(filename='database.ini', section='postgresql'):
+def config(filename='backend/database.ini', section='postgresql'):
     # create a parser
     parser = ConfigParser()
     # read config file
     parser.read(filename)
 
+    # print(f'sections = {parser.sections()}')
     # get section, default to postgresql
     db = {}
     if parser.has_section(section):

@@ -1,93 +1,410 @@
 # standard library imports
+import random
 import re
 
 # third-party imports
 from flask import Flask, request, jsonify
+from flask_mail import Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
 import psycopg2
+import sqlite3
 
 # local imports
-from backend.config import config
+# from config import config
 
 app = Flask(__name__)
 api = Api(app,
           default="ClickDown",  # Default namespace
           title="Assignment 2",  # Documentation Title
-          description="This page contains all of the REST requests that we service.")  # Documentation Description
+          description="This page contains all of the HTTP requests that we service.")  # Documentation Description
 
+mail_settings = {
+    "MAIL_SERVER": 'smtp.gmail.com',
+    "MAIL_PORT": 465,
+    "MAIL_USE_TLS": False,
+    "MAIL_USE_SSL": True,
+    "MAIL_USERNAME": 'clickdown3900@gmail.com',
+    "MAIL_PASSWORD": 'capstone123'
+}
+
+app.config.update(mail_settings)
+mail = Mail(app)
 
 #### HELPER FUNCTIONS ####
-def valid_email(email):
-    regex = '\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b'
-    if (re.search(regex, email)):
+def email_exists(email):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+
+    query = f"""
+            SELECT  count(*)
+            FROM    users
+            WHERE   email = '{email}';
+            """
+    print(query)
+    c.execute(query)
+    count = c.fetchone()[0]
+    print(count)
+
+    if (count == 1):
         return True
-    else:
-        return False
+    return False
+
+def user_exists(username):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+
+    query = f"""
+            SELECT  count(*)
+            FROM    users
+            WHERE   username = '{username}';
+            """
+    print(query)
+    c.execute(query)
+    count = c.fetchone()[0]
+    print(count)
+
+    if (count == 1):
+        return True
+    return False
 
 
 # Register an account
-# Assumes info is sent in POST body through a form
-parser = reqparse.RequestParser()
-parser.add_argument('first name', required=True, help='First name', location='form')
-parser.add_argument('last name', required=True, help='Last name', location='form')
-parser.add_argument('email', required=True, help='Email address', location='form')
-# add more arguments when necessary
+register_payload = api.model('register account', {
+    "username": fields.String,
+    "password": fields.String,
+    "email": fields.String,
+    "first_name": fields.String,
+    "last_name": fields.String,
+    "phone_number": fields.String,
+    "company": fields.String,
+})
 
-@api.route('/clickdown/register', methods=['POST'])
-class Account(Resource):
+@api.route('/register', methods=['POST'])
+class Users(Resource):
     # Use received information to register an account
     @api.response(200, 'New account registered successfully')
     @api.response(400, 'Bad request')
     @api.doc(description="Register a new account")
-    @api.expect(parser)
+    @api.expect(register_payload)
     def post(self):
-        first_name = request.args.get('first name')
-        last_name = request.args.get('last name')
-        email = request.args.get('email')
+        parser = reqparse.RequestParser()
+        parser.add_argument('username', required=True)
+        parser.add_argument('password', required=True)
+        parser.add_argument('email', required=True)
+        parser.add_argument('first_name', required=True)
+        parser.add_argument('last_name', required=True)
+        parser.add_argument('phone_number', required=True)
+        parser.add_argument('company', required=False, default=None)
+        args = parser.parse_args()
+        # print(args)
 
-        # if email is not valid, return error message
-        if (not valid_email(email)):
-            return {'message': f'You have not entered a valid email'}, 400
+        username = args.username
+        password = args.password
+        email = args.email
+        first_name = args.first_name
+        last_name = args.last_name
+        phone_number = args.phone_number
+        company = args.company
 
-        conn = psycopg2.connect(config())
+        # if email is already registered, return false
+        # DELETE THIS IF FRONTEND ALREADY CHECKS VALIDITY
+        if (email_exists(email)):
+            return {'message': f'A user with that email already exists',
+                    'value': False}, 400
+        if (user_exists(username)):
+            return {'message': f'A user with that username already exists',
+                    'value': False}, 400
+
+        # at this point, all inputs should be valid
+        # insert values into users table
+        conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
+        query = f"""
+                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+                VALUES ('{username}', '{password}', '{email}', '{first_name}', '{last_name}', '{phone_number}', '{company}');
+                """
+        c.execute(query)
+        conn.commit()
+
+        c.close()
+        conn.close()
+
+        return {'value': True}
 
 
-#### DELETE THIS FUNCTION LATER
-def connect():
-    conn = None
-    try:
-        # read connection parameters
-        params = config()
+# TODO: add email system
+# Forgot password
+forgot_payload = api.model('forgot password', {
+    "email": fields.String
+})
 
-        # connect to the PostgreSQL server
-        print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(**params)
-		
-        # create a cursor
-        cur = conn.cursor()
+@api.route('/forgot_password', methods=['POST'])
+class Users(Resource):
+    @api.response(200, 'Successfully found user, recovery email sent')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Forgot password")
+    @api.expect(forgot_payload)
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('email', required=True)
+        args = parser.parse_args()
+        # print(args)
+
+        email = args.email
+
+        if (not email_exists(email)):
+            return {'message': f'A user with that email does not exist',
+                    'value': False}, 400
         
-	    # execute a statement
-        print('PostgreSQL database version:')
-        cur.execute('SELECT version()')
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        recovery = -1
 
-        # display the PostgreSQL database server version
-        db_version = cur.fetchone()
-        print(db_version)
-       
-	    # close the communication with the PostgreSQL
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-            print('Database connection closed.')
+        # generate recovery code
+        while True:
+            recovery = ''.join([str(random.randint(0, 999)).zfill(3) for _ in range(2)])
+            
+            query = f"""
+                    SELECT  count(*)
+                    FROM    users
+                    WHERE   recovery = '{recovery}';
+                    """
+            c.execute(query)
+            count = c.fetchone()[0]
+            print(count)
+
+            if (count == 0):
+                break
+        
+        query = f"""
+                UPDATE  users
+                SET     recovery = '{recovery}'
+                WHERE   email = '{email}'
+                """
+        c.execute(query)
+        conn.commit()
+
+        # send email with code
+        with app.app_context():
+            msg = Message(subject="Forgot your password?",
+                          sender='clickdown3900@gmail.com',
+                          recipients=[f"{email}"], 
+                          body=f"Recovery code is {recovery}")
+            mail.send(msg)
+
+        c.close()
+        conn.close()
+
+        return {'value': True}
+
+
+# reset password
+recovery_payload = api.model('recovery code', {
+    "recovery": fields.Integer
+})
+new_pass_payload = api.model('new password', {
+    "email": fields.String,
+    "new_password": fields.String
+})
+
+@api.route('/reset_password', methods=['POST', 'PUT'])
+class Users(Resource):
+    @api.response(200, 'Successfully entered recovery code')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Enter recovery code")
+    @api.expect(recovery_payload)
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('recovery', required=True)
+        args = parser.parse_args()
+
+        recovery = args.recovery
+        
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # is there a recovery code that matches?
+        query = f"""
+                SELECT  count(*)
+                FROM    users
+                WHERE   recovery = '{recovery}';
+                """
+        c.execute(query)
+        count = c.fetchone()[0]
+        print(count)
+
+        if (count != 1):
+            return {'message': f'Incorrect recovery code',
+                    'value': False}, 400
+
+        return {'value': True}
+
+    @api.response(200, 'Successfully reset password')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Enter new password")
+    @api.expect(new_pass_payload)
+    def put(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('email', required=True)
+        parser.add_argument('new_password', required=True)
+        args = parser.parse_args()
+        # print(args)
+
+        email = args.email
+        new_password = args.new_password
+        
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # change the password and reset code
+        query = f"""
+                UPDATE  users
+                SET     password = '{new_password}', recovery = null
+                WHERE   email = '{email}'
+                """
+        c.execute()
+        conn.commit()
+
+        c.close()
+        conn.close()
+
+        return {'value': True}
+
+
+# TODO: redo function with proper login system
+# login
+login_payload = api.model('login info', {
+    "email": fields.String,
+    "password": fields.String
+})
+
+@api.route('/login', methods=['POST'])
+class Users(Resource):
+    @api.response(200, 'Successfully logged in')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Enter email and password")
+    @api.expect(login_payload)
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('email', required=True)
+        parser.add_argument('password', required=True)
+        args = parser.parse_args()
+        # print(args)
+
+        email = args.email
+        password = args.password
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # retrieve id using email and password
+        query = f"""
+                SELECT  id
+                FROM    users
+                WHERE   email = '{email}' and password = '{password}';
+                """
+        c.execute(query)
+        id = c.fetchone()
+
+        if (id is None):
+            return {'message': f'Incorrect email or password'}, 400
+        
+        c.close()
+        conn.close()
+
+        return {f"'id': {id}"}
+
+
+# TODO: redo function with proper logout system
+# logout
+logout_payload = api.model('logout info', {
+    "id": fields.Integer
+})
+
+@api.route('/logout', methods=['POST'])
+class Users(Resource):
+    @api.response(200, 'Successfully logged out')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Automatically logs out")
+    @api.expect(logout_payload)
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', required=True)
+        args = parser.parse_args()
+        # print(args)
+
+        id = args.id
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        
+        # HOW TO IMPLEMENT LOGOUT???
+        # store JWT in db maybe?
+
+        return {'value': True}
 
 if __name__ == '__main__':
-    conn = psycopg2.connect(config())
-    # do stuff
+    # params = config()
+    # conn = psycopg2.connect(**params)
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+
+    query = 'drop table if exists users'
+    c.execute(query)
+    query = 'drop table if exists tasks'
+    c.execute(query)
+    # create table users
+    query = """
+            CREATE TABLE IF NOT EXISTS users (
+                id              integer     primary key,
+                username        text        unique not null,
+                password        text        not null,
+                email           text        unique not null,
+                first_name      text        not null,
+                last_name       text        not null,
+                phone_number    text        not null,
+                company         text        ,
+                recovery        integer
+            );
+            """
+    c.execute(query)
+
+    # create table tasks
+    query = """
+            CREATE TABLE IF NOT EXISTS tasks (
+                id              serial      primary key,
+                owner           integer     not null,
+                title           text        not null,
+                description     text        not null,
+                creation_date   text        not null,
+                deadline        text        ,
+                labels          text        ,
+                current_state   state       not null,
+                progress        integer     ,
+                foreign key     (owner)     references users (id)
+            );
+            """
+    c.execute(query)
+    conn.commit()
+
+    # # insert test account
+    # query = f"""
+    #         INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+    #         VALUES ('asd', 'qwe', 'asd', 'asd', 'asd', '123124124', null);
+    #         """
+    # c.execute(query)
+    # conn.commit()
+
+    # # test retrieval
+    # query = """
+    #         select * from users;
+    #         """
+    # c.execute(query)
+    # test = c.fetchall()
+    # print(test)
+    
+    c.close()
     conn.close()
 
     app.run(debug=True)
