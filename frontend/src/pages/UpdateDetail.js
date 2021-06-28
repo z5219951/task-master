@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const UpdateDetail = (props) => {
 
-  const [name, setName] = useState('');
+  const [detail, setDetail] = useState('');
   const [detailProp, setDetailProp] = useState('');
   
   const [user, setUser] = useState({})
@@ -27,10 +27,19 @@ const UpdateDetail = (props) => {
     })
   },[props])
 
-
-  function handleSubmit () {
-    console.log('abc')
+  console.log(props.detail)
+  function handleSubmit (detailProp, detail) {
+    console.log(detailProp, detail)
+    console.log(user)
+    const updateDet = {...user};
+    updateDet[detailProp] = detail;
+    console.log(updateDet);
+    setUser(updateDet);
   }
+
+  useEffect(() => {
+    axios.put(`http://localhost:5000/userInform/1`, user)
+  }, [user])
   
   return (
     <>
@@ -40,10 +49,10 @@ const UpdateDetail = (props) => {
       <br/>
       <div><h2>New {props.label}: </h2></div>
       <div class="col-md-3">
-        <input class="form-control input-sm" type="text" id="name" onChange={(e) => setName(e.target.value)}></input>
+        <input class="form-control input-sm" type="text" id="name" onChange={(e) => setDetail(e.target.value)}></input>
       </div>
       <br/>
-      <button type="button" class="btn btn-primary" onClick={(e) => handleSubmit()}>Submit</button>
+      <button type="button" class="btn btn-primary" onClick={(e) => handleSubmit(detailProp, detail)}>Submit</button>
     </div>
     </>
   )
