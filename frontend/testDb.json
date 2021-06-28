@@ -145,30 +145,16 @@
       "id": 12
     }
   ],
-  "userInform": [
-    {
-      "email": "charlesqi02@gmail.com",
-      "passWord": "Abc123",
-      "userName": "z5219951",
-      "firstName": "Yue-",
-      "lastName": "Qi",
-      "phone": "0414558951",
-      "company": "1131",
-      "id": 1
-    },
+  "register": [
     {
       "email": "qicharles03@gmail.com",
-      "passWord": "Abc123",
-      "userName": "z5219951",
+      "passWord": "1234567Qq",
+      "userName": "1231",
       "firstName": "Charles",
       "lastName": "Qi",
       "phone": "0414558951",
-      "company": "1121",
-      "id": 3
-    },
-    {
-      "email": "abc",
-      "id": 4
+      "company": "",
+      "id": 1
     }
   ],
   "login": [

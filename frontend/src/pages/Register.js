@@ -96,7 +96,7 @@ class Register extends Component{
         return;
       }
       const data = {email:email,passWord:passWord,userName:user,firstName:firstName,lastName:lastName,phone:phone,company:comp};
-      axios.post('http://localhost:5000/userInform', data).then((res)=>{
+      axios.post('http://localhost:5000/register', data).then((res)=>{
           console.log("send inform");
           const result = true;
           if(result) {
