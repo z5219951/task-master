@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Test - Nicholai
+# Test - Nicholai Rank
 from configparser import ConfigParser
 
 def config(filename='database.ini', section='postgresql'):
