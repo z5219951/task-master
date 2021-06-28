@@ -38,7 +38,7 @@ const UpdateDetail = (props) => {
   useEffect(() => {
     console.log(user)
     if (user !== '') {
-      axios.put(`http://localhost:5000/userInform/1`, user)
+      axios.put(`http://localhost:5000/userInform/${currentUser}`, user)
     }
   }, [user])
   
