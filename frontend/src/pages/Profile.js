@@ -1,10 +1,30 @@
 import './Padding.css'
 import './Profile.css'
 import { useHistory } from 'react-router-dom';
+import store from '../store'
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
 const Profile = () => {
   const history = useHistory();
-  
+  const [user, setUser] = useState({})
+
+  // Find current user
+  const currentUser = store.getState().id;
+  useEffect(() => {
+    axios.get('http://localhost:5000/userInform').then((res) => {
+    const users = res.data
+    for (let i=0; i < users.length; i++) {
+      // If user ID in database matches current user
+      if (String(users[i].id) === String(currentUser)) {
+        setUser(users[i])
+      }
+    }
+    }).then(() => {
+      // console.log(user)
+    })
+  },[])
+
   function backClick () {
     history.push('./taskboard')
   }
@@ -30,27 +50,27 @@ const Profile = () => {
           <tbody>
             <tr>
               <th scope="row">Email</th>
-              <td> @email.com </td>
+              <td> {user.email} </td>
             </tr>
             <tr>
               <th scope="row">Username</th>
-              <td> abc </td>
+              <td> {user.userName} </td>
             </tr>
             <tr>
               <th scope="row">First Name</th>
-              <td> a </td>
+              <td> {user.firstName} </td>
             </tr>
             <tr>
               <th scope="row">Last Name</th>
-              <td> bc </td>
+              <td> {user.lastName} </td>
             </tr>
             <tr>
               <th scope="row">Phone</th>
-              <td> 0123 </td>
+              <td> {user.phone === '' ? 'Not entered' : user.phone} </td>
             </tr>
             <tr>
               <th scope="row">Company</th>
-              <td> abc123 </td>
+              <td> {user.company === '' ? 'Not entered' : user.company} </td>
             </tr>
           </tbody>
         </div>
