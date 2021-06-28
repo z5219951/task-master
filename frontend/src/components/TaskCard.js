@@ -3,10 +3,9 @@ import React from 'react';
 const TaskCard = (props) => {
   const tasks = props.task
   return (<>
-    <div class="card my-2 mx-5"> 
-      <div class="card-body" padding="100px">
-        <p class="card-text">
-          <h5 class="card-title">
+    <div className="card my-2 mx-5"> 
+      <div className="card-body" padding="100px">
+          <h5 className="card-title">
             Task #{tasks.id}:
             <br/>
             Name: {tasks.name}
@@ -23,7 +22,6 @@ const TaskCard = (props) => {
           Start Date: {tasks.startD}
           <br />
           Due Date: {tasks.dueD}
-        </p>
       </div>
     </div>
   </>

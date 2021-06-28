@@ -44,11 +44,11 @@ const Taskboard = () => {
         <div className="card">
           <br/>
             {cState.map((state) => {
-                return <div className="card m-4">
+                return <div key={state} className="card m-4">
                 <h5 className="card-title m-2">{state}:</h5>
                 {tasks && tasks.map((task) => {
                   if (JSON.stringify(task.cState) === JSON.stringify(state)) {
-                    return <TaskCard task={task}/>
+                    return <TaskCard key={task.id} task={task}/>
                   }
               })}
               </div>
