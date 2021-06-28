@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios'
 import store from '../store';
+import { Navbar, Nav } from 'react-bootstrap';
 
 // when use this button, you may need doing like this
 // <LogoutButton history = {this.props.history}/>
@@ -37,7 +38,9 @@ class LogoutButton extends Component{
     }
     render(){
         return (
-            <button type="button" className="btn btn-warning" onClick={this.handleClick}>Logout</button>
+            <Nav className="ml-auto">
+                <Nav.Link onClick={this.handleClick}>Logout</Nav.Link> 
+            </Nav>
         )
     }
 }

@@ -3,7 +3,7 @@ import './CreateTask.css'
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios'
-
+import store from '../store'
 
 const CreateTask = () => {
   const history = useHistory();
@@ -19,7 +19,8 @@ const CreateTask = () => {
   const [descriptionAlert, setDescriptionAlert] = useState('')
   const [startDAlert, setStartDAlert] = useState('')
   const [timeEst, setTimeEst] = useState(0)
-  
+  const [owner, setOwner] = useState('')
+
   function backClick () {
     history.push('./taskboard')
   }
@@ -52,15 +53,18 @@ const CreateTask = () => {
     } else {
       setDueDAlert('');
     }
-
-    const task = {task: {name: name, description: description, startD: startD, dueD: dueD, progress: progress,
-    timeEst: timeEst, difficulty: difficulty, cState: cState}}
+    const task = {name: name, description: description, startD: startD, dueD: dueD, progress: progress,
+    timeEst: timeEst, difficulty: difficulty, cState: cState, owner: owner}
     console.log(task)
-    axios.post('http://localhost:5000/tasks', task).then((res)=>{
+    axios.post('http://localhost:5000/tasks', task).then(()=>{
       console.log("Task Created");
       history.push('./taskboard');
     })
   }
+
+  useEffect(() => {
+    setOwner(store.getState().id)
+  }, [])
 
   // Validates date inputs
   useEffect(() => {

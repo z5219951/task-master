@@ -1,30 +1,112 @@
 {
   "tasks": [
     {
-      "task": {
-        "name": "a",
-        "description": "a",
-        "startD": "2021-06-11",
-        "dueD": "2021-06-24",
-        "progress": "5",
-        "timeEst": "1",
-        "difficulty": "Very Easy",
-        "cState": "Not Started"
-      },
+      "name": "name",
+      "description": "desc",
+      "startD": "2021-06-10",
+      "dueD": "2021-06-29",
+      "progress": "20",
+      "timeEst": "5",
+      "difficulty": "Very Easy",
+      "cState": "Not Started",
+      "owner": "1",
       "id": 1
     },
     {
-      "task": {
-        "name": "b",
-        "description": "b",
-        "startD": "2021-06-11",
-        "dueD": "2021-06-26",
-        "progress": "5",
-        "timeEst": "5",
-        "difficulty": "Very Easy",
-        "cState": "Not Started"
-      },
+      "name": "abc",
+      "description": "def",
+      "startD": "2021-06-10",
+      "dueD": "2021-06-30",
+      "progress": "20",
+      "timeEst": "1",
+      "difficulty": "Very Easy",
+      "cState": "Not Started",
+      "owner": "",
       "id": 2
+    },
+    {
+      "name": "abc",
+      "description": "def",
+      "startD": "2021-06-03",
+      "dueD": "2021-06-17",
+      "progress": "10",
+      "timeEst": "5",
+      "difficulty": "Very Easy",
+      "cState": "Not Started",
+      "owner": "",
+      "id": 3
+    },
+    {
+      "name": "abc",
+      "description": "def",
+      "startD": "2021-06-09",
+      "dueD": "2021-06-30",
+      "progress": "20",
+      "timeEst": "19",
+      "difficulty": "Very Easy",
+      "cState": "Not Started",
+      "owner": "",
+      "id": 4
+    },
+    {
+      "name": "abc",
+      "description": "def",
+      "startD": "2021-06-10",
+      "dueD": "2021-06-30",
+      "progress": "10",
+      "timeEst": "10",
+      "difficulty": "Very Easy",
+      "cState": "Not Started",
+      "owner": "",
+      "id": 5
+    },
+    {
+      "name": "abc",
+      "description": "def",
+      "startD": "2021-06-17",
+      "dueD": "2021-07-01",
+      "progress": "19",
+      "timeEst": "5",
+      "difficulty": "Very Easy",
+      "cState": "Not Started",
+      "owner": "1",
+      "id": 6
+    },
+    {
+      "name": "abc",
+      "description": "def",
+      "startD": "2021-06-02",
+      "dueD": "2021-06-30",
+      "progress": "30",
+      "timeEst": "5",
+      "difficulty": "Very Easy",
+      "cState": "Not Started",
+      "owner": "1",
+      "id": 7
+    },
+    {
+      "name": "New Task",
+      "description": "New Description",
+      "startD": "2021-06-08",
+      "dueD": "2021-06-30",
+      "progress": "50",
+      "timeEst": "5",
+      "difficulty": "Very Easy",
+      "cState": "Not Started",
+      "owner": "1",
+      "id": 8
+    },
+    {
+      "name": "ABC",
+      "description": "DEF",
+      "startD": "2021-06-17",
+      "dueD": "2021-06-18",
+      "progress": "50",
+      "timeEst": "5",
+      "difficulty": "Very Easy",
+      "cState": "Completed",
+      "owner": "1",
+      "id": 9
     }
   ],
   "userInform": [
@@ -32,10 +114,10 @@
       "email": "qicharles02@gmail.com",
       "passWord": "Abc123",
       "userName": "z5219951",
-      "firstName": "C",
+      "firstName": "Charles",
       "lastName": "Qi",
       "phone": "0414558951",
-      "company": "1141",
+      "company": "1131",
       "id": 1
     },
     {
@@ -378,6 +460,56 @@
       "email": "abc@Gmail.com",
       "passWord": "Abc123",
       "id": 65
+    },
+    {
+      "email": "Abc@gmail.com",
+      "passWord": "Abc123",
+      "id": 66
+    },
+    {
+      "email": "abc@gmail.com",
+      "passWord": "Abc123",
+      "id": 67
+    },
+    {
+      "email": "abc@gmail.com",
+      "passWord": "Abc123",
+      "id": 68
+    },
+    {
+      "email": "Abc@gmail.com",
+      "passWord": "Abc123",
+      "id": 69
+    },
+    {
+      "email": "abc@gmail.com",
+      "passWord": "Abc123",
+      "id": 70
+    },
+    {
+      "email": "abc@gmail.com",
+      "passWord": "Abc123",
+      "id": 71
+    },
+    {
+      "email": "abc@gmail.com",
+      "passWord": "Abc123",
+      "id": 72
+    },
+    {
+      "email": "abc@gmail.com",
+      "passWord": "Abc123",
+      "id": 73
+    },
+    {
+      "email": "abc@gmail.com",
+      "passWord": "Abc123",
+      "id": 74
+    },
+    {
+      "email": "abc@gmail.com",
+      "passWord": "ABc123",
+      "id": 75
     }
   ],
   "newPass": [
@@ -623,6 +755,162 @@
     {
       "email": "",
       "id": 47
+    },
+    {
+      "email": "",
+      "id": 48
+    },
+    {
+      "email": "",
+      "id": 49
+    },
+    {
+      "email": "",
+      "id": 50
+    },
+    {
+      "email": "",
+      "id": 51
+    },
+    {
+      "email": "",
+      "id": 52
+    },
+    {
+      "email": "",
+      "id": 53
+    },
+    {
+      "email": "",
+      "id": 54
+    },
+    {
+      "email": "",
+      "id": 55
+    },
+    {
+      "email": "",
+      "id": 56
+    },
+    {
+      "email": "",
+      "id": 57
+    },
+    {
+      "email": "",
+      "id": 58
+    },
+    {
+      "email": "",
+      "id": 59
+    },
+    {
+      "email": "",
+      "id": 60
+    },
+    {
+      "email": "",
+      "id": 61
+    },
+    {
+      "email": "",
+      "id": 62
+    },
+    {
+      "email": "",
+      "id": 63
+    },
+    {
+      "email": "",
+      "id": 64
+    },
+    {
+      "email": "",
+      "id": 65
+    },
+    {
+      "email": "",
+      "id": 66
+    },
+    {
+      "email": "",
+      "id": 67
+    },
+    {
+      "email": "",
+      "id": 68
+    },
+    {
+      "email": "",
+      "id": 69
+    },
+    {
+      "email": "",
+      "id": 70
+    },
+    {
+      "email": "",
+      "id": 71
+    },
+    {
+      "email": "",
+      "id": 72
+    },
+    {
+      "email": "",
+      "id": 73
+    },
+    {
+      "email": "",
+      "id": 74
+    },
+    {
+      "email": "",
+      "id": 75
+    },
+    {
+      "email": "",
+      "id": 76
+    },
+    {
+      "email": "",
+      "id": 77
+    },
+    {
+      "email": "",
+      "id": 78
+    },
+    {
+      "email": "",
+      "id": 79
+    },
+    {
+      "email": "",
+      "id": 80
+    },
+    {
+      "email": "",
+      "id": 81
+    },
+    {
+      "email": "",
+      "id": 82
+    },
+    {
+      "email": "",
+      "id": 83
+    },
+    {
+      "email": "",
+      "id": 84
+    },
+    {
+      "email": "",
+      "id": 85
+    },
+    {
+      "email": "",
+      "id": 86
     }
   ]
 }

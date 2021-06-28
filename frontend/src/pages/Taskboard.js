@@ -1,20 +1,16 @@
-import CreateTask from './CreateTask';
 import './Padding.css'
 import { useHistory } from 'react-router-dom';
 import store from '../store';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import TaskCard from '../components/TaskCard'
 
 const Taskboard = () => {
   const history = useHistory();
 
-  console.log(store.getState())
   if (store.getState() === undefined || store.getState().id === "") {
     history.push('/home')
   }
-  
-  // Yue just a example
-  console.log(store.getState().id);
 
   function createTask() {
     history.push('/createTask')
@@ -24,9 +20,15 @@ const Taskboard = () => {
 
   useEffect(() => {
     axios.get('http://localhost:5000/tasks').then((res) => {
-      
+      const taskList = res.data;
+      for (let i = 0; taskList.length > i; i++) {
+        if (store.getState().id === taskList[i].owner) {
+          console.log(taskList[i])
+          setTasks(tasks => [...tasks, taskList[i]])
+        }     
+      }
     })
-  })
+  }, [])
 
   return (
     <>
@@ -36,10 +38,12 @@ const Taskboard = () => {
       <div className="text-right mb-3">
         <button type="button" className="btn btn-secondary btn-lg w-100" onClick={() => { createTask()}}> Create Task </button></div>
       <br/>
+        <h5 className="card-title text-middle">My Tasks:</h5>
         <div className="card">
-          <h5 className="card-title">My Tasks:</h5>
           <br/>
-          {tasks}
+          {tasks && tasks.map((task) => {
+            return <TaskCard task={task}/>
+          })}
         </div>
       </div>
     </>

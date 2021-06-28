@@ -13,9 +13,7 @@ const NavbarControl = () => {
     store.dispatch(action);
   }
 
-  console.log(store.getState())
   const loggedIn = store.getState().loggedIn;
-  console.log(loggedIn)
   // Returns Navigation with register/login if user is not logged in 
   // Returns SignedInNav with profile/logout if user is logged in
   return (
@@ -26,7 +24,6 @@ const NavbarControl = () => {
 } 
 
 const mapStateToProps = (state) => {
-  console.log(state)
   return { state };
 };
 
