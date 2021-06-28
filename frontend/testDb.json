@@ -29,10 +29,10 @@
   ],
   "userInform": [
     {
-      "email": "qicharles01@gmail.com",
+      "email": "qicharles02@gmail.com",
       "passWord": "Abc123",
       "userName": "z5219951",
-      "firstName": "Charles",
+      "firstName": "C",
       "lastName": "Qi",
       "phone": "0414558951",
       "company": "1141",
@@ -373,6 +373,11 @@
       "email": "abc@Gmail.com",
       "passWord": "Abc123",
       "id": 64
+    },
+    {
+      "email": "abc@Gmail.com",
+      "passWord": "Abc123",
+      "id": 65
     }
   ],
   "newPass": [

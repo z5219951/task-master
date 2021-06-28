@@ -7,5 +7,6 @@
     align-items: center;
 }
 .logout_btn{
-    margin-right: 10vw;
+    float:right;
+    margin-right: 20px;
 }

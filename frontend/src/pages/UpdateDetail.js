@@ -8,8 +8,9 @@ const UpdateDetail = (props) => {
 
   const [detail, setDetail] = useState('');
   const [detailProp, setDetailProp] = useState('');
-  
+  const [updateDetAlert, setUpdateDetAlert] = useState('')
   const [user, setUser] = useState({})
+
   // Find current user
   const currentUser = store.getState().id;
   useEffect(() => {
@@ -27,18 +28,18 @@ const UpdateDetail = (props) => {
     })
   },[props])
 
-  console.log(props.detail)
   function handleSubmit (detailProp, detail) {
-    console.log(detailProp, detail)
-    console.log(user)
-    const updateDet = {...user};
-    updateDet[detailProp] = detail;
-    console.log(updateDet);
-    setUser(updateDet);
+    const updateDet = {...user}; // Copy user into updateDet
+    updateDet[detailProp] = detail; // Change selected field
+    setUser(updateDet); //Set user
   }
 
+  // Triggered when 'user' is modified
   useEffect(() => {
-    axios.put(`http://localhost:5000/userInform/1`, user)
+    console.log(user)
+    if (user !== '') {
+      axios.put(`http://localhost:5000/userInform/1`, user)
+    }
   }, [user])
   
   return (
@@ -50,6 +51,7 @@ const UpdateDetail = (props) => {
       <div><h2>New {props.label}: </h2></div>
       <div class="col-md-3">
         <input class="form-control input-sm" type="text" id="name" onChange={(e) => setDetail(e.target.value)}></input>
+        <font color="red">{updateDetAlert}</font>
       </div>
       <br/>
       <button type="button" class="btn btn-primary" onClick={(e) => handleSubmit(detailProp, detail)}>Submit</button>
