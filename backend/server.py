@@ -15,7 +15,7 @@ import sqlite3
 app = Flask(__name__)
 api = Api(app,
           default="ClickDown",  # Default namespace
-          title="Assignment 2",  # Documentation Title
+          title="Capstone Project COMP3900",  # Documentation Title
           description="This page contains all of the HTTP requests that we service.")  # Documentation Description
 
 mail_settings = {
@@ -40,10 +40,8 @@ def email_exists(email):
             FROM    users
             WHERE   email = '{email}';
             """
-    print(query)
     c.execute(query)
     count = c.fetchone()[0]
-    print(count)
 
     if (count == 1):
         return True
@@ -58,10 +56,8 @@ def user_exists(username):
             FROM    users
             WHERE   username = '{username}';
             """
-    print(query)
     c.execute(query)
     count = c.fetchone()[0]
-    print(count)
 
     if (count == 1):
         return True
@@ -180,7 +176,7 @@ class Users(Resource):
         query = f"""
                 UPDATE  users
                 SET     recovery = '{recovery}'
-                WHERE   email = '{email}'
+                WHERE   email = '{email}';
                 """
         c.execute(query)
         conn.commit()
@@ -261,7 +257,7 @@ class Users(Resource):
         query = f"""
                 UPDATE  users
                 SET     password = '{new_password}', recovery = null
-                WHERE   email = '{email}'
+                WHERE   email = '{email}';
                 """
         c.execute()
         conn.commit()
@@ -341,8 +337,228 @@ class Users(Resource):
         
         # HOW TO IMPLEMENT LOGOUT???
         # store JWT in db maybe?
+        
+        c.close()
+        conn.close()
 
         return {'value': True}
+
+
+# get user info
+@api.route('/user/<int:id>', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully retrieved user info')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Gets info for a user given their id")
+    def get(self, id):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  id, password, email, first_name, last_name, phone_number, company
+                FROM    users
+                WHERE   id = '{id}';
+                """
+
+        c.execute(query)
+        data = c.fetchone()
+
+        if (data is None):
+            return {'message': f'User not found'}, 404
+
+        resp =  {
+            'username': f'{data[0]}',
+            'password': f'{data[1]}',
+            'email': f'{data[2]}',
+            'first_name': f'{data[3]}',
+            'last_name': f'{data[4]}',
+            'phone_number': f'{data[5]}',
+            'company': f'{data[6]}'
+        }
+        
+        print(resp)
+        c.close()
+        conn.close()
+
+        return jsonify(resp)
+
+
+# update user info
+update_payload = api.model('update info', {
+    "username": fields.String,
+    "password": fields.String,
+    "email": fields.String,
+    "first_name": fields.String,
+    "last_name": fields.String,
+    "phone_number": fields.String,
+    "company": fields.String,
+})
+
+@api.route('/update', methods=['PUT'])
+class Users(Resource):
+    @api.response(200, 'Successfully updated user info')
+    @api.response(400, 'Bad Request')
+    @api.doc(description="Updates info for a user")
+    @api.expect(update_payload)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('username', required=True)
+        parser.add_argument('password', required=True)
+        parser.add_argument('email', required=True)
+        parser.add_argument('first_name', required=True)
+        parser.add_argument('last_name', required=True)
+        parser.add_argument('phone_number', required=True)
+        parser.add_argument('company', required=False, default=None)
+        args = parser.parse_args()
+        # print(args)
+
+        username = args.username
+        password = args.password
+        email = args.email
+        first_name = args.first_name
+        last_name = args.last_name
+        phone_number = args.phone_number
+        company = args.company
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                UPDATE  users
+                SET     username = '{username}',
+                        password = '{password}',
+                        email = '{email}',
+                        first_name = '{first_name}',
+                        last_name = '{last_name}',
+                        phone_number = '{phone_number}',
+                        company = '{company}'
+                WHERE   username = '{username}';
+                """
+        try:
+            c.execute(query)
+        except:
+            c.close()
+            conn.close()
+            # split up username and email later
+            return {'message': 'New username or email is already taken',
+                    'value': False}, 400
+
+        conn.commit()
+        
+        c.close()
+        conn.close()
+
+        return {'value': True}
+
+
+# update user info
+task_payload = api.model('task', {
+    "owner": fields.Integer,
+    "title": fields.String,
+    "description": fields.String,
+    "creation_date": fields.String,
+    "deadline": fields.String,
+    "labels": fields.String,
+    "current_state": fields.String,
+    "progress": fields.Integer,
+    "time_estimate": fields.Integer
+})
+
+@api.route('/create_task', methods=['POST'])
+class Users(Resource):
+    @api.response(200, 'Successfully created task')
+    @api.response(400, 'Bad Request')
+    @api.doc(description="Creates a task with the given info")
+    @api.expect(update_payload)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('owner', required=True)
+        parser.add_argument('title', required=True)
+        parser.add_argument('description', required=True)
+        parser.add_argument('creation_date', required=True)
+        parser.add_argument('deadline', required=False)
+        parser.add_argument('labels', required=False)
+        parser.add_argument('current_state', required=False, default='Not Started')
+        parser.add_argument('progress', required=False, default=0)
+        parser.add_argument('time_estimate', required=False)
+        args = parser.parse_args()
+        # print(args)
+
+        owner = args.owner
+        title = args.title
+        description = args.description
+        creation_date = args.creation_date
+        deadline = args.deadline
+        labels = args.labels
+        current_state = args.current_state
+        progress = args.progress
+        time_estimate = args.time_estimate
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                INSERT INTO users (owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate)
+                VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{labels}', '{current_state}', '{progress}', '{time_estimate}');
+                """
+        c.execute(query)
+        conn.commit()
+
+        query = f"""
+                SELECT  id
+                FROM    tasks
+                WHERE   owner = '{owner}';
+                """
+        c.execute(query)
+        id = c.fetchone[0]
+
+        c.close()
+        conn.close()
+
+        return {'id': id}
+
+
+# get user info
+@api.route('/user/<int:owner>/tasks', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully retrieved task info')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Gets all tasks for a user given their id")
+    def get(self, owner):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate
+                FROM    tasks
+                WHERE   owner = '{owner}';
+                """
+
+        c.execute(query)
+        data = c.fetchone()
+        task_list = []
+
+        while (data is not None):
+            task_info = {
+                'owner': f'{data[0]}',
+                'title': f'{data[1]}',
+                'description': f'{data[2]}',
+                'creation_date': f'{data[3]}',
+                'deadline': f'{data[4]}',
+                'labels': f'{data[5]}',
+                'current_state': f'{data[6]}',
+                'progress': f'{data[7]}',
+                'time_estimate': f'{data[8]}'
+            }
+            task_list.append(task_info)
+            data = c.fetchone()
+
+        print(task_list)
+
+        c.close()
+        conn.close()
+
+        return jsonify({'tasks': task_list})
 
 if __name__ == '__main__':
     # params = config()
@@ -380,8 +596,9 @@ if __name__ == '__main__':
                 creation_date   text        not null,
                 deadline        text        ,
                 labels          text        ,
-                current_state   state       not null,
+                current_state   text        not null,
                 progress        integer     ,
+                time_estimate   integer     ,
                 foreign key     (owner)     references users (id)
             );
             """
