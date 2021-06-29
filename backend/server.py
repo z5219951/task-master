@@ -1,12 +1,10 @@
 # standard library imports
 import random
-import re
 
 # third-party imports
 from flask import Flask, request, jsonify
 from flask_mail import Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
-import psycopg2
 import sqlite3
 
 # local imports
