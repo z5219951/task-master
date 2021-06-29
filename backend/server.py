@@ -460,7 +460,6 @@ task_payload = api.model('task', {
     "description": fields.String,
     "creation_date": fields.String,
     "deadline": fields.String,
-    "labels": fields.String,
     "current_state": fields.String,
     "progress": fields.Integer,
     "time_estimate": fields.Integer
@@ -471,15 +470,15 @@ class Users(Resource):
     @api.response(200, 'Successfully created task')
     @api.response(400, 'Bad Request')
     @api.doc(description="Creates a task with the given info")
-    @api.expect(update_payload)
-    def get(self):
+    @api.expect(task_payload)
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('owner', required=True)
         parser.add_argument('title', required=True)
         parser.add_argument('description', required=True)
         parser.add_argument('creation_date', required=True)
         parser.add_argument('deadline', required=False)
-        parser.add_argument('labels', required=False)
+        # parser.add_argument('labels', required=False)
         parser.add_argument('current_state', required=False, default='Not Started')
         parser.add_argument('progress', required=False, default=0)
         parser.add_argument('time_estimate', required=False)
@@ -491,7 +490,7 @@ class Users(Resource):
         description = args.description
         creation_date = args.creation_date
         deadline = args.deadline
-        labels = args.labels
+        # labels = args.labels
         current_state = args.current_state
         progress = args.progress
         time_estimate = args.time_estimate
@@ -500,8 +499,8 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO users (owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate)
-                VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{labels}', '{current_state}', '{progress}', '{time_estimate}');
+                INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, progress, time_estimate)
+                VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{progress}', '{time_estimate}');
                 """
         c.execute(query)
         conn.commit()
@@ -512,8 +511,8 @@ class Users(Resource):
                 WHERE   owner = '{owner}';
                 """
         c.execute(query)
-        id = c.fetchone[0]
-
+        id = c.fetchone()[0]
+        print(id)
         c.close()
         conn.close()
 
@@ -587,6 +586,11 @@ if __name__ == '__main__':
                 recovery        integer
             );
             """
+    c.execute(query)
+    query = f"""
+                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+                VALUES ('charles', '123456Qq', '1105282259@qq.com', 'Yue', 'Qi', '12345', '123');
+                """
     c.execute(query)
 
     # create table tasks

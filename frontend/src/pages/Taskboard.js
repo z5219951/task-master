@@ -23,11 +23,11 @@ const Taskboard = () => {
   // Get tasks created by the logged in user
   axios.defaults.crossDomain=true;
   useEffect(() => {
-    axios.get(`http://localhost:5000/${store.getState().id}/tasks`).then((res) => {
-      console.log(res)
-      const taskList = res.data;
+    axios.get(`http://localhost:5000/user/${store.getState().id}/tasks`).then((res) => {
+      const taskList = JSON.parse(res.data).tasks;
+      console.log(taskList)
       for (let i = 0; taskList.length > i; i++) {
-        if (store.getState().id === taskList[i].owner) {
+        if (store.getState().id == taskList[i].owner) {
           setTasks(tasks => [...tasks, taskList[i]])
         }     
       }
