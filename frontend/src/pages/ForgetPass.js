@@ -34,10 +34,12 @@ class ForgetPass extends Component{
         return;
       }
       // use axios for post data
-      axios.post('http://localhost:5000/forgetEmail', {email:email}).then((res)=>{
+      axios.defaults.crossDomain=true;
+      axios.post('http://localhost:5000/forgot_password', {email:email}).then((res)=>{
           // check the return information, if true it will enter the code page else 
           // it should request to enter again
-          const result = true;
+          console.log(res.data);
+          const result = res.data.value;
           if (result) {
             const action = {
                 type:'reset_email',

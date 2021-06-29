@@ -99,7 +99,7 @@ class Register extends Component{
       axios.defaults.crossDomain=true;
       axios.post('http://localhost:5000/register', data).then((res)=>{
           console.log(res);
-          const result = true;
+          const result = res.data.value;
           if(result) {
             this.props.history.push('./CheckCode')
           } else {

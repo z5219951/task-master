@@ -14,7 +14,7 @@ class LogoutButton extends Component{
     handleClick = ()=>{
         // logout current account
         try {
-            const id = store.getState().id;
+            const id = Number(store.getState().id);
             // give the current id address
             // attention, we didn't think about multi-login accounts
             axios.defaults.crossDomain=true;

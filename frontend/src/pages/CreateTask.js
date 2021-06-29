@@ -58,6 +58,7 @@ const CreateTask = () => {
     const task = {name: name, description: description, startD: startD, dueD: dueD, progress: progress,
     timeEst: timeEst, difficulty: difficulty, cState: cState, owner: owner}
     console.log(task)
+    axios.defaults.crossDomain=true;
     axios.post('http://localhost:5000/tasks', task).then(()=>{
       console.log("Task Created");
       history.push('./taskboard');

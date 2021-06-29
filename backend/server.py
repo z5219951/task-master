@@ -3,6 +3,7 @@ import random
 
 # third-party imports
 from flask import Flask, request, jsonify
+import json
 from flask_mail import Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
 from flask_cors import CORS
@@ -148,10 +149,9 @@ class Users(Resource):
         # print(args)
 
         email = args.email
-
+        # return  false if no such user
         if (not email_exists(email)):
-            return {'message': f'A user with that email does not exist',
-                    'value': False}, 400
+            return {'value': False},200
         
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -192,19 +192,15 @@ class Users(Resource):
         c.close()
         conn.close()
 
-        return {'value': True}
+        return {'value': True},200
 
 
 # reset password
 recovery_payload = api.model('recovery code', {
     "recovery": fields.Integer
 })
-new_pass_payload = api.model('new password', {
-    "email": fields.String,
-    "new_password": fields.String
-})
 
-@api.route('/reset_password', methods=['POST', 'PUT'])
+@api.route('/reset_password_code', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully entered recovery code')
     @api.response(400, 'Bad request')
@@ -231,21 +227,27 @@ class Users(Resource):
         print(count)
 
         if (count != 1):
-            return {'message': f'Incorrect recovery code',
-                    'value': False}, 400
+            return {'value': False}, 200
 
-        return {'value': True}
+        return {'value': True}, 200
 
+new_pass_payload = api.model('new password', {
+    "email": fields.String,
+    "new_password": fields.String
+})
+
+@api.route('/reset_password', methods=['POST'])
+class Users(Resource):
     @api.response(200, 'Successfully reset password')
     @api.response(400, 'Bad request')
     @api.doc(description="Enter new password")
     @api.expect(new_pass_payload)
-    def put(self):
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('email', required=True)
         parser.add_argument('new_password', required=True)
         args = parser.parse_args()
-        # print(args)
+        print(args)
 
         email = args.email
         new_password = args.new_password
@@ -259,13 +261,13 @@ class Users(Resource):
                 SET     password = '{new_password}', recovery = null
                 WHERE   email = '{email}';
                 """
-        c.execute()
+        c.execute(query)
         conn.commit()
 
         c.close()
         conn.close()
 
-        return {'value': True}
+        return {'value': True},200
 
 
 # TODO: redo function with proper login system
@@ -304,12 +306,14 @@ class Users(Resource):
         id = c.fetchone()
 
         if (id is None):
-            return {'message': f'Incorrect email or password'}, 400
+            return {'id':''}, 200
         
         c.close()
         conn.close()
-
-        return {f"'id': {id}"}
+        data = {
+            'id': id[0],
+        }
+        return json.dumps(data),200
 
 
 # TODO: redo function with proper logout system
@@ -380,7 +384,7 @@ class Users(Resource):
         c.close()
         conn.close()
 
-        return jsonify(resp)
+        return json.dumps(resp)
 
 
 # update user info
@@ -440,15 +444,14 @@ class Users(Resource):
             c.close()
             conn.close()
             # split up username and email later
-            return {'message': 'New username or email is already taken',
-                    'value': False}, 400
+            return {'value': False}, 200
 
         conn.commit()
         
         c.close()
         conn.close()
 
-        return {'value': True}
+        return {'value': True},200
 
 
 # update user info
@@ -515,7 +518,7 @@ class Users(Resource):
         c.close()
         conn.close()
 
-        return {'id': id}
+        return {'id': id},200
 
 
 # get user info
@@ -558,7 +561,7 @@ class Users(Resource):
         c.close()
         conn.close()
 
-        return jsonify({'tasks': task_list})
+        return json.dumps({'tasks': task_list})
 
 if __name__ == '__main__':
     # params = config()

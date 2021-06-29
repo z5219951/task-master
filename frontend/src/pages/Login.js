@@ -60,14 +60,16 @@ class Login extends Component{
         return;
       }
       // use axios for post data
-      axios.post('http://localhost:5000/login', {email:this.state.email,passWord:this.state.passWord}).then((res)=>{
+      axios.defaults.crossDomain=true;
+      const data = {email:this.state.email,password:this.state.passWord};
+      axios.post('http://localhost:5000/login', data).then((res)=>{
           console.log("you send the login data");
           // store the user id in store
-          const result = true;
-          if(result) {
+          const result = res.data.id;
+          if(result !== '') {
             const action = {
               type:'login_id',
-              value:"1"
+              value:result
             }
             store.dispatch(action);
             // move to task board

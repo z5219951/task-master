@@ -38,15 +38,15 @@ class VerifyCode extends Component{
           }))
       }
       const data = {
-        code:code,
-        email:this.state.email
+        recovery:Number(code),
       }
+      console.log(data)
       // use axios for post data
       axios.defaults.crossDomain=true;
-      axios.post('http://localhost:5000/forgetCode', data).then((res)=>{
+      axios.post('http://localhost:5000/reset_password_code', data).then((res)=>{
           // check the return information, if true it will enter the code page else 
           // it should request to enter again
-          const result = true;
+          const result = res.data.value;
           if (result) {
             console.log("correct");
             this.props.history.push('./newPass');
