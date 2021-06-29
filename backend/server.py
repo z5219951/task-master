@@ -456,7 +456,7 @@ class Users(Resource):
         return {'value': True},200
 
 
-# update user info
+# create task
 task_payload = api.model('task', {
     "owner": fields.Integer,
     "title": fields.String,
@@ -465,7 +465,8 @@ task_payload = api.model('task', {
     "deadline": fields.String,
     "current_state": fields.String,
     "progress": fields.Integer,
-    "time_estimate": fields.Integer
+    "time_estimate": fields.Integer,
+    "difficulty": fields.String
 })
 
 @api.route('/create_task', methods=['POST'])
@@ -485,6 +486,7 @@ class Users(Resource):
         parser.add_argument('current_state', required=False, default='Not Started')
         parser.add_argument('progress', required=False, default=0)
         parser.add_argument('time_estimate', required=False)
+        parser.add_argument('difficulty', required=False)
         args = parser.parse_args()
         # print(args)
 
@@ -497,13 +499,14 @@ class Users(Resource):
         current_state = args.current_state
         progress = args.progress
         time_estimate = args.time_estimate
+        difficulty = args.difficulty
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, progress, time_estimate)
-                VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{progress}', '{time_estimate}');
+                INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, progress, time_estimate, difficulty)
+                VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{progress}', '{time_estimate}', '{difficulty}');
                 """
         c.execute(query)
         conn.commit()
@@ -513,7 +516,8 @@ class Users(Resource):
                 FROM    tasks
                 WHERE   owner = '{owner}'
                 AND     title = '{title}'
-                AND     description = '{description}';
+                AND     description = '{description}'
+                AND     creation_date = '{creation_date}';
                 """
         c.execute(query)
         id = c.fetchone()[0]
@@ -535,7 +539,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate, difficulty
                 FROM    tasks
                 WHERE   owner = '{owner}';
                 """
@@ -556,7 +560,8 @@ class Users(Resource):
                 'labels': f'{data[6]}',
                 'current_state': f'{data[7]}',
                 'progress': f'{data[8]}',
-                'time_estimate': f'{data[9]}'
+                'time_estimate': f'{data[9]}',
+                'difficulty': f'{data[10]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
