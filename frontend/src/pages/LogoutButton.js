@@ -17,6 +17,7 @@ class LogoutButton extends Component{
             const id = store.getState().id;
             // give the current id address
             // attention, we didn't think about multi-login accounts
+            axios.defaults.crossDomain=true;
             axios.post('http://localhost:5000/logout', {id:id}).then((res)=>{
             const action = {
                 type:'login_id',

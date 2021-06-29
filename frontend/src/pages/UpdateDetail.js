@@ -19,6 +19,7 @@ const UpdateDetail = (props) => {
   // Find current user 
   const currentUser = store.getState().id;
   useEffect(() => {
+    axios.defaults.crossDomain=true;
     axios.get('http://localhost:5000/userInform').then((res) => {
     const users = res.data
     for (let i=0; i < users.length; i++) {

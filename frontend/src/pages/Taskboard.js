@@ -21,6 +21,7 @@ const Taskboard = () => {
   const cState = ['Not Started','In Progress', 'Completed', 'Blocked' ];
 
   // Get tasks created by the logged in user
+  axios.defaults.crossDomain=true;
   useEffect(() => {
     axios.get('http://localhost:5000/tasks').then((res) => {
       const taskList = res.data;

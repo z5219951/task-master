@@ -95,9 +95,10 @@ class Register extends Component{
       if(!pass) {
         return;
       }
-      const data = {email:email,passWord:passWord,userName:user,firstName:firstName,lastName:lastName,phone:phone,company:comp};
+      const data = {email:email,password:passWord,username:user,first_name:firstName,last_name:lastName,phone_number:phone,company:comp};
+      axios.defaults.crossDomain=true;
       axios.post('http://localhost:5000/register', data).then((res)=>{
-          console.log("send inform");
+          console.log(res);
           const result = true;
           if(result) {
             this.props.history.push('./CheckCode')

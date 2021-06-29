@@ -57,6 +57,7 @@ class RePassWord extends Component{
       }
       const email = this.state.email;
       // use axios for post data
+      axios.defaults.crossDomain=true;
       axios.post('http://localhost:5000/newPass', {email:email,passWord:passWord}).then((res)=>{
         const result = true;
         if(result) {

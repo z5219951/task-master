@@ -42,6 +42,7 @@ class VerifyCode extends Component{
         email:this.state.email
       }
       // use axios for post data
+      axios.defaults.crossDomain=true;
       axios.post('http://localhost:5000/forgetCode', data).then((res)=>{
           // check the return information, if true it will enter the code page else 
           // it should request to enter again

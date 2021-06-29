@@ -5,12 +5,14 @@ import random
 from flask import Flask, request, jsonify
 from flask_mail import Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
+from flask_cors import CORS
 import sqlite3
 
 # local imports
 # from config import config
 
 app = Flask(__name__)
+cors = CORS(app)
 api = Api(app,
           default="ClickDown",  # Default namespace
           title="Capstone Project COMP3900",  # Documentation Title
