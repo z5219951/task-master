@@ -307,10 +307,9 @@ class Users(Resource):
 
         if (id is None):
             return {'id':''}, 200
-        
         c.close()
         conn.close()
-        data = {
+        data = {    
             'id': id[0],
         }
         return json.dumps(data),200
