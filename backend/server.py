@@ -334,7 +334,8 @@ class Users(Resource):
         args = parser.parse_args()
         # print(args)
 
-        id = args.id
+        id = args.id        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -342,6 +343,83 @@ class Users(Resource):
         # HOW TO IMPLEMENT LOGOUT???
         # store JWT in db maybe?
 
+        return {'value': True}
+
+userInfo_payload = api.model('user info', {
+    "id": fields.Integer
+})
+@api.route('/userInfo', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully retrieved data')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Return JSON of user data")
+    @api.expect(userInfo_payload)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', required=True)        
+        args = parser.parse_args()
+
+        id = args.id
+        
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        
+        # Validate user?
+        
+        # retrieve user with given ID
+        query = f"""
+                SELECT  *
+                FROM    users
+                WHERE   id = '{id}';
+                """
+        c.execute(query)
+        row = c.fetchone()
+        
+        if row is none:
+            return {'message': f'User ID not found or not authorised'}, 400
+        
+        # Is this correct, check type of row?
+        return row
+        
+
+@api.route('/updateUser', methods=['PUT'])
+class Users(Resource):
+    @api.response(200, 'Successfully updated')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Update user database")
+    @api.expect(register_payload)
+    def put(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', required=True)
+        parser.add_argument('userName', required=True)
+        parser.add_argument('passWord', required=True)
+        parser.add_argument('email', required=True)
+        parser.add_argument('firstName', required=True)
+        parser.add_argument('lastName', required=True)
+        parser.add_argument('phone', required=True)
+        parser.add_argument('company', required=False, default=None)
+        args = parser.parse_args()
+    
+        id = args.id
+        username = args.userName
+        password = args.passWord
+        email = args.email
+        first_name = args.firstName
+        last_name = args.lastName
+        phone_number = args.phone
+        company = args.company
+        
+        # Validate user
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                UPDATE users 
+                SET (username = {username}, password = {password}, email={email}, first_name={firstName}, last_name={lastName}, phone_number={phone}, company={company})
+                where id={id};
+                """
+        c.execute(query)
+                
         return {'value': True}
 
 if __name__ == '__main__':
