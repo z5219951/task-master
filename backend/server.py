@@ -403,7 +403,7 @@ class Users(Resource):
     @api.response(400, 'Bad Request')
     @api.doc(description="Updates info for a user")
     @api.expect(update_payload)
-    def get(self):
+    def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('username', required=True)
         parser.add_argument('password', required=True)

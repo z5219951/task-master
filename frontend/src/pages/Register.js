@@ -101,7 +101,7 @@ class Register extends Component{
           console.log(res);
           const result = res.data.value;
           if(result) {
-            this.props.history.push('./CheckCode')
+            this.props.history.push('./login')
           } else {
             this.setState(()=>({
               email:'',
