@@ -9,3 +9,7 @@ Initialised React frontend on Git and created a simple navbar with routes for th
 Week 3
 Added on to storyboards created by Yue Qi. I separated Yue Qi's storyboard into chunks and added more detail to each one.
 Also written descriptions to those storyboards. Added a couple of user stories and acceptance criteria on Jira.
+
+Week 4
+Implemented the front end for the taskboard, a task creation page, a profile page and an update profile page covering user stories 
+cwc-51, cwc-68, cwc-39, and cwc-40.

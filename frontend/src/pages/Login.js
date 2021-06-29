@@ -1,9 +1,10 @@
-import React, {Component, Fragment} from 'react'
+import React, {useContext, Component, Fragment} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
 import axios from 'axios'
 import store from '../store';
-import LogoutButton from './LogoutButton';
+
+
 
 class Login extends Component{
   constructor(props) {
@@ -62,11 +63,27 @@ class Login extends Component{
       axios.post('http://localhost:5000/login', {email:this.state.email,passWord:this.state.passWord}).then((res)=>{
           console.log("you send the login data");
           // store the user id in store
-          const action = {
-            type:'login_id',
-            value:"test"
+          const result = true;
+          if(result) {
+            const action = {
+              type:'login_id',
+              value:"1"
+            }
+            store.dispatch(action);
+            // move to task board
+            const logged_in = {
+              type: 'loggedIn',
+              value: "true"
+            }
+            store.dispatch(logged_in);
+            this.props.history.push('./taskboard');
+          } else {
+            // incorrect password
+            this.setState(()=>({
+              passWord:'',
+              passWordAlert:'Please enter correct password'
+            }))
           }
-          store.dispatch(action);
       })
     } catch (error) {
         console.log(error);

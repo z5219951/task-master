@@ -2,7 +2,9 @@ import './Padding.css'
 
 const Home = () => {
   return (
-    <div className='padding'> Home Page </div>
+    <>
+    <div className='padding'><h1> Home Page </h1> </div>
+    </>
   )
 }
 

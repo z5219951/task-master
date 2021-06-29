@@ -1,0 +1,19 @@
+.table tr {
+  text-align: center;
+  font-size: 18px;
+}
+
+.table tr th {
+  width: 200px;
+}
+
+.table tr td {
+  width: 500px;
+}
+
+.table {
+  border-radius: 5px;
+  width: 50%;
+  margin: 0px auto;
+  float: none;
+}

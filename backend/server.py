@@ -3,12 +3,14 @@ import random
 import re
 
 # third-party imports
-from flask import Flask, request, jsonify, Mail, Message
+from flask import Flask, request, jsonify
+from flask_mail import Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
 import psycopg2
+import sqlite3
 
 # local imports
-from config import config
+# from config import config
 
 app = Flask(__name__)
 api = Api(app,
@@ -30,21 +32,35 @@ mail = Mail(app)
 
 #### HELPER FUNCTIONS ####
 def email_exists(email):
-    # regex = '\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b'
-    # if (re.search(regex, email)):
-    #     return True
-    # else:
-    #     return False
-    conn = psycopg2.connect(config())
+    conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
 
     query = f"""
             SELECT  count(*)
             FROM    users
-            WHERE   email = {email};
+            WHERE   email = '{email}';
             """
+    print(query)
     c.execute(query)
-    count = c.fetchone()
+    count = c.fetchone()[0]
+    print(count)
+
+    if (count == 1):
+        return True
+    return False
+
+def user_exists(username):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+
+    query = f"""
+            SELECT  count(*)
+            FROM    users
+            WHERE   username = '{username}';
+            """
+    print(query)
+    c.execute(query)
+    count = c.fetchone()[0]
     print(count)
 
     if (count == 1):
@@ -57,13 +73,13 @@ register_payload = api.model('register account', {
     "username": fields.String,
     "password": fields.String,
     "email": fields.String,
-    "first name": fields.String,
-    "last name": fields.String,
-    "phone number": fields.String,
+    "first_name": fields.String,
+    "last_name": fields.String,
+    "phone_number": fields.String,
     "company": fields.String,
 })
 
-@api.route('/clickdown/register', methods=['POST'])
+@api.route('/register', methods=['POST'])
 class Users(Resource):
     # Use received information to register an account
     @api.response(200, 'New account registered successfully')
@@ -75,33 +91,38 @@ class Users(Resource):
         parser.add_argument('username', required=True)
         parser.add_argument('password', required=True)
         parser.add_argument('email', required=True)
-        parser.add_argument('first name', required=True)
-        parser.add_argument('last name', required=True)
-        parser.add_argument('phone number', required=True)
+        parser.add_argument('first_name', required=True)
+        parser.add_argument('last_name', required=True)
+        parser.add_argument('phone_number', required=True)
         parser.add_argument('company', required=False, default=None)
+        args = parser.parse_args()
+        # print(args)
 
-        username = request.args.get('username')
-        password = request.args.get('password')
-        email = request.args.get('email')
-        first_name = request.args.get('first name')
-        last_name = request.args.get('last name')
-        phone_number = request.args.get('phone number')
-        company = request.args.get('company')
+        username = args.username
+        password = args.password
+        email = args.email
+        first_name = args.first_name
+        last_name = args.last_name
+        phone_number = args.phone_number
+        company = args.company
 
         # if email is already registered, return false
         # DELETE THIS IF FRONTEND ALREADY CHECKS VALIDITY
         if (email_exists(email)):
             return {'message': f'A user with that email already exists',
                     'value': False}, 400
+        if (user_exists(username)):
+            return {'message': f'A user with that username already exists',
+                    'value': False}, 400
 
         # at this point, all inputs should be valid
         # insert values into users table
-        conn = psycopg2.connect(config())
+        conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO users
-                VALUES (DEFAULT, {username}, {password}, {email}, {first_name}, {last_name}, {phone_number}, {company}, null);
+                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+                VALUES ('{username}', '{password}', '{email}', '{first_name}', '{last_name}', '{phone_number}', '{company}');
                 """
         c.execute(query)
         conn.commit()
@@ -109,7 +130,7 @@ class Users(Resource):
         c.close()
         conn.close()
 
-        return {'value': False}
+        return {'value': True}
 
 
 # TODO: add email system
@@ -118,37 +139,39 @@ forgot_payload = api.model('forgot password', {
     "email": fields.String
 })
 
-@api.route('/clickdown/forgot_password', methods=['GET'])
+@api.route('/forgot_password', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully found user, recovery email sent')
     @api.response(400, 'Bad request')
     @api.doc(description="Forgot password")
     @api.expect(forgot_payload)
-    def get(self):
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('email', required=True)
+        args = parser.parse_args()
+        # print(args)
 
-        email = request.args.get('email')
+        email = args.email
 
         if (not email_exists(email)):
             return {'message': f'A user with that email does not exist',
                     'value': False}, 400
         
-        conn = psycopg2.connect(config())
+        conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
         recovery = -1
 
         # generate recovery code
         while True:
-            recovery = ' '.join([str(random.randint(0, 999)).zfill(3) for _ in range(2)])
+            recovery = ''.join([str(random.randint(0, 999)).zfill(3) for _ in range(2)])
             
             query = f"""
                     SELECT  count(*)
                     FROM    users
-                    WHERE   recovery = {recovery};
+                    WHERE   recovery = '{recovery}';
                     """
             c.execute(query)
-            count = c.fetchone()
+            count = c.fetchone()[0]
             print(count)
 
             if (count == 0):
@@ -156,18 +179,18 @@ class Users(Resource):
         
         query = f"""
                 UPDATE  users
-                SET     recovery = {recovery}
-                WHERE   email = {email}
+                SET     recovery = '{recovery}'
+                WHERE   email = '{email}'
                 """
-        c.execute()
+        c.execute(query)
         conn.commit()
 
         # send email with code
         with app.app_context():
             msg = Message(subject="Forgot your password?",
-                        sender='clickdown3900@gmail.com',
-                        recipients=f"{email}", 
-                        body=f"Recovery code is {recovery}")
+                          sender='clickdown3900@gmail.com',
+                          recipients=[f"{email}"], 
+                          body=f"Recovery code is {recovery}")
             mail.send(msg)
 
         c.close()
@@ -185,29 +208,30 @@ new_pass_payload = api.model('new password', {
     "new_password": fields.String
 })
 
-@api.route('/clickdown/reset_password', methods=['GET', 'PUT'])
+@api.route('/reset_password', methods=['POST', 'PUT'])
 class Users(Resource):
     @api.response(200, 'Successfully entered recovery code')
     @api.response(400, 'Bad request')
     @api.doc(description="Enter recovery code")
     @api.expect(recovery_payload)
-    def get(self):
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('recovery', required=True)
+        args = parser.parse_args()
 
-        recovery = request.args.get('recovery')
+        recovery = args.recovery
         
-        conn = psycopg2.connect(config())
+        conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         # is there a recovery code that matches?
         query = f"""
                 SELECT  count(*)
                 FROM    users
-                WHERE   recovery = {recovery};
+                WHERE   recovery = '{recovery}';
                 """
         c.execute(query)
-        count = c.fetchone()
+        count = c.fetchone()[0]
         print(count)
 
         if (count != 1):
@@ -224,18 +248,20 @@ class Users(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('email', required=True)
         parser.add_argument('new_password', required=True)
+        args = parser.parse_args()
+        # print(args)
 
-        email = request.args.get('email')
-        new_password = request.args.get('new_password')
+        email = args.email
+        new_password = args.new_password
         
-        conn = psycopg2.connect(config())
+        conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         # change the password and reset code
         query = f"""
                 UPDATE  users
-                SET     password = {new_password}, recovery = null
-                WHERE   email = {email}
+                SET     password = '{new_password}', recovery = null
+                WHERE   email = '{email}'
                 """
         c.execute()
         conn.commit()
@@ -253,28 +279,30 @@ login_payload = api.model('login info', {
     "password": fields.String
 })
 
-@api.route('/clickdown/login', methods=['GET'])
+@api.route('/login', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully logged in')
     @api.response(400, 'Bad request')
     @api.doc(description="Enter email and password")
     @api.expect(login_payload)
-    def get(self):
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('email', required=True)
         parser.add_argument('password', required=True)
+        args = parser.parse_args()
+        # print(args)
 
-        email = request.args.get('email')
-        password = request.args.get('password')
+        email = args.email
+        password = args.password
 
-        conn = psycopg2.connect(config())
+        conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
-        
+
         # retrieve id using email and password
         query = f"""
                 SELECT  id
                 FROM    users
-                WHERE   email = {email} and password = {password};
+                WHERE   email = '{email}' and password = '{password}';
                 """
         c.execute(query)
         id = c.fetchone()
@@ -294,19 +322,21 @@ logout_payload = api.model('logout info', {
     "id": fields.Integer
 })
 
-@api.route('/clickdown/logout', methods=['GET'])
+@api.route('/logout', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully logged out')
     @api.response(400, 'Bad request')
     @api.doc(description="Automatically logs out")
-    @api.expect(login_payload)
-    def get(self):
+    @api.expect(logout_payload)
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', required=True)
+        args = parser.parse_args()
+        # print(args)
 
-        id = request.args.get('id')
+        id = args.id
 
-        conn = psycopg2.connect(config())
+        conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
         
         # HOW TO IMPLEMENT LOGOUT???
@@ -315,49 +345,66 @@ class Users(Resource):
         return {'value': True}
 
 if __name__ == '__main__':
-    # conn = psycopg2.connect(config())
-    # c = conn.cursor()
-    # # create table users
-    # query = """
-    #         CREATE TABLE IF NOT EXISTS users (
-    #             id              serial      primary key,
-    #             username        varchar(32) unique not null,
-    #             password        text        not null,
-    #             email           text        unique not null,
-    #             first_name      text        not null,
-    #             last_name       text        not null,
-    #             phone_number    text        not null,
-    #             company         text        ,
-    #             recovery        int
-    #         );
-    #         """
-    # c.execute(query)
+    # params = config()
+    # conn = psycopg2.connect(**params)
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
 
-    # # CAN DELETE IF enum is enforced by frontend, if so, change state to text
-    # # create state type first
-    # query = """
-    #         CREATE TYPE state AS ENUM (
-    #             "not started", "in progress", "blocked", "completed"
-    #         );
+    query = 'drop table if exists users'
+    c.execute(query)
+    query = 'drop table if exists tasks'
+    c.execute(query)
+    # create table users
+    query = """
+            CREATE TABLE IF NOT EXISTS users (
+                id              integer     primary key,
+                username        text        unique not null,
+                password        text        not null,
+                email           text        unique not null,
+                first_name      text        not null,
+                last_name       text        not null,
+                phone_number    text        not null,
+                company         text        ,
+                recovery        integer
+            );
+            """
+    c.execute(query)
+
+    # create table tasks
+    query = """
+            CREATE TABLE IF NOT EXISTS tasks (
+                id              serial      primary key,
+                owner           integer     not null,
+                title           text        not null,
+                description     text        not null,
+                creation_date   text        not null,
+                deadline        text        ,
+                labels          text        ,
+                current_state   state       not null,
+                progress        integer     ,
+                foreign key     (owner)     references users (id)
+            );
+            """
+    c.execute(query)
+    conn.commit()
+
+    # # insert test account
+    # query = f"""
+    #         INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+    #         VALUES ('asd', 'qwe', 'asd', 'asd', 'asd', '123124124', null);
     #         """
     # c.execute(query)
-    # # create table tasks
+    # conn.commit()
+
+    # # test retrieval
     # query = """
-    #         CREATE TABLE IF NOT EXISTS tasks (
-    #             id              serial      primary key,
-    #             owner           int         foreign key references users(id),
-    #             title           varchar(20) not null,
-    #             description     text        not null,
-    #             creation_date   timestamp   not null,
-    #             deadline        timestamp   ,
-    #             labels          text        ,
-    #             current_state   state       not null,
-    #             progress        int         
-    #         );
+    #         select * from users;
     #         """
     # c.execute(query)
+    # test = c.fetchall()
+    # print(test)
     
-    # c.close()
-    # conn.close()
+    c.close()
+    conn.close()
 
     app.run(debug=True)
