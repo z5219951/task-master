@@ -288,11 +288,9 @@ class Users(Resource):
         parser.add_argument('email', required=True)
         parser.add_argument('password', required=True)
         args = parser.parse_args()
-        # print(args)
 
         email = args.email
         password = args.password
-
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
@@ -307,6 +305,7 @@ class Users(Resource):
 
         if (id is None):
             return {'id':''}, 200
+
         c.close()
         conn.close()
         data = {    
@@ -358,7 +357,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, password, email, first_name, last_name, phone_number, company
+                SELECT  id, username, password, email, first_name, last_name, phone_number, company
                 FROM    users
                 WHERE   id = '{id}';
                 """
@@ -370,13 +369,14 @@ class Users(Resource):
             return {'message': f'User not found'}, 404
 
         resp =  {
-            'username': f'{data[0]}',
-            'password': f'{data[1]}',
-            'email': f'{data[2]}',
-            'first_name': f'{data[3]}',
-            'last_name': f'{data[4]}',
-            'phone_number': f'{data[5]}',
-            'company': f'{data[6]}'
+            'id': f'{data[0]}',
+            'username': f'{data[1]}',
+            'password': f'{data[2]}',
+            'email': f'{data[3]}',
+            'first_name': f'{data[4]}',
+            'last_name': f'{data[5]}',
+            'phone_number': f'{data[6]}',
+            'company': f'{data[7]}'
         }
         
         print(resp)
@@ -536,6 +536,7 @@ class Users(Resource):
                 WHERE   owner = '{owner}';
                 """
 
+        print(query)
         c.execute(query)
         data = c.fetchone()
         task_list = []

@@ -29,11 +29,11 @@ const Profile = () => {
       <br/>
       <div class="btn-group mr-2" role="group" aria-label="Button group example">
         <button class="btn btn-primary btn-lg" onClick={() => handleChange('email', 'Email')}>Change email</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('passWord', 'Password')}>Change password</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('userName', 'Username')}>Change username</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('firstName', 'First Name')}>Change first name</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('lastName', 'Last Name')}>Change last name</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('phone', 'Phone Number')}>Change phone number</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('password', 'Password')}>Change password</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('username', 'Username')}>Change username</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('first_name', 'First Name')}>Change first name</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('last_name', 'Last Name')}>Change last name</button>
+        <button class="btn btn-primary btn-lg" onClick={() => handleChange('phone_number', 'Phone Number')}>Change phone number</button>
         <button class="btn btn-primary btn-lg" onClick={() => handleChange('company', 'Company Name')}>Change company name</button>
       </div>
       <br/>

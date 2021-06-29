@@ -13,14 +13,8 @@ const Profile = () => {
   const currentUser = store.getState().id;
   useEffect(() => {
     axios.defaults.crossDomain=true;
-    axios.get('http://localhost:5000/userInform').then((res) => {
-    const users = res.data
-    for (let i=0; i < users.length; i++) {
-      // If user ID in database matches current user
-      if (String(users[i].id) === String(currentUser)) {
-        setUser(users[i])
-      }
-    }
+    axios.get(`http://localhost:5000/user/${store.getState().id}`).then((res) => {
+    setUser(JSON.parse(res.data))
     }).then(() => {
       // console.log(user)
     })
@@ -55,19 +49,19 @@ const Profile = () => {
             </tr>
             <tr>
               <th scope="row">Username</th>
-              <td> {user.userName} </td>
+              <td> {user.username} </td>
             </tr>
             <tr>
               <th scope="row">First Name</th>
-              <td> {user.firstName} </td>
+              <td> {user.first_name} </td>
             </tr>
             <tr>
               <th scope="row">Last Name</th>
-              <td> {user.lastName} </td>
+              <td> {user.last_name} </td>
             </tr>
             <tr>
               <th scope="row">Phone</th>
-              <td> {user.phone === '' ? 'Not entered' : user.phone} </td>
+              <td> {user.phone_number === '' ? 'Not entered' : user.phone_number} </td>
             </tr>
             <tr>
               <th scope="row">Company</th>

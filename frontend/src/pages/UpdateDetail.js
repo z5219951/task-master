@@ -21,8 +21,7 @@ const UpdateDetail = (props) => {
   useEffect(() => {
     axios.defaults.crossDomain=true;
     axios.get('http://localhost:5000/user/'+currentUser).then((res) => {
-    const users = res.data
-    setUser(users)
+    setUser(JSON.parse(res.data))
     // for (let i=0; i < users.length; i++) {
     //   // If user ID in database matches current user, set 'user' to include all of a user's info
     //   if (String(users[i].id) === String(currentUser)) {
@@ -113,7 +112,7 @@ const UpdateDetail = (props) => {
   // Triggered when 'user' is modified
   useEffect(() => {
     if (user !== '') {
-      axios.put(`http://localhost:5000/userInform/${currentUser}`, user)
+      axios.put(`http://localhost:5000/update `, user)
     }
   }, [user])
 
