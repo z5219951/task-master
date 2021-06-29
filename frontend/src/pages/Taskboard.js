@@ -49,7 +49,7 @@ const Taskboard = () => {
                 return <div key={state} className="card m-4">
                 <h5 className="card-title m-2">{state}:</h5>
                 {tasks && tasks.map((task) => {
-                  if (JSON.stringify(task.cState) === JSON.stringify(state)) {
+                  if (JSON.stringify(task.current_state) === JSON.stringify(state)) {
                     return <TaskCard key={task.id} task={task}/>
                   }
               })}

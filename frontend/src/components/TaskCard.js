@@ -6,9 +6,9 @@ const TaskCard = (props) => {
     <div className="card my-2 mx-5"> 
       <div className="card-body" padding="100px">
           <h5 className="card-title">
-            Task #{tasks.id}:
+            Task #{tasks.owner}:
             <br/>
-            Name: {tasks.name}
+            Name: {tasks.title}
             <br />
           </h5>
           Description: {tasks.description}
@@ -19,9 +19,9 @@ const TaskCard = (props) => {
           <br />
           Difficulty: {tasks.difficulty}
           <br />
-          Start Date: {tasks.startD}
+          Start Date: {tasks.creation_date}
           <br />
-          Due Date: {tasks.dueD}
+          Due Date: {tasks.deadline}
       </div>
     </div>
   </>
