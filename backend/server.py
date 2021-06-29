@@ -388,6 +388,7 @@ class Users(Resource):
 
 # update user info
 update_payload = api.model('update info', {
+    "id": fields.String,
     "username": fields.String,
     "password": fields.String,
     "email": fields.String,
@@ -403,8 +404,9 @@ class Users(Resource):
     @api.response(400, 'Bad Request')
     @api.doc(description="Updates info for a user")
     @api.expect(update_payload)
-    def get(self):
+    def put(self):
         parser = reqparse.RequestParser()
+        parser.add_argument('id', required=True)
         parser.add_argument('username', required=True)
         parser.add_argument('password', required=True)
         parser.add_argument('email', required=True)
@@ -415,6 +417,7 @@ class Users(Resource):
         args = parser.parse_args()
         # print(args)
 
+        id = args.id
         username = args.username
         password = args.password
         email = args.email
@@ -435,7 +438,7 @@ class Users(Resource):
                         last_name = '{last_name}',
                         phone_number = '{phone_number}',
                         company = '{company}'
-                WHERE   username = '{username}';
+                WHERE   id = '{id}';
                 """
         try:
             c.execute(query)
@@ -508,11 +511,13 @@ class Users(Resource):
         query = f"""
                 SELECT  id
                 FROM    tasks
-                WHERE   owner = '{owner}';
+                WHERE   owner = '{owner}'
+                AND     title = '{title}'
+                AND     description = '{description}';
                 """
         c.execute(query)
         id = c.fetchone()[0]
-        print(id)
+
         c.close()
         conn.close()
 
@@ -530,7 +535,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate
                 FROM    tasks
                 WHERE   owner = '{owner}';
                 """
@@ -542,15 +547,16 @@ class Users(Resource):
 
         while (data is not None):
             task_info = {
-                'owner': f'{data[0]}',
-                'title': f'{data[1]}',
-                'description': f'{data[2]}',
-                'creation_date': f'{data[3]}',
-                'deadline': f'{data[4]}',
-                'labels': f'{data[5]}',
-                'current_state': f'{data[6]}',
-                'progress': f'{data[7]}',
-                'time_estimate': f'{data[8]}'
+                'id': f'{data[0]}',
+                'owner': f'{data[1]}',
+                'title': f'{data[2]}',
+                'description': f'{data[3]}',
+                'creation_date': f'{data[4]}',
+                'deadline': f'{data[5]}',
+                'labels': f'{data[6]}',
+                'current_state': f'{data[7]}',
+                'progress': f'{data[8]}',
+                'time_estimate': f'{data[9]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -606,6 +612,7 @@ if __name__ == '__main__':
                 current_state   text        not null,
                 progress        integer     ,
                 time_estimate   integer     ,
+                difficulty      text        ,
                 foreign key     (owner)     references users (id)
             );
             """
