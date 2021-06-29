@@ -38,8 +38,8 @@ class ForgetPass extends Component{
       axios.post('http://localhost:5000/forgot_password', {email:email}).then((res)=>{
           // check the return information, if true it will enter the code page else 
           // it should request to enter again
-          console.log(res.data);
           const result = res.data.value;
+          console.log(res.data);
           if (result) {
             const action = {
                 type:'reset_email',

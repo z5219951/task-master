@@ -63,9 +63,8 @@ class Login extends Component{
       axios.defaults.crossDomain=true;
       const data = {email:this.state.email,password:this.state.passWord};
       axios.post('http://localhost:5000/login', data).then((res)=>{
-          console.log("you send the login data");
           // store the user id in store
-          const result = res.data.id;
+          const result = JSON.parse(res.data).id;
           if(result !== '') {
             const action = {
               type:'login_id',
