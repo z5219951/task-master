@@ -53,6 +53,6 @@ if __name__ == '__main__':
                 """
     c.execute(query)
     
-    c.commit()
+    conn.commit()
     c.close()
     conn.close()
