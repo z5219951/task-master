@@ -6,6 +6,10 @@ import re
 from flask import Flask, request, jsonify, Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
 import psycopg2
+from pymongo import MongoClient
+
+client = MongoClient("mongodb+srv://Nicholai:m0zsjtfKpS2WULZK@cluster0.i73do.mongodb.net/ClickDown?retryWrites=true&w=majority")
+db=client.business
 
 # local imports
 from config import config
@@ -60,7 +64,7 @@ register_payload = api.model('register account', {
     "first name": fields.String,
     "last name": fields.String,
     "phone number": fields.String,
-    "company": fields.String,
+    "company": fields.String
 })
 
 @api.route('/clickdown/register', methods=['POST'])
