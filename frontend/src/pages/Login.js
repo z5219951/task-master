@@ -64,7 +64,7 @@ class Login extends Component{
       const data = {email:this.state.email,password:this.state.passWord};
       axios.post('http://localhost:5000/login', data).then((res)=>{
           // store the user id in store
-          console.log(res)
+          console.log(res);
           const result = JSON.parse(res.data).id;
           console.log(result)
           if(result !== '') {
