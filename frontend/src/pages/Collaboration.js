@@ -5,12 +5,15 @@ class Collaboration extends Component{
     constructor(props) {
         super(props);
     }
+    handleClick = ()=>{
+        this.props.history.push('./userrequest');
+    }
     render(){
         return (
             <DropdownButton id="t1" className="t1" title="Users">
                 <Dropdown.Item href="">Search User</Dropdown.Item>
                 <Dropdown.Item href="">My Team</Dropdown.Item>
-                <Dropdown.Item href="">Request</Dropdown.Item>
+                <Dropdown.Item onClick={this.handleClick} href="">Request</Dropdown.Item>
             </DropdownButton>
         )
     }

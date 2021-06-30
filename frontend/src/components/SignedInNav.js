@@ -18,7 +18,7 @@ const SignedInNav = () => {
         <Nav className="ml-auto">
           <Nav.Link href="profile">Profile</Nav.Link>
         </Nav>
-        <Collaboration/>
+        <Collaboration history = {history}/>
       </div>
       <div className="logout_btn">
         <LogoutButton history = {history}/>
