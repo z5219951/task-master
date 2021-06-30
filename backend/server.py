@@ -607,7 +607,7 @@ if __name__ == '__main__':
     # create table tasks
     query = """
             CREATE TABLE IF NOT EXISTS tasks (
-                id              serial      primary key,
+                id              integer      primary key,
                 owner           integer     not null,
                 title           text        not null,
                 description     text        not null,

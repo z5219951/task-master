@@ -6,7 +6,7 @@ const TaskCard = (props) => {
     <div className="card my-2 mx-5"> 
       <div className="card-body" padding="100px">
           <h5 className="card-title">
-            Task #{tasks.owner}:
+            Task #{tasks.id}:
             <br/>
             Name: {tasks.title}
             <br />
