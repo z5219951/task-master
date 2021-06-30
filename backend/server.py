@@ -1,12 +1,12 @@
 # standard library imports
+import json
 import random
 
 # third-party imports
 from flask import Flask, request, jsonify
-import json
+from flask_cors import CORS
 from flask_mail import Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
-from flask_cors import CORS
 import sqlite3
 
 # local imports
