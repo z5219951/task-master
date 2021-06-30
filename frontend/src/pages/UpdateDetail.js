@@ -87,8 +87,8 @@ const UpdateDetail = (props) => {
   // Special case for password handling
   function handlePassword(oldPassword, newPassword, confirmPass) {
     setUpdateDetAlert('')
-    console.log(user['passWord'])
-    if (oldPassword !== user['passWord']) {
+    console.log(user['password'])
+    if (oldPassword !== user['password']) {
       setUpdateDetAlert('Current password incorrect!')
       return;
     }
@@ -118,7 +118,7 @@ const UpdateDetail = (props) => {
 
   // If field selected is password, set passwordBool to true
   useEffect(() => {
-    if (detailProp === 'passWord') {
+    if (detailProp === 'password') {
       setPasswordBool(true)
     } else {
       setPasswordBool(false)
