@@ -1,0 +1,31 @@
+.request_list{
+    width: 60vw;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-bottom: 5vh;
+}
+.container{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: 1px gray solid;
+    border-radius:20px;
+    min-height: 20vh;
+}
+.user_request_box{
+    width: 90%;
+    display: flex;
+    align-items: center;
+    margin-top: 5vh;
+    justify-content: space-between;
+}
+.user_request_name{
+    margin: 0;
+}
+.buttonBox{
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

@@ -1,4 +1,14 @@
 {
+  "user_request_information": [
+    {
+      "id": 123,
+      "userName": "test1"
+    }
+  ],
+  "user_request_accept": [
+  ],
+  "user_request_decline": [
+  ],
   "tasks": [
     {
       "name": "name",

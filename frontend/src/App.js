@@ -17,6 +17,7 @@ import CheckCode from './pages/CheckCode';
 import NavbarControl from './components/NavbarControl'
 import store from './store';
 import { connect } from 'react-redux';
+import UserRequest from './pages/UserRequest';
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
         <Route path='/newPass' exact component={RePassWord} />
         <Route path='/checkCode' exact component={CheckCode} />
         <Route path='/home' exact component={Home}/>
+        <Route path='/userrequest' exact component={UserRequest} />
         <Route path='/' component={Home} />
       </Switch>
     </>
