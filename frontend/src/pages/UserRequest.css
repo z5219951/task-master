@@ -5,13 +5,16 @@
     flex-direction: column;
     padding-bottom: 5vh;
 }
-.container{
+.request_container{
     display: flex;
     align-items: center;
     flex-direction: column;
     border: 1px gray solid;
     border-radius:20px;
     min-height: 20vh;
+    margin-top: 10vh;
+    width: 80vw;
+    margin-left: 10vw;
 }
 .user_request_box{
     width: 90%;
@@ -24,7 +27,7 @@
     margin: 0;
 }
 .buttonBox{
-    width: 80%;
+    width: 70%;
     display: flex;
     align-items: center;
     justify-content: space-between;

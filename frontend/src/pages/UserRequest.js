@@ -87,7 +87,7 @@ class UserRequest extends Component{
     handleAccept = ()=>{
         const id  = Number(this.state.id);
         const requestUser = Number(this.state.requestUser);
-        const data = {id:id,requestUser:requestUser}
+        const data = {userId:id,requestUser:requestUser}
         const inform = this.state.inform;
         let url = '';
         if(inform === 'Accept the connection?') {
@@ -158,7 +158,7 @@ class UserRequest extends Component{
     render(){
         return (
             <Fragment>
-                <div className='container'>
+                <div className='request_container'>
                     {/* <p>Search User</p>
                     <div className='serach_box'>
                         <input type="text" id="inputFirstName" className="form-control" placeholder="User Email" onChange={this.handleInput} name="email" value = {this.state.firstName}/>
