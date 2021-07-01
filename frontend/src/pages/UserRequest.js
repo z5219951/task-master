@@ -60,6 +60,12 @@ class UserRequest extends Component{
             this.setState(()=>({
                 inform:'go to profile page',
             }))
+            // send profile user id
+            const action = {
+                type:'user_profile',
+                value:requestUser
+            }
+            store.dispatch(action);
         } else if(name === 'accept') {
             this.setState(()=>({
                 inform:'Accept the connection?',
@@ -134,13 +140,16 @@ class UserRequest extends Component{
                 }))
             })
             } else {
-                Alert("Please try again")
+                alert("Please try again")
             }
             
         })
         } catch (error) {
             
         }
+    }
+    handleBack = ()=>{
+        this.props.history.push('./taskboard');
     }
     getItem = ()=>{
         console.log(this.state.list);
@@ -159,11 +168,13 @@ class UserRequest extends Component{
         return (
             <Fragment>
                 <div className='request_container'>
+                <button type="button" className="btn btn-info btn-xs request_back" onClick={this.handleBack}>Back</button>
                     {/* <p>Search User</p>
                     <div className='serach_box'>
                         <input type="text" id="inputFirstName" className="form-control" placeholder="User Email" onChange={this.handleInput} name="email" value = {this.state.firstName}/>
                         <button className="btn btn-lg btn-primary btn-block" onClick={this.handleSubmit} type="button" >Search</button>
                     </div> */}
+                    <p>Request Lists</p>
                     <div className='request_list'>
                         {this.getItem()}
                     </div>

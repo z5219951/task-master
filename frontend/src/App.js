@@ -18,6 +18,7 @@ import NavbarControl from './components/NavbarControl'
 import store from './store';
 import { connect } from 'react-redux';
 import UserRequest from './pages/UserRequest';
+import SearchUser from './pages/SearchUser';
 
 function App() {
 
@@ -25,10 +26,10 @@ function App() {
     <>
       <NavbarControl/>
       <Switch>
-        <Route path='/profile' component={Profile} />
-        <Route path='/updateprofile' component={UpdateProfile} />
-        <Route path='/createtask' component={CreateTask} />
-        <Route path='/taskboard' component={Taskboard}/>
+        <Route path='/profile' exact component={Profile} />
+        <Route path='/updateprofile' exact component={UpdateProfile} />
+        <Route path='/createtask' exact component={CreateTask} />
+        <Route path='/taskboard' exact component={Taskboard}/>
         <Route path='/login' exact component={Login} />
         <Route path='/register' exact component={Register} />
         <Route path='/forget' exact component={ForgetPass} />
@@ -37,6 +38,7 @@ function App() {
         <Route path='/checkCode' exact component={CheckCode} />
         <Route path='/home' exact component={Home}/>
         <Route path='/userrequest' exact component={UserRequest} />
+        <Route path='/searchuser' exact component={SearchUser} />
         <Route path='/' component={Home} />
       </Switch>
     </>

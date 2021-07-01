@@ -32,3 +32,18 @@
     align-items: center;
     justify-content: space-between;
 }
+.request_back{
+    color: #fff;
+    align-self: flex-start;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.serach_box{
+    display: flex;
+    width: 60%;
+    justify-content: space-between;
+}
+#inputEmail{
+    width: 70%;
+}

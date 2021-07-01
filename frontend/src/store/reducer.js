@@ -4,7 +4,8 @@
 const defaultState = {
     id:'',
     email:'',
-    loggedIn: false
+    loggedIn: false,
+    userProfile:''
 };
 
 // make sure your action.type  is unique
@@ -21,6 +22,11 @@ export default (state = defaultState, action) =>{
         return newState;
     }
     if (action.type === 'loggedIn') {
+        const newState = JSON.parse(JSON.stringify(state));
+        newState.loggedIn = action.value;
+        return newState;
+    }
+    if (action.type === 'user_profile') {
         const newState = JSON.parse(JSON.stringify(state));
         newState.loggedIn = action.value;
         return newState;
