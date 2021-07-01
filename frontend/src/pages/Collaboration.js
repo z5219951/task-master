@@ -8,10 +8,13 @@ class Collaboration extends Component{
     handleClick = ()=>{
         this.props.history.push('./userrequest');
     }
+    handleSearch = ()=>{
+        this.props.history.push('./searchuser');
+    }
     render(){
         return (
             <DropdownButton id="t1" className="t1" title="Users">
-                <Dropdown.Item href="">Search User</Dropdown.Item>
+                <Dropdown.Item onClick={this.handleSearch} href="">Search User</Dropdown.Item>
                 <Dropdown.Item href="">My Team</Dropdown.Item>
                 <Dropdown.Item onClick={this.handleClick} href="">Request</Dropdown.Item>
             </DropdownButton>

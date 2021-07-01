@@ -10,9 +10,19 @@
       "userId": 0,
       "requestUser": null,
       "id": 1
+    },
+    {
+      "userId": 1,
+      "requestUser": null,
+      "id": 2
     }
   ],
-  "request_search_user": [],
+  "request_search_user": [
+    {
+      "email": "qicharles03@gmail.com",
+      "id": 1
+    }
+  ],
   "user_request_accept": [],
   "user_request_decline": [],
   "tasks": [

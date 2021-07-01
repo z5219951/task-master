@@ -87,7 +87,8 @@ class SearchUser extends Component{
                 return;
             }
             // send user email to check
-            axios.get('http://localhost:5000/request_search_user').then((res)=>{
+            const data = {email:email}
+            axios.post('http://localhost:5000/request_search_user',data).then((res)=>{
                 // store the user id in store
                 console.log(res)
                 // const result = JSON.parse(res.data);
@@ -133,7 +134,7 @@ class SearchUser extends Component{
                 <button type="button" className="btn btn-info btn-xs request_back" onClick={this.handleBack}>Back</button>
                     <p>Search User</p>
                     <div className='serach_box'>
-                        <input type="email" id="inputEmail" className="form-control" placeholder="User Email" onChange={this.handleInput} name="email" value = {this.state.email}/>
+                        <input type="email" id="inputEmail" className="form-control seach_email" placeholder="User Email" onChange={this.handleInput} name="email" value = {this.state.email}/>
                         <p className="alertName">{this.state.emailAlert}</p>
                         <button className="btn btn-lg btn-primary btn-block" onClick={this.handleSubmit} type="button" >Search</button>
                     </div>
