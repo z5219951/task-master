@@ -64,8 +64,8 @@ if __name__ == '__main__':
             CREATE TABLE IF NOT EXISTS friend_list (
                 user_a          integer     not null,
                 user_b          integer     not null,
-                foreign key     (user_a) references users (id),
-                foreign key     (user_b)   references users (id),
+                foreign key     (user_a)    references users (id),
+                foreign key     (user_b)    references users (id),
                 constraint      connection  primary key (user_a, user_b)
             );
             """

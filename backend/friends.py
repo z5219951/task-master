@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify, Blueprint
-from flask_restx import Resource, Api, fields, inputs, reqparse
+from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
 import sqlite3
 
 bp = Blueprint('friends', __name__, url_prefix='/friends')
-api = Api(bp)
+api = Namespace("Friends", "Operations for adding/removing friends")
 
 ### HELPERS ###
 # Delete from Table "friend_requests" given two user IDs
@@ -22,7 +22,7 @@ def friend_list_remove(user_from, user_to):
     c.execute(query)
     data = c.fetchone()
     
-    if data is empty:
+    if data is None:
         return False
     
     else:
@@ -38,15 +38,22 @@ def friend_list_remove(user_from, user_to):
 
 
 ### FRIEND ROUTES ### 
+request_payload = api.model('request connection', {
+    "userId": fields.Integer,
+    "requestedUser": fields.Integer
+})
+
 @api.route('/sendRequest', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Request Sent')
     @api.response(400, 'Bad request - User/s does not exist')
     @api.doc(description="Send a friend request to requested user")
+    @api.expect(request_payload)
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('userId', required=True)
         parser.add_argument('requestedUser', required=True)
+        args = parser.parse_args()
         
         user_from = args.requestedUser
         user_to = args.userId
@@ -91,10 +98,12 @@ class Users(Resource):
     @api.response(200, 'Decline command OK')
     @api.response(400, 'Bad request')
     @api.doc(description="Remove friend request from database")
+    @api.expect(request_payload)
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('userId', required=True)
         parser.add_argument('requestedUser', required=True)
+        args = parser.parse_args()
         
         user_from = args.requestedUser
         user_to = args.userId
@@ -114,10 +123,12 @@ class Users(Resource):
     @api.response(200, 'Accept command OK')
     @api.response(400, 'Bad request - Friend request does not exist')
     @api.doc(description="Link two account IDs as friends")
+    @api.expect(request_payload)
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('userId', required=True)
         parser.add_argument('requestedUser', required=True)
+        args = parser.parse_args()
         
         user_from = args.requestedUser
         user_to = args.userId

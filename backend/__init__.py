@@ -21,7 +21,7 @@ api = Api(app,
           description="This page contains all of the HTTP requests that we service.")  # Documentation Description
 
 app.register_blueprint(friends.bp)
-
+api.add_namespace(friends.api)
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
     "MAIL_PORT": 465,
