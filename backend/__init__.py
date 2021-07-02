@@ -3,7 +3,7 @@ import json
 import random
 
 # third-party imports
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_mail import Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
@@ -11,6 +11,7 @@ import sqlite3
 
 # local imports
 # from config import config
+from . import friends
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -18,6 +19,8 @@ api = Api(app,
           default="ClickDown",  # Default namespace
           title="Capstone Project COMP3900",  # Documentation Title
           description="This page contains all of the HTTP requests that we service.")  # Documentation Description
+
+app.register_blueprint(friends.bp)
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
