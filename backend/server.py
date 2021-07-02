@@ -407,13 +407,13 @@ class Users(Resource):
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', required=True)
-        parser.add_argument('username', required=True)
-        parser.add_argument('password', required=True)
-        parser.add_argument('email', required=True)
-        parser.add_argument('first_name', required=True)
-        parser.add_argument('last_name', required=True)
-        parser.add_argument('phone_number', required=True)
-        parser.add_argument('company', required=False, default=None)
+        parser.add_argument('username')
+        parser.add_argument('password')
+        parser.add_argument('email')
+        parser.add_argument('first_name')
+        parser.add_argument('last_name')
+        parser.add_argument('phone_number')
+        parser.add_argument('company')
         args = parser.parse_args()
         # print(args)
 
@@ -453,7 +453,7 @@ class Users(Resource):
         c.close()
         conn.close()
 
-        return {'value': True},200
+        return {'value': True}, 200
 
 
 # create task
@@ -528,7 +528,7 @@ class Users(Resource):
         return {'id': id},200
 
 
-# get user info
+# get all tasks for a user
 @api.route('/user/<int:owner>/tasks', methods=['GET'])
 class Users(Resource):
     @api.response(200, 'Successfully retrieved task info')
@@ -557,7 +557,7 @@ class Users(Resource):
                 'description': f'{data[3]}',
                 'creation_date': f'{data[4]}',
                 'deadline': f'{data[5]}',
-                'labels': f'{data[6]}',
+                # 'labels': f'{data[6]}',
                 'current_state': f'{data[7]}',
                 'progress': f'{data[8]}',
                 'time_estimate': f'{data[9]}',
@@ -572,6 +572,83 @@ class Users(Resource):
         conn.close()
 
         return json.dumps({'tasks': task_list})
+
+
+# update task info
+update_task_payload = api.model('update info', {
+    "id": fields.String,
+    "owner": fields.String,
+    "title": fields.String,
+    "description": fields.String,
+    "creation_date": fields.String,
+    "deadline": fields.String,
+    # "labels": fields.String,
+    "current_state": fields.String,
+    "progress": fields.Integer,
+    "time_estimate": fields.Integer,
+    "difficulty": fields.String
+})
+
+@api.route('/tasks/update', methods=['PUT'])
+class Users(Resource):
+    @api.response(200, 'Successfully updated task')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Updates a task given its id")
+    @api.expect(update_task_payload)
+    def put(self, id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', required=True)
+        parser.add_argument('owner')
+        parser.add_argument('title')
+        parser.add_argument('description')
+        parser.add_argument('creation_date')
+        parser.add_argument('deadline')
+        # parser.add_argument('labels')
+        parser.add_argument('current_state')
+        parser.add_argument('progress')
+        parser.add_argument('time_estimate')
+        parser.add_argument('difficulty')
+        args = parser.parse_args()
+        # print(args)
+
+        id = args.id
+        owner = args.owner
+        title = args.title
+        description = args.description
+        creation_date = args.creation_date
+        deadline = args.deadline
+        # labels = args.labels
+        current_state = args.current_state
+        progress = args.progress
+        time_estimate = args.time_estimate
+        difficulty = args.difficulty
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                UPDATE  users
+                SET     owner = '{owner}',
+                        title = '{title}',
+                        description = '{description}',
+                        creation_date = '{creation_date}',
+                        deadline = '{deadline}',
+                        current_state = '{current_state}'
+                        progress = '{progress}'
+                        time_estimate = '{time_estimate}'
+                        difficulty = '{difficulty}'
+                WHERE   id = '{id}';
+                """
+        try:
+            c.execute(query)
+        except:
+            c.close()
+            conn.close()
+            return {'value': False}, 200
+        c.close()
+        conn.close()
+
+        return {'value': True}
 
 if __name__ == '__main__':
     # params = config()
