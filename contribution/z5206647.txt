@@ -10,3 +10,12 @@ proposed user stories, made minor edits as most was already complete.
 Week 2:
 Participated in the weekly meeting, and wrote a minutes report for the meeting.
 Primarily worked on the project proposal - formatting, background research. 
+
+Week 3:
+Participated in the weekly meeting, and wrote a minutes report for the meeting.
+For the report, linked the user stories to project objects. Formatted the 
+completed report in latex. 
+Began looking into software stack.
+
+Week 4:
+
