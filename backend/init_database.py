@@ -46,6 +46,21 @@ if __name__ == '__main__':
     c.execute(query)
     conn.commit()
 
+    # create table groups
+    query = """
+            CREATE TABLE IF NOT EXISTS groups (
+                id              integer     primary key,
+                creator         integer     not null,
+                title           text        not null,
+                description     text        not null,
+                creation_date   text        not null,
+                user            integer     not null,
+                foreign key     (creator)   references users (id)
+            );
+            """
+    c.execute(query)
+    conn.commit()
+
     # insert test data
     query = f"""
                 INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
