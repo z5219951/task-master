@@ -31,25 +31,21 @@ const Profile = () => {
   return (
     <>
     <div className='padding'> 
-      <div class="row">
-        <h1 class="col">Your Profile</h1>
-        <button class="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
+      <div className="row">
+        <h1 className="col">Your Profile</h1>
+        <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
       <br/>
-      <div  class="d-grid gap-2">
-        <button type="button" class="btn btn-secondary btn-block" onClick={() => updateProfile()}> Update Profile </button>
+      <div className="d-grid gap-2">
+        <button type="button" className="btn btn-secondary btn-block" onClick={() => updateProfile()}> Update Profile </button>
       </div>
       <br/>
       <div>
-        <div class="table table-striped table-secondary table-hover table-bordered border-dark" >    
+        <table className="table table-striped table-secondary table-hover table-bordered border-dark" >    
           <tbody>
             <tr>
               <th scope="row">Email</th>
               <td> {user.email} </td>
-            </tr>
-            <tr>
-              <th scope="row">Username</th>
-              <td> {user.username} </td>
             </tr>
             <tr>
               <th scope="row">First Name</th>
@@ -68,7 +64,7 @@ const Profile = () => {
               <td> {user.company === '' ? 'Not entered' : user.company} </td>
             </tr>
           </tbody>
-        </div>
+        </table>
       </div>
     </div>
     </>
