@@ -76,18 +76,18 @@ class SearchUser extends Component{
     }
     handleSubmit = ()=>{
         try {
-            const email = this.state.email;
-            // check email format
-            const testEmail = /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/;
-            if(!testEmail.test(email)) {
+            const email = this.state.email.trim();
+            // check format, avoid empty string
+            
+            if(email.length === 0) {
                 this.setState(()=>({
                 email:'',
-                emailAlert:'Please enter correct Email'
+                emailAlert:'Please enter correct content'
                 }))
                 return;
             }
             // send user email to check
-            const data = {email:email}
+            const data = {input:email}
             axios.post('http://localhost:5000/request_search_user',data).then((res)=>{
                 // store the user id in store
                 console.log(res)
@@ -134,7 +134,7 @@ class SearchUser extends Component{
                 <button type="button" className="btn btn-info btn-xs request_back" onClick={this.handleBack}>Back</button>
                     <p>Search User</p>
                     <div className='serach_box'>
-                        <input type="email" id="inputEmail" className="form-control seach_email" placeholder="User Email" onChange={this.handleInput} name="email" value = {this.state.email}/>
+                        <input type="text" id="inputEmail" className="form-control seach_email" placeholder="Enter user name, name, email or phone number" onChange={this.handleInput} name="email" value = {this.state.email}/>
                         <p className="alertName">{this.state.emailAlert}</p>
                         <button className="btn btn-lg btn-primary btn-block" onClick={this.handleSubmit} type="button" >Search</button>
                     </div>

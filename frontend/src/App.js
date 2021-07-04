@@ -19,6 +19,8 @@ import store from './store';
 import { connect } from 'react-redux';
 import UserRequest from './pages/UserRequest';
 import SearchUser from './pages/SearchUser';
+import Groups from './pages/Groups';
+import CreateGroup from './pages/CreateGroup';
 
 function App() {
 
@@ -39,6 +41,8 @@ function App() {
         <Route path='/home' exact component={Home}/>
         <Route path='/userrequest' exact component={UserRequest} />
         <Route path='/searchuser' exact component={SearchUser} />
+        <Route path='/groups' exact component={Groups} />
+        <Route path='/creategroup' exact component={CreateGroup} />
         <Route path='/' component={Home} />
       </Switch>
     </>
