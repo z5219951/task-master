@@ -78,9 +78,9 @@ if __name__ == '__main__':
 
     # insert test data
     query = f"""
-                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
-                VALUES ('charles', '123456Qq', '123@qq.com', 'Yue', 'Qi', '12345', '123');
-                """
+            INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+            VALUES ('charles', '123456Qq', '1105282259@qq.com', 'Yue', 'Qi', '12345', '123');
+            """
     c.execute(query)
     
     query = f"""
