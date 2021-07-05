@@ -196,9 +196,9 @@ class Users(Resource):
         args = parser.parse_args()
 
         id = authCheck(args.email, args.password)
-
+        print(id)
         if (id is None):
-            return {'id':''}, 200
+            return json.dumps({'id':''}), 200
 
         data = {    
             'id': id[0],
