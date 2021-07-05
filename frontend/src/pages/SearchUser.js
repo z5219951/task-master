@@ -6,6 +6,7 @@ import store from '../store';
 import { Button, Modal } from 'react-bootstrap';
 import './UserRequest.css'
 import { Alert } from 'bootstrap';
+import ViewProfileButton from '../components/ViewProfileButton'
 
 class SearchUser extends Component{
     constructor(props) {
@@ -94,6 +95,7 @@ class SearchUser extends Component{
                 // const result = JSON.parse(res.data);
                 const testResult = [
                     {
+                        userId: 1,
                         requestUser:123,
                         userName:'test1'
                     }
@@ -118,7 +120,7 @@ class SearchUser extends Component{
             this.state.list.map((item,index)=><div key = {index}className="user_request_box">
                 <p className="user_request_name">{item.userName}</p>
                 <div className='buttonBox'>
-                    <Button variant="secondary" name="profile" value={item.requestUser} onClick={this.handleShow}>View Profile</Button>
+                    <ViewProfileButton id={item.userId}></ViewProfileButton>
                     <Button variant="primary" name="accept" value={item.requestUser} onClick={this.handleShow}>Request Connection</Button>
                 </div>
             </div>)

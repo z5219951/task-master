@@ -4,6 +4,7 @@ import './Groups.css'
 import axios from 'axios'
 import { Button } from 'react-bootstrap';
 import store from '../store';
+import ViewProfileButton from '../components/ViewProfileButton'
 
 class Groups extends Component{
     constructor(props){
@@ -68,7 +69,7 @@ class Groups extends Component{
             list.map((item,index)=>
                 <div className="group_member_box" key = {index}>
                     <p className="group_user">{item.userName}</p>
-                    <Button variant="secondary" name="profile" value={item.userId} onClick={this.handleShow}>View Profile</Button>
+                    <ViewProfileButton id={item.userId}></ViewProfileButton>
                 </div>
             )
         )
