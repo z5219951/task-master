@@ -10,7 +10,9 @@ if __name__ == '__main__':
     c.execute(query)
     query = 'drop table if exists tasks'
     c.execute(query)
-    query = 'drop table if exists friends'
+    query = 'drop table if exists friend_requests'
+    c.execute(query)
+    query = 'drop table if exists friend_list'
     c.execute(query)
     
     # create table users
@@ -78,6 +80,12 @@ if __name__ == '__main__':
     query = f"""
                 INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
                 VALUES ('charles', '123456Qq', '123@qq.com', 'Yue', 'Qi', '12345', '123');
+                """
+    c.execute(query)
+    
+    query = f"""
+                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+                VALUES ('gavin', 'Testing123', '1@gmail.com', 'Gavin', 'Wang', '54321', '321');
                 """
     c.execute(query)
     

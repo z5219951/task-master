@@ -1,3 +1,7 @@
 .venv/
 .vscode/
 **/__pycache__
+*log*
+
+# project specific
+clickdown.db
