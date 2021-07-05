@@ -5,7 +5,6 @@ import axios from 'axios'
 import store from '../store';
 import { Button, Modal } from 'react-bootstrap';
 import './UserRequest.css'
-import { Alert } from 'bootstrap';
 import ViewProfileButton from '../components/ViewProfileButton'
 
 class SearchUser extends Component{
@@ -27,7 +26,8 @@ class SearchUser extends Component{
     handleShow = (e)=>{
         // send request
         const type = e.target.name;
-        const requestUser = Number(this.state.requestUser);
+        const requestUser = Number(e.target.value);
+        console.log(requestUser);
         if(type === "profile") {
             alert("go to profile")
             // send profile user id
@@ -95,7 +95,6 @@ class SearchUser extends Component{
                 // const result = JSON.parse(res.data);
                 const testResult = [
                     {
-                        userId: 1,
                         requestUser:123,
                         userName:'test1'
                     }
@@ -120,7 +119,7 @@ class SearchUser extends Component{
             this.state.list.map((item,index)=><div key = {index}className="user_request_box">
                 <p className="user_request_name">{item.userName}</p>
                 <div className='buttonBox'>
-                    <ViewProfileButton id={item.userId}></ViewProfileButton>
+                    <ViewProfileButton id={item.requestUser}></ViewProfileButton>
                     <Button variant="primary" name="accept" value={item.requestUser} onClick={this.handleShow}>Request Connection</Button>
                 </div>
             </div>)
@@ -136,10 +135,10 @@ class SearchUser extends Component{
                 <button type="button" className="btn btn-info btn-xs request_back" onClick={this.handleBack}>Back</button>
                     <p>Search User</p>
                     <div className='serach_box'>
-                        <input type="text" id="inputEmail" className="form-control seach_email" placeholder="Enter user name, name, email or phone number" onChange={this.handleInput} name="email" value = {this.state.email}/>
-                        <p className="alertName">{this.state.emailAlert}</p>
+                        <input type="text" id="seach_email" className="form-control seach_email" placeholder="Enter user name, name, email or phone number" onChange={this.handleInput} name="email" value = {this.state.email}/>
                         <button className="btn btn-lg btn-primary btn-block" onClick={this.handleSubmit} type="button" >Search</button>
                     </div>
+                    <p className="alertName">{this.state.emailAlert}</p>
                     <div className='request_list'>
                         {this.getItem()}
                     </div>

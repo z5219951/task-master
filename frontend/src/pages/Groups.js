@@ -27,11 +27,11 @@ class Groups extends Component{
                     groupName:"group1",
                     members:[
                         {
-                            userId:123,
+                            requestUser:123,
                             userName:'member1'
                         },
                         {
-                            userId:331,
+                            requestUser:331,
                             userName:'member2'
                         }
                     ]
@@ -40,11 +40,11 @@ class Groups extends Component{
                     groupName:"group2",
                     members:[
                         {
-                            userId:1,
+                            requestUser:1,
                             userName:'member3'
                         },
                         {
-                            userId:3,
+                            requestUser:3,
                             userName:'member5'
                         }
                     ]
@@ -69,7 +69,7 @@ class Groups extends Component{
             list.map((item,index)=>
                 <div className="group_member_box" key = {index}>
                     <p className="group_user">{item.userName}</p>
-                    <ViewProfileButton id={item.userId}></ViewProfileButton>
+                    <ViewProfileButton id={item.requestUser}></ViewProfileButton>
                 </div>
             )
         )

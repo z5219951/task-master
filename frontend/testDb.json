@@ -60,6 +60,15 @@
         0
       ],
       "id": 7
+    },
+    {
+      "userId": 0,
+      "groupName": "1231",
+      "userList": [
+        123,
+        0
+      ],
+      "id": 8
     }
   ],
   "user_request_information": [
@@ -78,6 +87,16 @@
       "userId": 1,
       "requestUser": null,
       "id": 2
+    },
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 3
+    },
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 4
     }
   ],
   "request_search_user": [
@@ -200,10 +219,53 @@
     {
       "input": "a",
       "id": 30
+    },
+    {
+      "input": "1105282259@qq.com",
+      "id": 31
+    },
+    {
+      "input": "1105282259@qq.com",
+      "id": 32
+    },
+    {
+      "input": "1105282259@qq.com",
+      "id": 33
+    },
+    {
+      "input": "1231",
+      "id": 34
     }
   ],
-  "user_request_accept": [],
-  "user_request_decline": [],
+  "user_request_accept": [
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 1
+    }
+  ],
+  "user_request_decline": [
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 1
+    },
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 2
+    },
+    {
+      "userId": 0,
+      "requestUser": 331,
+      "id": 3
+    },
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 4
+    }
+  ],
   "tasks": [
     {
       "name": "name",
