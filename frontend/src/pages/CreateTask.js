@@ -27,28 +27,28 @@ const CreateTask = () => {
 
   function handleSubmit () {
     if (name === '') {
-      setNameAlert('Please input a task name!')
+      setNameAlert('Please enter a task name!')
       return
     } else {
       setNameAlert('');
     }
 
     if (description === '') {
-      setDescriptionAlert('Please input a description!')
+      setDescriptionAlert('Please enter a description!')
       return
     } else {
       setDescriptionAlert('');
     }
 
     if (startD === '') {
-      setStartDAlert('Please input a start date!')
+      setStartDAlert('Please enter a start date!')
       return
     } else {
       setStartDAlert('');
     }
 
     if (dueD === '') {
-      setDueDAlert('Please input a due date! ')
+      setDueDAlert('Please enter a due date! ')
       return
     } else {
       setDueDAlert('');
@@ -72,7 +72,7 @@ const CreateTask = () => {
   useEffect(() => {
     setDueDAlert('')
     if (startD === '' && dueD !== '') {
-      setDueDAlert('Please input a start date!')
+      setDueDAlert('Please enter a start date!')
       return
     }
     if (dueD === '') {
@@ -80,7 +80,7 @@ const CreateTask = () => {
       return
     }
     if (dueD < startD) {
-      setDueDAlert('Please input a start date before the due date')
+      setDueDAlert('Please enter a start date before the due date')
     }
   }, [dueD, startD])
 

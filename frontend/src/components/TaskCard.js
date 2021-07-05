@@ -33,7 +33,7 @@ const TaskCard = (props) => {
           <br />
           Due Date: {tasks.deadline}
       </div>
-      <button onClick={() => handleClick()}>Update Task</button>
+      <button className="btn btn-secondary btn-lg" onClick={() => handleClick()}>Update Task</button>
     </div>
   </>
   )

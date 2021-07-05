@@ -66,48 +66,33 @@ const Profile = () => {
       return
     }
 
+    const updateDet = {...user}; // Copy user into updateDet
+
     if (firstName !== '') {
-      const updateDet = {...user}; // Copy user into updateDet
-      console.log(updateDet)
       updateDet.first_name = firstName; // Change selected field
-      setUser(updateDet); //Set user
     }
 
     if (lastName !== '') {
-      const updateDet = {...user}; // Copy user into updateDet
-      console.log(updateDet)
       updateDet.last_name = lastName; // Change selected field
-      setUser(updateDet); //Set user
     }
     
     if (removeNumber === true) {
-      const updateDet = {...user}; // Copy user into updateDet
-      console.log(updateDet)
       updateDet.phone_number = ''; // Change selected field
-      setUser(updateDet); //Set user
     }
 
     if (removeNumber === false && phoneNumber !== '') {
-      const updateDet = {...user}; // Copy user into updateDet
-      console.log(updateDet)
       updateDet.phone_number = phoneNumber; // Change selected field
-      setUser(updateDet); //Set user
     }
 
     if (removeCompany === true) {
-      const updateDet = {...user}; // Copy user into updateDet
-      console.log(updateDet)
       updateDet.company = ''; // Change selected field
-      setUser(updateDet); //Set user
     }
 
     if (removeCompany === false && companyName !== '') {
-      const updateDet = {...user}; // Copy user into updateDet
-      console.log(updateDet)
       updateDet.company = companyName; // Change selected field
-      setUser(updateDet); //Set user
     }
-
+    
+    setUser(updateDet); //Set user
     handleShow()
 
   }
