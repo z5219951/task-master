@@ -25,12 +25,7 @@ const Taskboard = () => {
   useEffect(() => {
     axios.get(`http://localhost:5000/user/${store.getState().id}/tasks`).then((res) => {
       const taskList = JSON.parse(res.data).tasks;
-      console.log(taskList)
-      for (let i = 0; taskList.length > i; i++) {
-        if (store.getState().id == taskList[i].owner) {
-          setTasks(tasks => [...tasks, taskList[i]])
-        }     
-      }
+      setTasks(taskList)
     })
   }, [])
 

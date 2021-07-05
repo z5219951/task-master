@@ -1,7 +1,17 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 const TaskCard = (props) => {
   const tasks = props.task
+  const history = useHistory();
+
+  function handleClick() {
+    history.push({
+      pathname: '/updateTask',
+      state: { id: tasks.id }
+  });
+  }
+
   return (<>
     <div className="card my-2 mx-5"> 
       <div className="card-body" padding="100px">
@@ -23,6 +33,7 @@ const TaskCard = (props) => {
           <br />
           Due Date: {tasks.deadline}
       </div>
+      <button onClick={() => handleClick()}>Update Task</button>
     </div>
   </>
   )

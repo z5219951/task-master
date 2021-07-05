@@ -19,6 +19,7 @@ import store from './store';
 import { connect } from 'react-redux';
 import UserRequest from './pages/UserRequest';
 import SearchUser from './pages/SearchUser';
+import UpdateTask from './pages/UpdateTask'
 
 function App() {
 
@@ -39,6 +40,7 @@ function App() {
         <Route path='/home' exact component={Home}/>
         <Route path='/userrequest' exact component={UserRequest} />
         <Route path='/searchuser' exact component={SearchUser} />
+        <Route path='/updateTask' exact component={UpdateTask} />
         <Route path='/' component={Home} />
       </Switch>
     </>
