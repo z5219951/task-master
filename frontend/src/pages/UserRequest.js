@@ -5,7 +5,6 @@ import axios from 'axios'
 import store from '../store';
 import { Button, Modal } from 'react-bootstrap';
 import './UserRequest.css'
-import { Alert } from 'bootstrap';
 
 class UserRequest extends Component{
     constructor(props) {

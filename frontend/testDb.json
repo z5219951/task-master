@@ -1,4 +1,67 @@
 {
+  "groups_information": [],
+  "groups_connected_user": [],
+  "create_group": [
+    {
+      "id": 1,
+      "groupName": "1231",
+      "userList": [
+        null
+      ]
+    },
+    {
+      "id": 2,
+      "groupName": "1121",
+      "userList": [
+        null,
+        ""
+      ]
+    },
+    {
+      "id": 3,
+      "groupName": "1231",
+      "userList": [
+        null,
+        ""
+      ]
+    },
+    {
+      "id": 4,
+      "groupName": "1231",
+      "userList": [
+        null,
+        0
+      ]
+    },
+    {
+      "id": 5,
+      "groupName": "1231",
+      "userList": [
+        null,
+        null,
+        0
+      ]
+    },
+    {
+      "id": 6,
+      "groupName": "group1",
+      "userList": [
+        123,
+        331,
+        0
+      ]
+    },
+    {
+      "userId": 0,
+      "groupName": "groupa",
+      "userList": [
+        123,
+        331,
+        0
+      ],
+      "id": 7
+    }
+  ],
   "user_request_information": [
     {
       "id": 123,

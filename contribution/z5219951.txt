@@ -10,3 +10,6 @@ Drawing out some part of the flow diagrams. Adding story points to user stories.
 
 Week4
 Me and Wayne finish the frontend part in Sprint1. I finish user story CWC-36,37,38,67 which include the login page, forget paswword page, register page and logout component. Besides, I add some acceptance criteria in user stories
+
+Week5
+Me and Wayne check our backend port is working for our frontend page. I start writing our frontend page about cwc-50,47.

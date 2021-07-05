@@ -1,0 +1,50 @@
+.groups_container{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: 1px gray solid;
+    border-radius:20px;
+    min-height: 20vh;
+    margin-top: 10vh;
+    width: 80vw;
+    margin-left: 10vw;
+}
+.group_btn_box{
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    margin-bottom: 20px;
+}
+
+.group_lists{
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+}
+
+.groupsDetail{
+    border-bottom: 1px solid grey;
+    margin-bottom: 20px;
+}
+.group_member_box{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    align-items: center;
+}
+.group_user{
+    margin: 0%;
+}
+.creat_groupName_box{
+    width: 90%;
+}
+
+.btnCreate{
+    width: 90%;
+    margin: 2vh 0;
+
+}
+
+.createGroup_item{
+    font-size: 1.4rem;
+}
