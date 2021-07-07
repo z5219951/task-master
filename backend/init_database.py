@@ -14,6 +14,8 @@ if __name__ == '__main__':
     c.execute(query)
     query = 'drop table if exists friend_list'
     c.execute(query)
+    query = 'drop table if exists groups'
+    c.execute(query)
     
     # create table users
     query = """
@@ -72,6 +74,17 @@ if __name__ == '__main__':
             );
             """
     
+    c.execute(query)
+
+    # create table groups
+    query = """
+            CREATE TABLE IF NOT EXISTS groups (
+                id              integer     primary key,
+                name            text        not null,
+                user            integer     not null,
+                foreign key     (user)      references users (id)
+            );
+            """
     c.execute(query)
     
     conn.commit()
