@@ -20,3 +20,10 @@ Pitched condensed list of core "guaranteed" extensions to team.
 Wrote material clarifying how 'groups' would function in final application and the rationale behind this.
 Composed both software architecture diagrams and provided justification for our chosen technology stack.
 
+Week 4:
+Tested and connected MongoDB for possible database as postgres and sql alternatives had difficulties. Got writeable cloud database set up, however likely proceeding with Justin's serverless sqlite db, so this has been shelved.
+
+Week 5:
+Refactored server.py so that db functionality was encapsulated in db.py
+Began dialogueflow preliminary tests and setting up webhooks via IFTTT.
+

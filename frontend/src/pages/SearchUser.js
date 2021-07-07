@@ -5,7 +5,7 @@ import axios from 'axios'
 import store from '../store';
 import { Button, Modal } from 'react-bootstrap';
 import './UserRequest.css'
-import { Alert } from 'bootstrap';
+import ViewProfileButton from '../components/ViewProfileButton'
 
 class SearchUser extends Component{
     constructor(props) {
@@ -26,7 +26,8 @@ class SearchUser extends Component{
     handleShow = (e)=>{
         // send request
         const type = e.target.name;
-        const requestUser = Number(this.state.requestUser);
+        const requestUser = Number(e.target.value);
+        console.log(requestUser);
         if(type === "profile") {
             alert("go to profile")
             // send profile user id
@@ -76,18 +77,18 @@ class SearchUser extends Component{
     }
     handleSubmit = ()=>{
         try {
-            const email = this.state.email;
-            // check email format
-            const testEmail = /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/;
-            if(!testEmail.test(email)) {
+            const email = this.state.email.trim();
+            // check format, avoid empty string
+            
+            if(email.length === 0) {
                 this.setState(()=>({
                 email:'',
-                emailAlert:'Please enter correct Email'
+                emailAlert:'Please enter correct content'
                 }))
                 return;
             }
             // send user email to check
-            const data = {email:email}
+            const data = {input:email}
             axios.post('http://localhost:5000/request_search_user',data).then((res)=>{
                 // store the user id in store
                 console.log(res)
@@ -118,7 +119,7 @@ class SearchUser extends Component{
             this.state.list.map((item,index)=><div key = {index}className="user_request_box">
                 <p className="user_request_name">{item.userName}</p>
                 <div className='buttonBox'>
-                    <Button variant="secondary" name="profile" value={item.requestUser} onClick={this.handleShow}>View Profile</Button>
+                    <ViewProfileButton id={item.requestUser}></ViewProfileButton>
                     <Button variant="primary" name="accept" value={item.requestUser} onClick={this.handleShow}>Request Connection</Button>
                 </div>
             </div>)
@@ -134,10 +135,10 @@ class SearchUser extends Component{
                 <button type="button" className="btn btn-info btn-xs request_back" onClick={this.handleBack}>Back</button>
                     <p>Search User</p>
                     <div className='serach_box'>
-                        <input type="email" id="inputEmail" className="form-control seach_email" placeholder="User Email" onChange={this.handleInput} name="email" value = {this.state.email}/>
-                        <p className="alertName">{this.state.emailAlert}</p>
+                        <input type="text" id="seach_email" className="form-control seach_email" placeholder="Enter user name, name, email or phone number" onChange={this.handleInput} name="email" value = {this.state.email}/>
                         <button className="btn btn-lg btn-primary btn-block" onClick={this.handleSubmit} type="button" >Search</button>
                     </div>
+                    <p className="alertName">{this.state.emailAlert}</p>
                     <div className='request_list'>
                         {this.getItem()}
                     </div>

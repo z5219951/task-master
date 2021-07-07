@@ -1,4 +1,76 @@
 {
+  "groups_information": [],
+  "groups_connected_user": [],
+  "create_group": [
+    {
+      "id": 1,
+      "groupName": "1231",
+      "userList": [
+        null
+      ]
+    },
+    {
+      "id": 2,
+      "groupName": "1121",
+      "userList": [
+        null,
+        ""
+      ]
+    },
+    {
+      "id": 3,
+      "groupName": "1231",
+      "userList": [
+        null,
+        ""
+      ]
+    },
+    {
+      "id": 4,
+      "groupName": "1231",
+      "userList": [
+        null,
+        0
+      ]
+    },
+    {
+      "id": 5,
+      "groupName": "1231",
+      "userList": [
+        null,
+        null,
+        0
+      ]
+    },
+    {
+      "id": 6,
+      "groupName": "group1",
+      "userList": [
+        123,
+        331,
+        0
+      ]
+    },
+    {
+      "userId": 0,
+      "groupName": "groupa",
+      "userList": [
+        123,
+        331,
+        0
+      ],
+      "id": 7
+    },
+    {
+      "userId": 0,
+      "groupName": "1231",
+      "userList": [
+        123,
+        0
+      ],
+      "id": 8
+    }
+  ],
   "user_request_information": [
     {
       "id": 123,
@@ -15,16 +87,185 @@
       "userId": 1,
       "requestUser": null,
       "id": 2
+    },
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 3
+    },
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 4
     }
   ],
   "request_search_user": [
     {
       "email": "qicharles03@gmail.com",
       "id": 1
+    },
+    {
+      "input": "a",
+      "id": 2
+    },
+    {
+      "input": "a",
+      "id": 3
+    },
+    {
+      "input": "a",
+      "id": 4
+    },
+    {
+      "input": "a",
+      "id": 5
+    },
+    {
+      "input": "a",
+      "id": 6
+    },
+    {
+      "input": "123",
+      "id": 7
+    },
+    {
+      "input": "123",
+      "id": 8
+    },
+    {
+      "input": "a",
+      "id": 9
+    },
+    {
+      "input": "a",
+      "id": 10
+    },
+    {
+      "input": "a",
+      "id": 11
+    },
+    {
+      "input": "a",
+      "id": 12
+    },
+    {
+      "input": "a",
+      "id": 13
+    },
+    {
+      "input": "a",
+      "id": 14
+    },
+    {
+      "input": "a",
+      "id": 15
+    },
+    {
+      "input": "a",
+      "id": 16
+    },
+    {
+      "input": "a",
+      "id": 17
+    },
+    {
+      "input": "a",
+      "id": 18
+    },
+    {
+      "input": "a",
+      "id": 19
+    },
+    {
+      "input": "a",
+      "id": 20
+    },
+    {
+      "input": "a",
+      "id": 21
+    },
+    {
+      "input": "a",
+      "id": 22
+    },
+    {
+      "input": "a",
+      "id": 23
+    },
+    {
+      "input": "a",
+      "id": 24
+    },
+    {
+      "input": "a",
+      "id": 25
+    },
+    {
+      "input": "a",
+      "id": 26
+    },
+    {
+      "input": "a",
+      "id": 27
+    },
+    {
+      "input": "a",
+      "id": 28
+    },
+    {
+      "input": "a",
+      "id": 29
+    },
+    {
+      "input": "a",
+      "id": 30
+    },
+    {
+      "input": "1105282259@qq.com",
+      "id": 31
+    },
+    {
+      "input": "1105282259@qq.com",
+      "id": 32
+    },
+    {
+      "input": "1105282259@qq.com",
+      "id": 33
+    },
+    {
+      "input": "1231",
+      "id": 34
     }
   ],
-  "user_request_accept": [],
-  "user_request_decline": [],
+  "user_request_accept": [
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 1
+    }
+  ],
+  "user_request_decline": [
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 1
+    },
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 2
+    },
+    {
+      "userId": 0,
+      "requestUser": 331,
+      "id": 3
+    },
+    {
+      "userId": 0,
+      "requestUser": 123,
+      "id": 4
+    }
+  ],
   "tasks": [
     {
       "name": "name",
@@ -583,6 +824,26 @@
       "email": "1105282259@qq.com",
       "password": "123456Qq",
       "id": 80
+    },
+    {
+      "email": "abc@gmail.com",
+      "password": "Abc123",
+      "id": 81
+    },
+    {
+      "email": "abc@gmail.com",
+      "password": "Abc123",
+      "id": 82
+    },
+    {
+      "email": "abc@gmail.com",
+      "password": "Abc12334",
+      "id": 83
+    },
+    {
+      "email": "abc@gmail.com",
+      "password": "Abc12334",
+      "id": 84
     }
   ],
   "newPass": [

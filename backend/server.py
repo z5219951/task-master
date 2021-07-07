@@ -1,12 +1,10 @@
 # standard library imports
-from backend.db import *
 import json
 import random
 import sys
-import db
 
 # third-party imports
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_mail import Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
@@ -14,6 +12,8 @@ import sqlite3
 
 # local imports
 # from config import config
+from db import *
+import friends
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -21,6 +21,9 @@ api = Api(app,
           default="ClickDown",  # Default namespace
           title="Capstone Project COMP3900",  # Documentation Title
           description="This page contains all of the HTTP requests that we service.")  # Documentation Description
+
+app.register_blueprint(friends.bp)
+api.add_namespace(friends.api)
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
@@ -193,9 +196,9 @@ class Users(Resource):
         args = parser.parse_args()
 
         id = authCheck(args.email, args.password)
-
+        print(id)
         if (id is None):
-            return {'id':''}, 200
+            return json.dumps({'id':''}), 200
 
         data = {    
             'id': id[0],

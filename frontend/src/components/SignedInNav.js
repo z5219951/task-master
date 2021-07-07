@@ -11,7 +11,7 @@ const SignedInNav = () => {
   return(
     <>
     <Navbar bg="dark" variant="dark">
-    <Navbar.Brand href="home">ClickDown</Navbar.Brand>
+    <Navbar.Brand href="taskboard">ClickDown</Navbar.Brand>
     <Navbar.Toggle aria-controls="basic-navbar-nav" />
     <Navbar.Collapse id="basic-navbar-nav">
       <div className='sign_bar_opt'>

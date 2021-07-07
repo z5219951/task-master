@@ -27,28 +27,28 @@ const CreateTask = () => {
 
   function handleSubmit () {
     if (name === '') {
-      setNameAlert('Please input a task name!')
+      setNameAlert('Please enter a task name!')
       return
     } else {
       setNameAlert('');
     }
 
     if (description === '') {
-      setDescriptionAlert('Please input a description!')
+      setDescriptionAlert('Please enter a description!')
       return
     } else {
       setDescriptionAlert('');
     }
 
     if (startD === '') {
-      setStartDAlert('Please input a start date!')
+      setStartDAlert('Please enter a start date!')
       return
     } else {
       setStartDAlert('');
     }
 
     if (dueD === '') {
-      setDueDAlert('Please input a due date! ')
+      setDueDAlert('Please enter a due date! ')
       return
     } else {
       setDueDAlert('');
@@ -72,7 +72,7 @@ const CreateTask = () => {
   useEffect(() => {
     setDueDAlert('')
     if (startD === '' && dueD !== '') {
-      setDueDAlert('Please input a start date!')
+      setDueDAlert('Please enter a start date!')
       return
     }
     if (dueD === '') {
@@ -80,65 +80,65 @@ const CreateTask = () => {
       return
     }
     if (dueD < startD) {
-      setDueDAlert('Please input a start date before the due date')
+      setDueDAlert('Please enter a start date before the due date')
     }
   }, [dueD, startD])
 
   return(
     <>
-    <div class="padding">
-      <div class="row">
-        <h1 class="col">Create a task</h1>
-        <button class="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
+    <div className="padding">
+      <div className="row">
+        <h1 className="col">Create a task</h1>
+        <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
       <form>
-        <div class="form-group">
-          <div class="col-md-4">
-            <label for="name">Task Name</label>
-            <input class="form-control input-sm" type="text" id="name" onChange={(e) => setName(e.target.value)}></input>
+        <div className="form-group">
+          <div className="col-md-4">
+            <label htmlFor="name">Task Name</label>
+            <input className="form-control input-sm" type="text" id="name" onChange={(e) => setName(e.target.value)}></input>
             <div><font color="red">{nameAlert}</font></div>
           </div>
         </div>
-        <div class="form-group">
-          <div class="col-md-4">
-            <label for="description">Task Description</label>
-            <textarea class="form-control" rows="3" id="description" onChange={(e) => setDescription(e.target.value)}></textarea>
+        <div className="form-group">
+          <div className="col-md-4">
+            <label htmlFor="description">Task Description</label>
+            <textarea className="form-control" rows="3" id="description" onChange={(e) => setDescription(e.target.value)}></textarea>
             <div><font color="red">{descriptionAlert}</font></div>
           </div>
         </div>
-        <div class="form-group">
-          <div class="col-md-2">
-            <label for="startD">Start Date</label>
-            <input class="form-control input-sm" type="date" id="startD" onChange={(e) => setStartD(e.target.value)}></input>
+        <div className="form-group">
+          <div className="col-md-2">
+            <label htmlFor="startD">Start Date</label>
+            <input className="form-control input-sm" type="date" id="startD" onChange={(e) => setStartD(e.target.value)}></input>
             <div><font color="red">{startDAlert}</font></div>
           </div>
         </div>
-        <div class="form-group">
-          <div class="col-md-2">
-            <label for="endD">Due Date</label>
-            <input class="form-control input-sm" type="date" id="endD" onChange={(e) => setDueD(e.target.value)}></input>
+        <div className="form-group">
+          <div className="col-md-2">
+            <label htmlFor="endD">Due Date</label>
+            <input className="form-control input-sm" type="date" id="endD" onChange={(e) => setDueD(e.target.value)}></input>
           </div>
         <div><font color="red">{dueDAlert}</font></div>
         </div>
-        <div class="form-group">
-          <label for="progress">Progress</label>
+        <div className="form-group">
+          <label htmlFor="progress">Progress</label>
           <br/>
-          <div class="col-md-3">
-            <input class="form-control input-lg" value={progress} type="number" min="0" max="100" onChange={(e) => setProgress(e.target.value)}></input>
+          <div className="col-md-3">
+            <input className="form-control input-lg" value={progress} type="number" min="0" max="100" onChange={(e) => setProgress(e.target.value)}></input>
             <span>% Complete</span>
           </div>
           <progress value={progress} max="100"> </progress>
         </div>
-        <div class="form-group">
-          <div class="col-md-3">
-            <label for="time">Time Estimate (Number of Hours)</label>
-            <input class="form-control input-lg" value={timeEst} type="number" min="0" onChange={(e) => setTimeEst(e.target.value)}></input>
+        <div className="form-group">
+          <div className="col-md-3">
+            <label htmlFor="time">Time Estimate (Number of Hours)</label>
+            <input className="form-control input-lg" value={timeEst} type="number" min="0" onChange={(e) => setTimeEst(e.target.value)}></input>
           </div>
         </div>
-        <div class="form-group">
-          <div class="col-md-2">
-            <label for="inputsm">Difficulty</label>
-            <select class="form-control input-sm" id="state" type="text" onChange={(e) => setDifficulty(e.target.value)}>
+        <div className="form-group">
+          <div className="col-md-2">
+            <label htmlFor="inputsm">Difficulty</label>
+            <select className="form-control input-sm" id="state" type="text" onChange={(e) => setDifficulty(e.target.value)}>
               <option>Very Easy</option>
               <option>Easy</option>
               <option>Medium</option>
@@ -147,10 +147,10 @@ const CreateTask = () => {
             </select>
           </div>
         </div>
-        <div class="form-group">
-          <div class="col-md-2">
-            <label for="state">State of Completion</label>
-            <select class="form-control input-sm" id="state" type="text" onChange={(e) => setCState(e.target.value)}>
+        <div className="form-group">
+          <div className="col-md-2">
+            <label htmlFor="state">State of Completion</label>
+            <select className="form-control input-sm" id="state" type="text" onChange={(e) => setCState(e.target.value)}>
               <option>Not Started</option>
               <option>In Progress</option>
               <option>Blocked</option>
@@ -159,7 +159,7 @@ const CreateTask = () => {
           </div>
         </div>
         <br/>
-        <button type="button" class="btn btn-primary" onClick={(e) => handleSubmit()}>Submit</button>
+        <button type="button" className="btn btn-primary" onClick={(e) => handleSubmit()}>Submit</button>
       </form>
     </div>
     </>

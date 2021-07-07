@@ -49,6 +49,42 @@ def getUserByID(id):
     conn.close()
 
     return data
+    
+def getUserByEmail(email):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    #Should we be grabbing the password from here?
+    query = f"""
+            SELECT  id, username, password, email, first_name, last_name, phone_number, company
+            FROM    users
+            WHERE   email = '{email}';
+            """
+
+    c.execute(query)
+    data = c.fetchone()
+    c.close()
+    conn.close()
+
+    return data
+
+# Convert the above user data structures into a dictionary
+def userDict(data):
+    userDict = {}
+    if data != None:
+        userDict = {
+            "id" :          data[0],
+            "username":     data[1],
+            "password":     data[2],
+            "email":        data[3],
+            "first_name":   data[4],
+            "last_name":    data[5],
+            "phone_number": data[6],
+            "company":      data[7]
+        }
+    
+    return userDict
+        
+    
 
 def updateUser(id, username, password, email, first_name, last_name, phone_number, company):
     conn = sqlite3.connect('clickdown.db')
@@ -219,3 +255,110 @@ def updateRecovery(recovery, email):
     conn.commit()
     c.close()
     conn.close()
+
+### Friend database functions ### 
+def friendRequestAdd(user_from, user_to):
+    # Check that users from args exists
+    print("in add")
+    user = getUserByID(user_from)
+    if user == []:
+        return False
+    
+    user = getUserByID(user_to)
+    if user == []:
+        return False
+        
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    query = f"""
+            INSERT INTO friend_requests (user_from, user_to)
+            VALUES ('{user_from}', '{user_to}');
+            """
+
+    try: 
+        c.execute(query)
+        
+    # If a request exists already
+    except sqlite3.IntegrityError:
+        return {'value': True},200
+
+    conn.commit()
+    
+    return True
+
+def friendRequestGet(email):
+    requests_list = []
+    
+    data = getUserByEmail(email)
+    userInfo = userDict(data)
+    
+    if userInfo == {}:
+        return requests_list
+            
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    query = f"""
+        SELECT  user_from
+        FROM    friend_requests
+        WHERE   user_to = '{userInfo["id"]}'
+        """
+    
+    c.execute(query)
+    data = c.fetchall()
+    
+    for id in data:
+        data = getUserByID(id[0])
+        userInfo = userDict(data)
+        userJson = {
+            "requestUser": userInfo["id"],
+            "userName"   : userInfo["first_name"] + " " +
+                           userInfo["last_name"]
+        }
+        
+    requests_list.append(userJson)
+    
+    return requests_list
+    
+# Delete from Table "friend_requests" given two user IDs
+# Returns True if action is correctly executed, False if record cannot be found
+def friendRequestRemove(user_from, user_to):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    query = f"""
+        SELECT  *
+        FROM    friend_requests
+        WHERE   user_to = '{user_to}'
+        AND     user_from = '{user_from}';
+        """
+    
+    c.execute(query)
+    data = c.fetchone()
+    
+    if data is None:
+        return False
+    
+    else:
+        query = f"""
+                DELETE
+                FROM    friend_requests
+                WHERE   user_to = '{user_to}'
+                AND     user_from = '{user_from}';
+                """
+        c.execute(query)
+        conn.commit()
+    
+    return True
+    
+def friendListAdd(userA, userB):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    query = f"""
+            INSERT INTO friend_list (user_a, user_b)
+            VALUES ('{userA}', '{userB}');
+            """
+    c.execute(query)
+    conn.commit()

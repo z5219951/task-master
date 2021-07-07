@@ -22,12 +22,6 @@ const UpdateDetail = (props) => {
     axios.defaults.crossDomain=true;
     axios.get('http://localhost:5000/user/'+currentUser).then((res) => {
     setUser(JSON.parse(res.data))
-    // for (let i=0; i < users.length; i++) {
-    //   // If user ID in database matches current user, set 'user' to include all of a user's info
-    //   if (String(users[i].id) === String(currentUser)) {
-    //     setUser(users[i])
-    //   }
-    // }
     }).then(() => {
       // detail prop = field
       setDetailProp(props.detail)

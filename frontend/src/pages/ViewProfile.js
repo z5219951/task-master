@@ -1,44 +1,37 @@
-import './Padding.css'
-import './Profile.css'
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import store from '../store'
-import axios from 'axios';
-import { useState, useEffect } from 'react';
 
-const Profile = () => {
-  const history = useHistory();
+const ViewProfile = (props) => {
+  const history = useHistory()
   const [user, setUser] = useState({})
+  const id = props.location.state.id
 
-  // Find current user
-  const currentUser = store.getState().id;
+  function backClick () {
+    history.goBack()
+  }
+
+  useEffect(() => {
+    setUser({'id': '1', 'username': 'abcdefgh', 'password': 'Abc123', 'email': 'abcd@gmail.com', 'first_name': 'abcd', 'last_name': 'efgh', 'phone_number': '0123', 'company': ''})
+  },[])
+
+  /*
   useEffect(() => {
     axios.defaults.crossDomain=true;
-    axios.get(`http://localhost:5000/user/${store.getState().id}`).then((res) => {
+    axios.get(`http://localhost:5000/user/${id}`).then((res) => {
     setUser(JSON.parse(res.data))
     }).then(() => {
       // console.log(user)
     })
   },[])
-
-  function backClick () {
-    history.push('./taskboard')
-  }
-
-  function updateProfile () {
-    history.push('./updateprofile')
-  }
-
-  return (
+*/
+  return(
     <>
-    <div className='padding'> 
+     <div className='padding'> 
       <div className="row">
-        <h1 className="col">Your Profile</h1>
+        <h1 className="col">{user.first_name}'s Profile</h1>
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
       <br/>
-      <div className="d-grid gap-2">
-        <button type="button" className="btn btn-secondary btn-block" onClick={() => updateProfile()}> Update Profile </button>
-      </div>
       <br/>
       <div>
         <table className="table table-striped table-secondary table-hover table-bordered border-dark" >    
@@ -71,4 +64,4 @@ const Profile = () => {
   )
 }
 
-export default Profile;
+export default ViewProfile
