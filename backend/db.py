@@ -116,7 +116,7 @@ def updateUser(id, username, password, email, first_name, last_name, phone_numbe
 
     return {'value': True},200
 
-def insertUser(id, username, password, email, first_name, last_name, phone_number, company):
+def insertUser(username, password, email, first_name, last_name, phone_number, company):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
 
