@@ -349,6 +349,15 @@ class Users(Resource):
     def get(self, owner):
         return json.dumps({'tasks': getTasks(owner)})
 
+# listener route for chatbot
+@api.route('/webhook', methods=['POST'])
+class Webhook(Resource):
+    def post(self):
+        req = request.get_json(force=True)
+        print(req)
+
+        return {'fulfilment': 'Working here!'},200
+
 if __name__ == '__main__':
     # params = config()
     # conn = psycopg2.connect(**params)
