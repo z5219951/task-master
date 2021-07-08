@@ -14,6 +14,7 @@ import sqlite3
 # from config import config
 from db import *
 import friends
+import groups
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -24,6 +25,8 @@ api = Api(app,
 
 app.register_blueprint(friends.bp)
 api.add_namespace(friends.api)
+app.register_blueprint(groups.bp)
+api.add_namespace(groups.api)
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
