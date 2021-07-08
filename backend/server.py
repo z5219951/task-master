@@ -71,10 +71,10 @@ class Users(Resource):
         # DELETE THIS IF FRONTEND ALREADY CHECKS VALIDITY
         if (email_exists(args.email)):
             return {'message': f'A user with that email already exists',
-                    'value': False}, 400
+                    'value': False}, 200
         if (user_exists(args.username)):
             return {'message': f'A user with that username already exists',
-                    'value': False}, 400
+                    'value': False}, 200
 
         # at this point, all inputs should be valid
         # insert values into users table
