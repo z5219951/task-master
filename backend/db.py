@@ -362,3 +362,45 @@ def friendListAdd(userA, userB):
             """
     c.execute(query)
     conn.commit()
+    
+def searchUsers(needle):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    query = f"""
+            SELECT  *
+            FROM    users
+            WHERE   email = '{needle}'
+            or      first_name = '{needle}'
+            or      last_name = '{needle}'
+            or      phone_number = '{needle}'
+            or      company = '{needle}';
+            """
+    
+    c.execute(query)
+    data = c.fetchall()
+    
+    split = needle.split()
+    # If len > 1 assume input string is FIRST LAST
+    if len(split) > 1:
+        first_name = split[0]
+        last_name = split[1]
+        
+        query = f"""
+        SELECT  *
+        FROM    users
+        WHERE   first_name = '{first_name}'
+        AND     last_name = '{last_name}'
+        """
+        
+        c.execute(query)
+        data.append(c.fetchone())
+
+    res = []
+    for d in data:
+        if d == None:
+            break
+        res.append({"requestUser": d[0],
+                    "username": d[4] + " " + d[5]})
+    
+    return res
