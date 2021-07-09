@@ -6,7 +6,8 @@ const defaultState = {
     email:'',
     loggedIn: false,
     userProfile:'',
-    userEmail:''
+    userEmail:'',
+    testMod:false
 };
 
 // make sure your action.type  is unique

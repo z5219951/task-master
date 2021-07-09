@@ -42,7 +42,9 @@ class SearchUser extends Component{
                 const data = {userId:userId,requestedUser:requestUser};
                 axios.defaults.crossDomain=true;
                 let url = "http://localhost:5000/friends/sendRequest";
-                // url = "http://localhost:5000/request_search_email";
+                if(store.getState().testMod) {
+                    url = "http://localhost:5000/request_search_email";
+                }
                 axios.post(url, data).then((res)=>{
                     console.log(res);
                     const result = true;
@@ -95,7 +97,9 @@ class SearchUser extends Component{
             const data = {input:email}
             axios.defaults.crossDomain=true;
             let url = "http://localhost:5000/friends/searchUser"
-            // url = 'http://localhost:5000/request_search_user'
+            if(store.getState().testMod) {
+                url = 'http://localhost:5000/request_search_user';
+            }
             axios.post(url,data).then((res)=>{
                 // store the user id in store
                 console.log(res)

@@ -26,7 +26,9 @@ class UserRequest extends Component{
     componentDidMount = ()=>{
         try {
             let url = 'http://localhost:5000/friends/'+this.state.email+'/requests';
-            // url = 'http://localhost:5000/user_request_information';
+            if(store.getState().testMod) {
+                url = 'http://localhost:5000/user_request_information';
+            }
             axios.defaults.crossDomain=true;
             axios.get(url).then((res)=>{
             // store the user id in store
@@ -124,7 +126,11 @@ class UserRequest extends Component{
                     }
                 ))
                 // request the new state
-                axios.get('http://localhost:5000/user_request_information').then((res)=>{
+                let url = 'http://localhost:5000/friends/'+this.state.email+'/requests';
+                if(store.getState().testMod) {
+                    url = 'http://localhost:5000/user_request_information';
+                }
+                axios.get(url).then((res)=>{
                 // store the user id in store
                 console.log(res)
                 // const result = JSON.parse(res.data);
