@@ -94,14 +94,22 @@ class Users(Resource):
         return {'value': True},200
 
 
-#TODO
+search_payload = api.model('search', {
+    "input": fields.String
+})
 @api.route('/searchUser', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Sucessfully searched for requests')
     @api.response(400, 'Bad request')
-    @api.doc(description="Search for pending friend requests")
+    @api.expect(search_payload)
+    @api.doc(description="Search for users based on name, email, company, phone")
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('username', required=True)
+        parser.add_argument('input', required=True)
+        args = parser.parse_args()
         
-        return False
+        search_string = args.input
+        
+        res = db.searchUsers(search_string)
+        
+        return json.dumps(res), 200
