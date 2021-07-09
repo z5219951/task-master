@@ -103,10 +103,17 @@ class Register extends Component{
           if(result) {
             this.props.history.push('./login')
           } else {
-            this.setState(()=>({
-              email:'',
-              emailAlert:'This email has been used'
-            }))
+            if(res.data.message === "A user with that email already exists") {
+              this.setState(()=>({
+                email:'',
+                emailAlert:'This email has been used'
+              }))
+            } else {
+              this.setState(()=>({
+                user:'',
+                userAlert:'This user name already exists'
+              }))
+            }
           }
       })
     } catch (error) {

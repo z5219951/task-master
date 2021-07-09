@@ -18,7 +18,6 @@ import groups
 import tasks
 
 app = Flask(__name__)
-cors = CORS(app)
 api = Api(app,
           default="ClickDown",  # Default namespace
           title="Capstone Project COMP3900",  # Documentation Title
@@ -28,6 +27,8 @@ app.register_blueprint(friends.bp)
 api.add_namespace(friends.api)
 app.register_blueprint(groups.bp)
 api.add_namespace(groups.api)
+
+cors = CORS(app)
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
@@ -75,10 +76,10 @@ class Users(Resource):
         # DELETE THIS IF FRONTEND ALREADY CHECKS VALIDITY
         if (email_exists(args.email)):
             return {'message': f'A user with that email already exists',
-                    'value': False}
+                    'value': False}, 200
         if (user_exists(args.username)):
             return {'message': f'A user with that username already exists',
-                    'value': False}
+                    'value': False}, 200
 
         # at this point, all inputs should be valid
         # insert values into users table

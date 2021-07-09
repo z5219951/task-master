@@ -13,7 +13,7 @@ class UserRequest extends Component{
         const id = Number(store.getState().id);
         this.state = {
             id:id,
-            email:'',
+            email:store.getState().userEmail,
             show:false,
             list:[],
             inform:'go to profile page',
@@ -21,10 +21,16 @@ class UserRequest extends Component{
             requestUser:''
 
         }
+        // check login status
     }
     componentDidMount = ()=>{
         try {
-            axios.get('http://localhost:5000/user_request_information').then((res)=>{
+            let url = 'http://localhost:5000/friends/'+this.state.email+'/requests';
+            if(store.getState().testMod) {
+                url = 'http://localhost:5000/user_request_information';
+            }
+            axios.defaults.crossDomain=true;
+            axios.get(url).then((res)=>{
             // store the user id in store
             console.log(res)
             // const result = JSON.parse(res.data);
@@ -108,6 +114,7 @@ class UserRequest extends Component{
             return;
         }
         try {
+            axios.defaults.crossDomain=true;
             axios.post(url, data).then((res)=>{
             // store the user id in store
             const result = true;
@@ -119,7 +126,11 @@ class UserRequest extends Component{
                     }
                 ))
                 // request the new state
-                axios.get('http://localhost:5000/user_request_information').then((res)=>{
+                let url = 'http://localhost:5000/friends/'+this.state.email+'/requests';
+                if(store.getState().testMod) {
+                    url = 'http://localhost:5000/user_request_information';
+                }
+                axios.get(url).then((res)=>{
                 // store the user id in store
                 console.log(res)
                 // const result = JSON.parse(res.data);
@@ -168,11 +179,6 @@ class UserRequest extends Component{
             <Fragment>
                 <div className='request_container'>
                 <button type="button" className="btn btn-info btn-xs request_back" onClick={this.handleBack}>Back</button>
-                    {/* <p>Search User</p>
-                    <div className='serach_box'>
-                        <input type="text" id="inputFirstName" className="form-control" placeholder="User Email" onChange={this.handleInput} name="email" value = {this.state.firstName}/>
-                        <button className="btn btn-lg btn-primary btn-block" onClick={this.handleSubmit} type="button" >Search</button>
-                    </div> */}
                     <p>Request Lists</p>
                     <div className='request_list'>
                         {this.getItem()}
