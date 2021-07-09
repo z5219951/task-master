@@ -359,9 +359,9 @@ class Webhook(Resource):
         #friendly reminder that the response is a json so it can be accessed like an array/dict
         intent = req["queryResult"]["intent"]['displayName']
 
-        parseIntent(intent, req)
+        response = parseIntent(intent, req)
 
-        return {'fulfillment_text': 'Working here!'},200
+        return response,200
 
 if __name__ == '__main__':
     # params = config()
