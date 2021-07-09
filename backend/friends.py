@@ -40,7 +40,7 @@ class Users(Resource):
     @api.doc(description="Search for pending friend requests")
     def get(self, email):
         res = db.friendRequestGet(email)
-        
+        print(res)
         return res, 200
         
 @api.route('/decline', methods=['POST'])

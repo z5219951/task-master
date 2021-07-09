@@ -17,7 +17,6 @@ import friends
 import groups
 
 app = Flask(__name__)
-cors = CORS(app)
 api = Api(app,
           default="ClickDown",  # Default namespace
           title="Capstone Project COMP3900",  # Documentation Title
@@ -27,6 +26,8 @@ app.register_blueprint(friends.bp)
 api.add_namespace(friends.api)
 app.register_blueprint(groups.bp)
 api.add_namespace(groups.api)
+
+cors = CORS(app)
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',

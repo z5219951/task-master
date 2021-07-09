@@ -76,6 +76,12 @@ class Login extends Component{
               value: "true"
             }
             store.dispatch(logged_in);
+            // set user email
+            const userEmail = {
+              type: 'user_email',
+              value: this.state.email
+            }
+            store.dispatch(userEmail);
             this.props.history.push('./taskboard');
           } else {
             // incorrect password
