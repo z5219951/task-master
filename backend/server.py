@@ -15,6 +15,7 @@ import sqlite3
 from db import *
 import friends
 import groups
+import tasks
 
 app = Flask(__name__)
 api = Api(app,
