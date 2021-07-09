@@ -14,6 +14,7 @@ import sqlite3
 # from config import config
 from db import *
 import friends
+from chatbot import *
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -354,9 +355,13 @@ class Users(Resource):
 class Webhook(Resource):
     def post(self):
         req = request.get_json(force=True)
-        print(req)
+        print(json.dumps(req, indent=4, sort_keys=True))
+        #friendly reminder that the response is a json so it can be accessed like an array/dict
+        intent = req["queryResult"]["intent"]['displayName']
 
-        return {'fulfilment': 'Working here!'},200
+        parseIntent(intent, req)
+
+        return {'fulfillment_text': 'Working here!'},200
 
 if __name__ == '__main__':
     # params = config()
