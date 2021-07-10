@@ -33,7 +33,6 @@ const UpdateTask = (props) => {
       const taskList = JSON.parse(res.data).tasks;
       for (let i = 0; i < taskList.length; i++) {
         if (taskList[i].id === taskID) {
-          console.log(taskList[i])
           setTask(taskList[i])
         }
       }
@@ -99,7 +98,10 @@ const UpdateTask = (props) => {
   }
 
   useEffect(() => {
-    console.log(task)
+    if (Object.keys(task).length !== 0) {
+      axios.put(`http://localhost:5000/tasks/update `, task)
+      console.log(task)
+    } 
   },[task])
 
   return(

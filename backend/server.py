@@ -376,7 +376,7 @@ class Users(Resource):
     @api.response(404, 'Not Found')
     @api.doc(description="Updates a task given its id")
     @api.expect(update_task_payload)
-    def put(self, id):
+    def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', required=True)
         parser.add_argument('owner')
@@ -408,27 +408,29 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                UPDATE  users
+                UPDATE  tasks
                 SET     owner = '{owner}',
                         title = '{title}',
                         description = '{description}',
                         creation_date = '{creation_date}',
                         deadline = '{deadline}',
-                        current_state = '{current_state}'
-                        progress = '{progress}'
-                        time_estimate = '{time_estimate}'
+                        current_state = '{current_state}',
+                        progress = '{progress}',
+                        time_estimate = '{time_estimate}',
                         difficulty = '{difficulty}'
                 WHERE   id = '{id}';
                 """
         try:
             c.execute(query)
-        except:
+        except Exception as e:
             c.close()
             conn.close()
             return {'value': False}, 200
+
+        conn.commit()
+        
         c.close()
         conn.close()
-
         return {'value': True}
 
 

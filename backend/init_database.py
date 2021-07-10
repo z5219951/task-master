@@ -47,7 +47,7 @@ if __name__ == '__main__':
                 progress        integer     ,
                 time_estimate   integer     ,
                 difficulty      text        ,
-                assigned_to     integer     not null,
+                assigned_to     integer     ,
                 foreign key     (owner)     references users (id)
             );
             """
