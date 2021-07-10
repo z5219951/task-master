@@ -365,9 +365,7 @@ update_task_payload = api.model('update info', {
     "deadline": fields.String,
     # "labels": fields.String,
     "current_state": fields.String,
-    "progress": fields.Integer,
     "time_estimate": fields.Integer,
-    "difficulty": fields.String
 })
 
 @api.route('/tasks/update', methods=['PUT'])
@@ -386,9 +384,7 @@ class Users(Resource):
         parser.add_argument('deadline')
         # parser.add_argument('labels')
         parser.add_argument('current_state')
-        parser.add_argument('progress')
         parser.add_argument('time_estimate')
-        parser.add_argument('difficulty')
         args = parser.parse_args()
         # print(args)
 
@@ -400,9 +396,7 @@ class Users(Resource):
         deadline = args.deadline
         # labels = args.labels
         current_state = args.current_state
-        progress = args.progress
         time_estimate = args.time_estimate
-        difficulty = args.difficulty
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -415,14 +409,13 @@ class Users(Resource):
                         creation_date = '{creation_date}',
                         deadline = '{deadline}',
                         current_state = '{current_state}',
-                        progress = '{progress}',
-                        time_estimate = '{time_estimate}',
-                        difficulty = '{difficulty}'
+                        time_estimate = '{time_estimate}'
                 WHERE   id = '{id}';
                 """
         try:
             c.execute(query)
         except Exception as e:
+            print(e)
             c.close()
             conn.close()
             return {'value': False}, 200

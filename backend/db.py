@@ -135,8 +135,8 @@ def createTask(owner, title, description, creation_date, deadline, current_state
     c = conn.cursor()
 
     query = f"""
-            INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, progress, time_estimate, difficulty)
-            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{progress}', '{time_estimate}', '{difficulty}');
+            INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, time_estimate)
+            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{time_estimate}');
             """
     c.execute(query)
     conn.commit()
@@ -161,7 +161,7 @@ def getTasks(owner):
     c = conn.cursor()
 
     query = f"""
-            SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate, difficulty
+            SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate
             FROM    tasks
             WHERE   owner = '{owner}';
             """
@@ -181,9 +181,7 @@ def getTasks(owner):
             'deadline': f'{data[5]}',
             'labels': f'{data[6]}',
             'current_state': f'{data[7]}',
-            'progress': f'{data[8]}',
-            'time_estimate': f'{data[9]}',
-            'difficulty': f'{data[10]}'
+            'time_estimate': f'{data[8]}',
         }
         task_list.append(task_info)
         data = c.fetchone()

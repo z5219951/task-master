@@ -9,17 +9,16 @@ const CreateTask = () => {
   const history = useHistory();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [startD, setStartD] = useState('');
   const [dueD, setDueD] = useState('');
   const [cState, setCState] = useState('Not Started');
-  const [difficulty, setDifficulty] = useState('Very Easy');
   const [dueDAlert, setDueDAlert] = useState('')
-  const [progress, setProgress] = useState(0)
   const [nameAlert, setNameAlert] = useState('')
   const [descriptionAlert, setDescriptionAlert] = useState('')
-  const [startDAlert, setStartDAlert] = useState('')
   const [timeEst, setTimeEst] = useState(0)
   const [owner, setOwner] = useState('')
+
+  var today = new Date();
+  const currentDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
 
   function backClick () {
     history.push('./taskboard')
@@ -40,23 +39,13 @@ const CreateTask = () => {
       setDescriptionAlert('');
     }
 
-    if (startD === '') {
-      setStartDAlert('Please enter a start date!')
+    if (dueD !== '' && Date.parse(dueD) < Date.parse(currentDate)) {
+      setDueDAlert('Please enter a valid deadline')
       return
-    } else {
-      setStartDAlert('');
-    }
-
-    if (dueD === '') {
-      setDueDAlert('Please enter a due date! ')
-      return
-    } else {
-      setDueDAlert('');
     }
 
     // Create task object and push it to server
-    const task = {title: name, description: description, creation_date: startD, deadline: dueD, progress: progress,time_estimate: timeEst, difficulty: difficulty, current_state: cState, owner: owner}
-    console.log(task)
+    const task = {title: name, description: description, creation_date: currentDate, deadline: dueD, time_estimate: timeEst, current_state: cState, owner: owner}
     axios.defaults.crossDomain=true;
     axios.post('http://localhost:5000/create_task', task).then(()=>{
       console.log("Task Created");
@@ -68,22 +57,6 @@ const CreateTask = () => {
     setOwner(store.getState().id)
   }, [])
 
-  // Validates date inputs
-  useEffect(() => {
-    setDueDAlert('')
-    if (startD === '' && dueD !== '') {
-      setDueDAlert('Please enter a start date!')
-      return
-    }
-    if (dueD === '') {
-      setDueDAlert('')
-      return
-    }
-    if (dueD < startD) {
-      setDueDAlert('Please enter a start date before the due date')
-    }
-  }, [dueD, startD])
-
   return(
     <>
     <div className="padding">
@@ -94,68 +67,29 @@ const CreateTask = () => {
       <form>
         <div className="form-group">
           <div className="col-md-4">
-            <label htmlFor="name">Task Name</label>
+            <label htmlFor="name">Task Name<span className='redStar'>*</span></label>
             <input className="form-control input-sm" type="text" id="name" onChange={(e) => setName(e.target.value)}></input>
             <div><font color="red">{nameAlert}</font></div>
           </div>
         </div>
         <div className="form-group">
           <div className="col-md-4">
-            <label htmlFor="description">Task Description</label>
+            <label htmlFor="description">Task Description<span className='redStar'>*</span></label>
             <textarea className="form-control" rows="3" id="description" onChange={(e) => setDescription(e.target.value)}></textarea>
             <div><font color="red">{descriptionAlert}</font></div>
           </div>
         </div>
         <div className="form-group">
-          <div className="col-md-2">
-            <label htmlFor="startD">Start Date</label>
-            <input className="form-control input-sm" type="date" id="startD" onChange={(e) => setStartD(e.target.value)}></input>
-            <div><font color="red">{startDAlert}</font></div>
-          </div>
-        </div>
-        <div className="form-group">
-          <div className="col-md-2">
-            <label htmlFor="endD">Due Date</label>
+          <div className="col-md-3">
+            <label htmlFor="endD">Deadline (Optional)</label>
             <input className="form-control input-sm" type="date" id="endD" onChange={(e) => setDueD(e.target.value)}></input>
           </div>
         <div><font color="red">{dueDAlert}</font></div>
         </div>
         <div className="form-group">
-          <label htmlFor="progress">Progress</label>
-          <br/>
-          <div className="col-md-3">
-            <input className="form-control input-lg" value={progress} type="number" min="0" max="100" onChange={(e) => setProgress(e.target.value)}></input>
-            <span>% Complete</span>
-          </div>
-          <progress value={progress} max="100"> </progress>
-        </div>
-        <div className="form-group">
           <div className="col-md-3">
             <label htmlFor="time">Time Estimate (Number of Hours)</label>
             <input className="form-control input-lg" value={timeEst} type="number" min="0" onChange={(e) => setTimeEst(e.target.value)}></input>
-          </div>
-        </div>
-        <div className="form-group">
-          <div className="col-md-2">
-            <label htmlFor="inputsm">Difficulty</label>
-            <select className="form-control input-sm" id="state" type="text" onChange={(e) => setDifficulty(e.target.value)}>
-              <option>Very Easy</option>
-              <option>Easy</option>
-              <option>Medium</option>
-              <option>Hard</option>
-              <option>Very Hard</option>
-            </select>
-          </div>
-        </div>
-        <div className="form-group">
-          <div className="col-md-2">
-            <label htmlFor="state">State of Completion</label>
-            <select className="form-control input-sm" id="state" type="text" onChange={(e) => setCState(e.target.value)}>
-              <option>Not Started</option>
-              <option>In Progress</option>
-              <option>Blocked</option>
-              <option>Completed</option>
-            </select>
           </div>
         </div>
         <br/>

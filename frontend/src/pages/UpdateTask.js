@@ -129,29 +129,12 @@ const UpdateTask = (props) => {
           </div>
         </div>
         <div className="form-group row mb-5">
-          <label htmlFor="startD" className="col-sm-3 col-form-label">Update Start Date</label>
-          <div className="col-sm-4">
-          <input className="form-control input-sm" type="date" id="startD" onChange={(e) => setStartD(e.target.value)}></input>
-            &nbsp;&nbsp;Current Start Date - {task.creation_date}
-            <br />
-            <font color="red">{startDAlert}</font>
-          </div>
-        </div>
-        <div className="form-group row mb-5">
-          <label htmlFor="dueD" className="col-sm-3 col-form-label">Update Due Date</label>
+          <label htmlFor="dueD" className="col-sm-3 col-form-label">Update Deadline</label>
           <div className="col-sm-4">
             <input className="form-control input-sm" type="date" id="DueD" onChange={(e) => setDueD(e.target.value)}></input>
-            &nbsp;&nbsp;Current Due Date - {task.deadline}
+            &nbsp;&nbsp;Current Deadline - {task.deadline}
             <br/>
             <font color="red">{dueDAlert}</font>
-          </div>
-        </div>
-        <div className="form-group row mb-5">
-          <label htmlFor="description" className="col-sm-3 col-form-label">Update Progress (%)</label>
-          <div className="col-sm-4">
-          <input className="form-control input-lg" type="number" min="0" max="100" onChange={(e) => setProgress(e.target.value)}></input>
-            <progress value={task.progress} max="100"> </progress>
-            &nbsp;&nbsp;Current Progress - {task.progress}%
           </div>
         </div>
         <div className="form-group row mb-5">
@@ -162,23 +145,9 @@ const UpdateTask = (props) => {
           </div>
         </div>
         <div className="form-group row mb-5">
-          <label htmlFor="difficulty" className="col-sm-3 col-form-label">Update Difficulty</label>
+          <label htmlFor="cState" className="col-sm-3 col-form-label">Update Completion State</label>
           <div className="col-sm-5">
-            <select className="form-control input-sm" id="state" type="text" onChange={(e) => setDifficulty(e.target.value)}>
-              <option value=''></option>
-              <option value="Very Easy">Very Easy</option>
-              <option value="Easy">Easy</option>
-              <option value="Medium">Medium</option>
-              <option value="Hard">Hard</option>
-              <option value="Very Hard">Very Hard</option>
-            </select>
-            &nbsp;&nbsp;Current Difficulty - {task.difficulty}
-          </div>
-        </div>
-        <div className="form-group row mb-5">
-          <label htmlFor="cState" className="col-sm-3 col-form-label" onChange={(e) => setCState(e.target.value)}>Update Completion State</label>
-          <div className="col-sm-5">
-            <select className="form-control input-sm" id="state" type="text">
+            <select className="form-control input-sm" id="state" type="text" onChange={(e) => setCState(e.target.value)}>
               <option value=''></option>
               <option>Not Started</option>
               <option>In Progress</option>

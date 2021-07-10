@@ -44,9 +44,7 @@ if __name__ == '__main__':
                 deadline        text        ,
                 labels          text        ,
                 current_state   text        not null,
-                progress        integer     ,
                 time_estimate   integer     ,
-                difficulty      text        ,
                 assigned_to     integer     ,
                 foreign key     (owner)     references users (id)
             );
