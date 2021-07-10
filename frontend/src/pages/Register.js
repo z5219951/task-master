@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
 import axios from 'axios'
+import Photo from './Photo';
 
 class Register extends Component{
   constructor(props) {
@@ -21,6 +22,7 @@ class Register extends Component{
       confirmAlert:'',
       firstNameAlert:'',
       lastNameAlert:'',
+      imageUrl:''
     }
   }
   handleInput = (e)=>{
@@ -120,6 +122,10 @@ class Register extends Component{
         console.log(error);
     }
   }
+  getUrl = (url)=>{
+    this.setState({imageUrl:url});
+    console.log(url)
+  }
   render(){
     return(
     <div className="container">
@@ -136,8 +142,10 @@ class Register extends Component{
           <input type="text" id="inputLastName" className="form-control" placeholder="Last name" onChange={this.handleInput} name="lastName" value = {this.state.lastName}required/>
           <p className="alertName">{this.state.lastNameAlert}</p>
           <label htmlFor="inputUserName" className="sr-only loginDes">User Name <span className='redStar'>*</span></label>
-          <input type="text" id="inputUserName" className="form-control" placeholder="User name" onChange={this.handleInput} name="user" value = {this.state.user}required/>
+          <input type="text" id="inputUserName" className="form-control" placeholder="User name" onChange={this.handleInput.bind(this)} name="user" value = {this.state.user}required/>
           <p className="alertName">{this.state.userAlert}</p>
+          <label htmlFor="inputUserName" className="sr-only loginDes">Upload Photo</label>
+          <Photo sendUrl = {this.getUrl} postUrl="http://1234"></Photo>
           <label htmlFor="inputPhone" className="sr-only loginDes">Phone</label>
           <input type="number" id="inputPhone" className="form-control" placeholder="Phone number" onChange={this.handleInput} name="phone" value = {this.state.phone}/>
           <label htmlFor="inputComp" className="sr-only loginDes">Company</label>

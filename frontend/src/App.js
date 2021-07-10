@@ -23,6 +23,7 @@ import UpdateTask from './pages/UpdateTask'
 import Groups from './pages/Groups';
 import CreateGroup from './pages/CreateGroup';
 import ViewProfile from './pages/ViewProfile'
+import TestPage from './pages/TestPage';
 
 function App() {
 
@@ -47,6 +48,7 @@ function App() {
         <Route path='/groups' exact component={Groups} />
         <Route path='/creategroup' exact component={CreateGroup} />
         <Route path='/viewprofile' exact component={ViewProfile} />
+        <Route path='/testpage' exact component={TestPage} />
         <Route path='/' component={Home} />
       </Switch>
     </>
