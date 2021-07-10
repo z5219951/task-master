@@ -259,7 +259,6 @@ def updateRecovery(recovery, email):
 ### Friend database functions ### 
 def friendRequestAdd(user_from, user_to):
     # Check that users from args exists
-    print("in add")
     user = getUserByID(user_from)
     if user == []:
         return False
@@ -316,8 +315,7 @@ def friendRequestGet(email):
             "userName"   : userInfo["first_name"] + " " +
                            userInfo["last_name"]
         }
-        
-    requests_list.append(userJson)
+        requests_list.append(userJson)
     
     return requests_list
     
@@ -367,14 +365,15 @@ def searchUsers(needle):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
     
+    needle = needle.lower()
     query = f"""
             SELECT  *
             FROM    users
-            WHERE   email = '{needle}'
-            or      first_name = '{needle}'
-            or      last_name = '{needle}'
+            WHERE   lower(email) = '{needle}'
+            or      lower(first_name) = '{needle}'
+            or      lower(last_name) = '{needle}'
             or      phone_number = '{needle}'
-            or      company = '{needle}';
+            or      lower(company) = '{needle}';
             """
     
     c.execute(query)
@@ -389,8 +388,8 @@ def searchUsers(needle):
         query = f"""
         SELECT  *
         FROM    users
-        WHERE   first_name = '{first_name}'
-        AND     last_name = '{last_name}'
+        WHERE   lower(first_name) = '{first_name}'
+        AND     lower(last_name) = '{last_name}'
         """
         
         c.execute(query)
