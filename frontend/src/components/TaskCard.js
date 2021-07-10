@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import store from '../store';
 import './TaskCard.css'
 
 const TaskCard = (props) => {
   const tasks = props.task
+  const [update, setUpdate] = useState(false)
   const history = useHistory();
 
+  
   function handleClick() {
     history.push({
       pathname: '/updateTask',
@@ -13,11 +16,18 @@ const TaskCard = (props) => {
   });
   }
 
+  useEffect(() => {
+    console.log(tasks.owner, store.getState().id)
+    if (parseInt(tasks.owner) === parseInt(store.getState().id)) {
+      setUpdate(true)
+    }
+  },[])
+
   return (<>
     <div className="card my-2 mx-5"> 
       <div className="card-header">
         <div className="display-5">
-          Task #{tasks.id}: {tasks.title}
+          Task ID #{tasks.id}: {tasks.title}
         </div>
       </div>
       <div className="card-body" padding="100px">
@@ -25,8 +35,7 @@ const TaskCard = (props) => {
         <p className="card-text"><em>Deadline: {tasks.deadline ? tasks.deadline : 'No deadline'} </em></p>
         <p className="card-text"><em>Estimated completion time: {tasks.time_estimate} hours </em></p>
         <p className="card-text"><em>Task Status: {tasks.current_state}</em></p>
-        <button className="btn btn-secondary btn-lg" onClick={() => handleClick()}>Update Task</button>
-        <br />
+        {update ? <div><button className="btn btn-secondary btn-lg" onClick={() => handleClick()}>Update Task</button><br/></div> : ''}
       </div>
     </div>
   </>
