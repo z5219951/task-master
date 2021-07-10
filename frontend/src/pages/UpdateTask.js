@@ -55,40 +55,8 @@ const UpdateTask = (props) => {
       updateTask.time_estimate = timeEst;
     }
 
-    if (progress !== '') {
-      updateTask.progress = progress;
-    }
-
-    if (difficulty !== '') {
-      updateTask.difficulty = difficulty;
-    }
-
     if (cState !== '') {
       updateTask.current_state = cState;
-    }
-
-    if (dueD !== '' && startD === '') {
-      if (dueD < updateTask.creation_date) {
-        setDueDAlert('Please enter a due date after the start date')
-      }
-      updateTask.deadline = dueD
-    }
-
-    if (dueD === '' && startD !== '') {
-      if (startD > updateTask.deadline) {
-        setStartDAlert('Please enter a start date before the due date')
-        return
-      }
-      updateTask.creation_date = startD
-    }
-
-    if (dueD !== '' && startD !== '') {
-      if (dueD < startD) {
-        setDueDAlert('Please enter a due date after the start date')
-        return
-      }
-      updateTask.deadline = dueD
-      updateTask.creation_date = startD
     }
     
     setTask(updateTask)
