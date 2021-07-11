@@ -13,6 +13,7 @@ class CalendarCom extends Component{
     super(props);
     this.state = {
       taskLists:[],
+      selectedList:[],
       show:false,
       latest:new Date()
     }
@@ -80,33 +81,35 @@ class CalendarCom extends Component{
         taskLists:taskList
       }))
     })
-    this.setState(()=>(
-      {
-        taskLists:[{
-          owner: 0,
-          title: "test1",
-          description: "test des",
-          creation_date: "2021-06-10",
-          deadline: "2021-07-19",
-          current_state: "Not Started",
-          progress: 20,
-          time_estimate: 5,
-          difficulty: "Very Easy",
-          id:1
-        },{
-          owner: 0,
-          title: "test2",
-          description: "test des",
-          creation_date: "2021-06-18",
-          deadline: "2021-07-10",
-          current_state: "Not Started",
-          progress: 20,
-          time_estimate: 5,
-          difficulty: "Very Easy",
-          id:2
-        }]
-      }
-    ))
+    // this.setState(()=>(
+    //   {
+    //     taskLists:[{
+    //       owner: 0,
+    //       title: "test1",
+    //       description: "test des",
+    //       creation_date: "2021-06-10",
+    //       deadline: "2021-07-19",
+    //       current_state: "Not Started",
+    //       progress: 20,
+    //       time_estimate: 5,
+    //       difficulty: "Very Easy",
+    //       id:1,
+    //       labels:[]
+    //     },{
+    //       owner: 0,
+    //       title: "test2",
+    //       description: "test des",
+    //       creation_date: "2021-06-18",
+    //       deadline: "2021-07-10",
+    //       current_state: "Not Started",
+    //       progress: 20,
+    //       time_estimate: 5,
+    //       difficulty: "Very Easy",
+    //       id:2,
+    //       labels:[]
+    //     }]
+    //   }
+    // ))
   }
   onPanelChange = (value)=>{
     // set task event
@@ -121,8 +124,28 @@ class CalendarCom extends Component{
     //   }
     // }
   }
-  onSelect = (e)=>{
-    console.log(e);
+  onSelect = (value)=>{
+    let listData = [];
+    let tasks = this.state.taskLists;
+    for(let i = 0; i < tasks.length;i++) {
+      let end = new Date(tasks[i].deadline);
+      end.setDate(end.getDate()+1);
+      end.setHours(0);
+      let start = new Date(tasks[i].creation_date);
+      start.setHours(0);
+      value._d .setHours(0);
+      if(start <= value._d && end >= value._d ) {
+        listData.push(tasks[i]);
+      }
+    }
+    console.log(listData);
+    this.setState(()=>(
+      {
+        selectedList:listData,
+        show:true
+      }
+    ))
+
   }
   render(){
     return (
@@ -132,7 +155,7 @@ class CalendarCom extends Component{
             <Modal.Header>
             <Modal.Title>My Tasks</Modal.Title>
             </Modal.Header>
-            <Modal.Body>{this.state.taskLists.map((task) => {
+            <Modal.Body>{this.state.selectedList.map((task) => {
             return <TaskCard key={task.id} task={task}/>})}</Modal.Body>
             <Modal.Footer>
             <Button variant="secondary" onClick={this.handleClose}>
