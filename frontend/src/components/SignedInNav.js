@@ -17,6 +17,7 @@ const SignedInNav = () => {
       <div className='sign_bar_opt'>
         <Nav className="ml-auto">
           <Nav.Link href="profile">Profile</Nav.Link>
+          <Nav.Link href="calendar">Calendar</Nav.Link>
         </Nav>
         <Collaboration history = {history}/>
       </div>

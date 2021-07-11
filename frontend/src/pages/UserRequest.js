@@ -9,6 +9,9 @@ import './UserRequest.css'
 class UserRequest extends Component{
     constructor(props) {
         super(props);
+        if (store.getState() === undefined || store.getState().id === "") {
+            this.props.history.push('/home')
+        }
         // get id
         const id = Number(store.getState().id);
         this.state = {
