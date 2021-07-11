@@ -5,7 +5,8 @@ import { Component } from 'react';
 import TaskCard from '../components/TaskCard';
 import './CalendarCom.css'
 import { Button, Modal } from 'react-bootstrap';
-
+import axios from 'axios'
+import store from '../store';
 
 class CalendarCom extends Component{
   constructor(props){
