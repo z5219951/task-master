@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import axios from 'axios'
 
 const ViewProfile = (props) => {
   const history = useHistory()
@@ -9,12 +10,12 @@ const ViewProfile = (props) => {
   function backClick () {
     history.goBack()
   }
-
+/*
   useEffect(() => {
     setUser({'id': '1', 'username': 'abcdefgh', 'password': 'Abc123', 'email': 'abcd@gmail.com', 'first_name': 'abcd', 'last_name': 'efgh', 'phone_number': '0123', 'company': ''})
   },[])
 
-  /*
+  */
   useEffect(() => {
     axios.defaults.crossDomain=true;
     axios.get(`http://localhost:5000/user/${id}`).then((res) => {
@@ -23,7 +24,7 @@ const ViewProfile = (props) => {
       // console.log(user)
     })
   },[])
-*/
+
   return(
     <>
      <div className='padding'> 

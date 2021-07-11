@@ -24,7 +24,11 @@ import Groups from './pages/Groups';
 import CreateGroup from './pages/CreateGroup';
 import ViewProfile from './pages/ViewProfile'
 import TestPage from './pages/TestPage';
+<<<<<<< HEAD
 import CalendarCom from './pages/CalendarCom';
+=======
+import TaskSearchResult from './pages/TaskSearchResult'
+>>>>>>> 4b384a1f5bbe03cb35c771b5827a8ee1e5863a65
 
 function App() {
 
@@ -51,6 +55,7 @@ function App() {
         <Route path='/viewprofile' exact component={ViewProfile} />
         <Route path='/testpage' exact component={TestPage} />
         <Route path='/calendar' exact component={CalendarCom} />
+        <Route path='/taskSearchResult' exact component={TaskSearchResult} />
         <Route path='/' component={Home} />
       </Switch>
     </>

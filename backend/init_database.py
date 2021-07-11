@@ -42,12 +42,10 @@ if __name__ == '__main__':
                 description     text        not null,
                 creation_date   text        not null,
                 deadline        text        ,
-                labels          text        ,
+                labels          array        ,
                 current_state   text        not null,
-                progress        integer     ,
                 time_estimate   integer     ,
-                difficulty      text        ,
-                assigned_to     integer     not null,
+                assigned_to     integer     ,
                 foreign key     (owner)     references users (id)
             );
             """

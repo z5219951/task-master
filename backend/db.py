@@ -130,13 +130,13 @@ def insertUser(username, password, email, first_name, last_name, phone_number, c
     c.close()
     conn.close()
 
-def createTask(owner, title, description, creation_date, deadline, current_state, progress, time_estimate, difficulty):
+def createTask(owner, title, description, creation_date, deadline, current_state, time_estimate, labels):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
 
     query = f"""
-            INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, progress, time_estimate, difficulty)
-            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{progress}', '{time_estimate}', '{difficulty}');
+            INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, time_estimate, labels)
+            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{time_estimate}', '{labels}');
             """
     c.execute(query)
     conn.commit()
@@ -161,12 +161,11 @@ def getTasks(owner):
     c = conn.cursor()
 
     query = f"""
-            SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate, difficulty
+            SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate
             FROM    tasks
             WHERE   owner = '{owner}';
             """
 
-    print(query)
     c.execute(query)
     data = c.fetchone()
     task_list = []
@@ -181,14 +180,12 @@ def getTasks(owner):
             'deadline': f'{data[5]}',
             'labels': f'{data[6]}',
             'current_state': f'{data[7]}',
-            'progress': f'{data[8]}',
-            'time_estimate': f'{data[9]}',
-            'difficulty': f'{data[10]}'
+            'time_estimate': f'{data[8]}',
         }
         task_list.append(task_info)
         data = c.fetchone()
 
-    print(task_list)
+    # print(task_list)
 
     c.close()
     conn.close()
@@ -240,7 +237,7 @@ def recoveryMatch(recovery):
     count = c.fetchone()[0]
     c.close()
     conn.close()
-    print(count)
+    #print(count)
     return count
 
 def updateRecovery(recovery, email):
@@ -259,7 +256,6 @@ def updateRecovery(recovery, email):
 ### Friend database functions ### 
 def friendRequestAdd(user_from, user_to):
     # Check that users from args exists
-    print("in add")
     user = getUserByID(user_from)
     if user == []:
         return False
@@ -316,8 +312,7 @@ def friendRequestGet(email):
             "userName"   : userInfo["first_name"] + " " +
                            userInfo["last_name"]
         }
-        
-    requests_list.append(userJson)
+        requests_list.append(userJson)
     
     return requests_list
     
@@ -367,14 +362,15 @@ def searchUsers(needle):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
     
+    needle = needle.lower()
     query = f"""
             SELECT  *
             FROM    users
-            WHERE   email = '{needle}'
-            or      first_name = '{needle}'
-            or      last_name = '{needle}'
+            WHERE   lower(email) = '{needle}'
+            or      lower(first_name) = '{needle}'
+            or      lower(last_name) = '{needle}'
             or      phone_number = '{needle}'
-            or      company = '{needle}';
+            or      lower(company) = '{needle}';
             """
     
     c.execute(query)
@@ -389,8 +385,8 @@ def searchUsers(needle):
         query = f"""
         SELECT  *
         FROM    users
-        WHERE   first_name = '{first_name}'
-        AND     last_name = '{last_name}'
+        WHERE   lower(first_name) = '{first_name}'
+        AND     lower(last_name) = '{last_name}'
         """
         
         c.execute(query)
