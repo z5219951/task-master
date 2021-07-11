@@ -42,7 +42,7 @@ if __name__ == '__main__':
                 description     text        not null,
                 creation_date   text        not null,
                 deadline        text        ,
-                labels          text        ,
+                labels          array        ,
                 current_state   text        not null,
                 time_estimate   integer     ,
                 assigned_to     integer     ,

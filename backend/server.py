@@ -175,7 +175,7 @@ class Users(Resource):
         parser.add_argument('email', required=True)
         parser.add_argument('new_password', required=True)
         args = parser.parse_args()
-        print(args)
+        #print(args)
 
         updatePassword(args.email, args.new_password)
         return {'value': True},200
@@ -314,9 +314,7 @@ task_payload = api.model('task', {
     "creation_date": fields.String,
     "deadline": fields.String,
     "current_state": fields.String,
-    "progress": fields.Integer,
     "time_estimate": fields.Integer,
-    "difficulty": fields.String
 })
 
 @api.route('/create_task', methods=['POST'])
@@ -332,15 +330,13 @@ class Users(Resource):
         parser.add_argument('description', required=True)
         parser.add_argument('creation_date', required=True)
         parser.add_argument('deadline', required=False)
-        # parser.add_argument('labels', required=False)
+        parser.add_argument('labels', required=False)
         parser.add_argument('current_state', required=False, default='Not Started')
-        parser.add_argument('progress', required=False, default=0)
         parser.add_argument('time_estimate', required=False)
-        parser.add_argument('difficulty', required=False)
         args = parser.parse_args()
-        # print(args)
+        #print(args)
 
-        id = createTask(args.owner, args.title, args.description, args.creation_date, args.deadline, args.current_state, args.progress, args.time_estimate, args.difficulty)
+        id = createTask(args.owner, args.title, args.description, args.creation_date, args.deadline, args.current_state, args.time_estimate, args.labels)
 
         return {'id': id},200
 
@@ -382,11 +378,11 @@ class Users(Resource):
         parser.add_argument('description')
         parser.add_argument('creation_date')
         parser.add_argument('deadline')
-        # parser.add_argument('labels')
+        parser.add_argument('labels')
         parser.add_argument('current_state')
         parser.add_argument('time_estimate')
         args = parser.parse_args()
-        # print(args)
+        print(args)
 
         id = args.id
         owner = args.owner
@@ -394,10 +390,9 @@ class Users(Resource):
         description = args.description
         creation_date = args.creation_date
         deadline = args.deadline
-        # labels = args.labels
+        labels = args.labels
         current_state = args.current_state
         time_estimate = args.time_estimate
-
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
@@ -408,6 +403,7 @@ class Users(Resource):
                         description = '{description}',
                         creation_date = '{creation_date}',
                         deadline = '{deadline}',
+                        labels = '{labels}',
                         current_state = '{current_state}',
                         time_estimate = '{time_estimate}'
                 WHERE   id = '{id}';
