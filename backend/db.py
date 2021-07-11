@@ -130,13 +130,13 @@ def insertUser(username, password, email, first_name, last_name, phone_number, c
     c.close()
     conn.close()
 
-def createTask(owner, title, description, creation_date, deadline, current_state, progress, time_estimate, difficulty):
+def createTask(owner, title, description, creation_date, deadline, current_state, time_estimate, labels):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
 
     query = f"""
-            INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, time_estimate)
-            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{time_estimate}');
+            INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, time_estimate, labels)
+            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{time_estimate}', '{labels}');
             """
     c.execute(query)
     conn.commit()
@@ -166,7 +166,6 @@ def getTasks(owner):
             WHERE   owner = '{owner}';
             """
 
-    print(query)
     c.execute(query)
     data = c.fetchone()
     task_list = []
@@ -186,7 +185,7 @@ def getTasks(owner):
         task_list.append(task_info)
         data = c.fetchone()
 
-    print(task_list)
+    # print(task_list)
 
     c.close()
     conn.close()
@@ -238,7 +237,7 @@ def recoveryMatch(recovery):
     count = c.fetchone()[0]
     c.close()
     conn.close()
-    print(count)
+    #print(count)
     return count
 
 def updateRecovery(recovery, email):

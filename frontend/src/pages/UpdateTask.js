@@ -3,6 +3,8 @@ import axios from 'axios';
 import store from '../store';
 import { useHistory } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
+import CreatableSelect from 'react-select/creatable';
+import Select from 'react-select';
 
 const UpdateTask = (props) => {
   
@@ -15,13 +17,11 @@ const UpdateTask = (props) => {
   const [startD, setStartD] = useState('');
   const [dueD, setDueD] = useState('');
   const [cState, setCState] = useState('');
-  const [difficulty, setDifficulty] = useState('');
   const [startDAlert, setStartDAlert] = useState('')
   const [dueDAlert, setDueDAlert] = useState('')
   const [timeEst, setTimeEst] = useState('')
-  const [progress, setProgress] = useState('')
   const [show, setShow] = useState(false);
-
+  const [labels, setLabels] = useState('')
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -81,6 +81,19 @@ const UpdateTask = (props) => {
       </div>
       <h3>Please enter the fields you wish to update</h3>
       <br/>
+      <div className="form-group row mb-5">
+          <label htmlFor="cState" className="col-sm-3 col-form-label">Update Completion State</label>
+          <div className="col-sm-5">
+            <select className="form-control input-sm" id="state" type="text" onChange={(e) => setCState(e.target.value)}>
+              <option value=''></option>
+              <option>Not Started</option>
+              <option>In Progress</option>
+              <option>Blocked</option>
+              <option>Completed</option>
+            </select>
+            &nbsp;&nbsp;Current Completion State - {task.current_state}
+          </div>
+        </div>
       <div className="form">
         <div className="form-group row mb-5">
           <label htmlFor="name" className="col-sm-3 col-form-label">Update Task Name</label>
@@ -112,19 +125,7 @@ const UpdateTask = (props) => {
             &nbsp;&nbsp;Current Time Estimate - {task.time_estimate} hours
           </div>
         </div>
-        <div className="form-group row mb-5">
-          <label htmlFor="cState" className="col-sm-3 col-form-label">Update Completion State</label>
-          <div className="col-sm-5">
-            <select className="form-control input-sm" id="state" type="text" onChange={(e) => setCState(e.target.value)}>
-              <option value=''></option>
-              <option>Not Started</option>
-              <option>In Progress</option>
-              <option>Blocked</option>
-              <option>Completed</option>
-            </select>
-            &nbsp;&nbsp;Current Completion State - {task.current_state}
-          </div>
-        </div>
+        <br/>
         <button type="button" className="btn btn-primary" onClick={(e) => handleSubmit()}>Submit</button>
       </div>
       <Modal animation={false} show={show} onHide={handleClose}>
