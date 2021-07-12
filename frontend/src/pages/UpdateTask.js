@@ -24,6 +24,9 @@ const UpdateTask = (props) => {
   const [labels, setLabels] = useState('')
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [friends, setFriends] = useState([{label: 'Myself', value:''}])
+  const [assigned_to, setAssigned_to] = useState('')
+  const [assigned, setAssigned] = useState('')
 
   // Get task
   const [task, setTask] = useState('')
@@ -36,6 +39,17 @@ const UpdateTask = (props) => {
           setTask(taskList[i])
         }
       }
+    })
+    // test
+    /*
+    Obtain connected users
+    axios.get(`http://localhost:5000/getFriends/${store.getState().id}`).then((res) => {
+      // temp = JSON.parse(res.data)
+    })
+    */
+    const temp = [{'id': '1', 'username': 'gavin', 'password': 'Testing123', 'email': '1105282259@qq.com', 'first_name': 'Gavin', 'last_name': 'Wang', 'phone_number': '54321', 'company': '321'}, {'id': '2', 'username': 'gavin', 'password': 'Testing123', 'email': '1@gmail.com', 'first_name': 'Gavin', 'last_name': 'Wang', 'phone_number': '54321', 'company': '321'}]
+    temp.map((user) => {
+      setFriends(friends => [...friends,{'value': user.id, 'label': user.email}])
     })
   }, [])
 
@@ -58,6 +72,10 @@ const UpdateTask = (props) => {
     if (cState !== '') {
       updateTask.current_state = cState;
     }
+
+    if (assigned_to !== '') {
+      updateTask.assigned_to = assigned_to;
+    }
     
     setTask(updateTask)
     handleShow()
@@ -68,9 +86,22 @@ const UpdateTask = (props) => {
   useEffect(() => {
     if (Object.keys(task).length !== 0) {
       axios.put(`http://localhost:5000/tasks/update `, task)
-      console.log(task)
+      
+      if (task.assigned_to !== '' || task.assigned_to !== undefined) {
+        axios.get(`http://localhost:5000/user/${task.assigned_to}`).then((res) => {
+        setAssigned(JSON.parse(res.data).email)
+      })}
     } 
+
   },[task])
+
+  function handleAssigned(assigned) {
+    console.log(assigned)
+    setAssigned_to(assigned.value)
+    if (assigned.value === '') {
+      setAssigned_to(store.getState().id)
+    }
+  }
 
   return(
     <>
@@ -82,19 +113,26 @@ const UpdateTask = (props) => {
       <h3>Please enter the fields you wish to update</h3>
       <br/>
       <div className="form-group row mb-5">
-          <label htmlFor="cState" className="col-sm-3 col-form-label">Update Completion State</label>
-          <div className="col-sm-5">
-            <select className="form-control input-sm" id="state" type="text" onChange={(e) => setCState(e.target.value)}>
-              <option value=''></option>
-              <option>Not Started</option>
-              <option>In Progress</option>
-              <option>Blocked</option>
-              <option>Completed</option>
-            </select>
-            &nbsp;&nbsp;Current Completion State - {task.current_state}
+        <label htmlFor="cState" className="col-sm-3 col-form-label">Update Completion State</label>
+        <div className="col-sm-5">
+          <select className="form-control input-sm" id="state" type="text" onChange={(e) => setCState(e.target.value)}>
+            <option value=''></option>
+            <option>Not Started</option>
+            <option>In Progress</option>
+            <option>Blocked</option>
+            <option>Completed</option>
+          </select>
+          &nbsp;&nbsp;Current Completion State - {task.current_state}
+        </div>
+      </div>
+      <div className="form">
+        <div className="form-group row mb-5">
+          <label htmlFor="assign" className="col-sm-3 col-form-label">Assign Task</label>
+          <div className="col-md-6">
+            <Select placeholder='Search for a user to assign this task to' options={friends} onChange={(e) => handleAssigned(e)}/>
+            Currently assigned to - {assigned}
           </div>
         </div>
-      <div className="form">
         <div className="form-group row mb-5">
           <label htmlFor="name" className="col-sm-3 col-form-label">Update Task Name</label>
           <div className="col-sm-5">

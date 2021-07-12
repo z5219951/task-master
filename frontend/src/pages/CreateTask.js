@@ -20,6 +20,8 @@ const CreateTask = () => {
   const [owner, setOwner] = useState('')
   const [labels, setLabels] = useState('')
   const [existingLabels, setExistingLabels] = useState('')
+  const [friends, setFriends] = useState([{label: 'Myself', value:''}])
+  const [assigned_to, setAssigned_to] = useState('')
 
   var today = new Date();
   const currentDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
@@ -49,8 +51,12 @@ const CreateTask = () => {
     }
     const options = []
 
+    if (assigned_to === "") {
+      setAssigned_to(store.getState().id)
+    }
+
     // Create task object and push it to server
-    const task = {title: name, description: description, creation_date: currentDate, deadline: dueD, time_estimate: timeEst, current_state: cState, owner: owner, labels: labels}
+    const task = {title: name, description: description, creation_date: currentDate, deadline: dueD, time_estimate: timeEst, current_state: cState, owner: owner, labels: labels, assigned_to: assigned_to}
     console.log(task)
     axios.defaults.crossDomain=true;
     axios.post('http://localhost:5000/create_task', task).then(()=>{
@@ -62,12 +68,18 @@ const CreateTask = () => {
   useEffect(() => {
     setOwner(store.getState().id)
     // test
+    /*
+    Obtain connected users
+    axios.get(`http://localhost:5000/getFriends/${store.getState().id}`).then((res) => {
+      // temp = JSON.parse(res.data)
+    })
+    */
     setExistingLabels([{label:'frontend', value:'frontend'},{label:'backend', value:'backend'}])
+    const temp = [{'id': '1', 'username': 'gavin', 'password': 'Testing123', 'email': 'abc@gmail.com', 'first_name': 'Gavin', 'last_name': 'Wang', 'phone_number': '54321', 'company': '321'}, {'id': '2', 'username': 'gavin', 'password': 'Testing123', 'email': '1@gmail.com', 'first_name': 'Gavin', 'last_name': 'Wang', 'phone_number': '54321', 'company': '321'}]
+    temp.map((user) => {
+      setFriends(friends => [...friends,{'value': user.id, 'label': user.email}])
+    })
   }, [])
-
-  useEffect(() => {
-    console.log(labels)
-  }, [labels])
 
   // Obtain existing labels
   /*
@@ -80,6 +92,14 @@ const CreateTask = () => {
     setLabels(JSON.stringify(labels))
     // Post new labels
     //axios.post(`http://localhost:5000/labels/${store.getState().id}`)
+  }
+
+  function handleAssigned(assigned) {
+    console.log(assigned)
+    setAssigned_to(assigned.value)
+    if (assigned.value === '') {
+      setAssigned_to(store.getState().id)
+    }
   }
 
   return(
@@ -120,7 +140,7 @@ const CreateTask = () => {
         <div className="form-group">
           <div className="col-md-6">
             <label htmlFor="assign">Assign Task</label>
-            <Select placeholder='Search for a user to assign this task to' options={existingLabels}/>
+            <Select placeholder='Search for a user to assign this task to' options={friends} onChange={(e) => handleAssigned(e)}/>
           </div>
         </div>
         <div className="form-group">

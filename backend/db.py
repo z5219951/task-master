@@ -130,13 +130,13 @@ def insertUser(username, password, email, first_name, last_name, phone_number, c
     c.close()
     conn.close()
 
-def createTask(owner, title, description, creation_date, deadline, current_state, time_estimate, labels):
+def createTask(owner, title, description, creation_date, deadline, current_state, time_estimate, labels, assigned_to):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
 
     query = f"""
-            INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, time_estimate, labels)
-            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{time_estimate}', '{labels}');
+            INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, time_estimate, labels, assigned_to)
+            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{time_estimate}', '{labels}', '{assigned_to}');
             """
     c.execute(query)
     conn.commit()
@@ -161,7 +161,7 @@ def getTasks(owner):
     c = conn.cursor()
 
     query = f"""
-            SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate
+            SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
             FROM    tasks
             WHERE   owner = '{owner}';
             """
@@ -181,6 +181,7 @@ def getTasks(owner):
             'labels': f'{data[6]}',
             'current_state': f'{data[7]}',
             'time_estimate': f'{data[8]}',
+            'assigned_to': f'{data[9]}'
         }
         task_list.append(task_info)
         data = c.fetchone()
