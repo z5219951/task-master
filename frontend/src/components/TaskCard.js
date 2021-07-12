@@ -65,7 +65,7 @@ const TaskCard = (props) => {
       setUpdateLabel(true)
     }
     // Post new labels
-    //axios.post(`http://localhost:5000/labels/${store.getState().id}`)
+    //axios.post(`http://localhost:5000/labels/${store.getState().id}`, labels)
   }
 
   return (<>

@@ -32,8 +32,8 @@ const UpdateTask = (props) => {
   const [task, setTask] = useState('')
   const taskID = props.location.state.id;
   useEffect(() => {
-    axios.get(`http://localhost:5000/user/${store.getState().id}/tasks`).then((res) => {
-      const taskList = JSON.parse(res.data).tasks;
+    axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
+      const taskList = JSON.parse(res.data);
       for (let i = 0; i < taskList.length; i++) {
         if (taskList[i].id === taskID) {
           setTask(taskList[i])
