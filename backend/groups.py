@@ -62,7 +62,11 @@ class Users(Resource):
                 """
         c.execute(query)
 
-        name = c.fetchone()[0]
+        try:
+            name = c.fetchone()[0]
+        except:
+            return {'value': False}
+            
         print(f'name fetched is: {name}')
         group_list = []
 
