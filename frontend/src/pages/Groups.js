@@ -18,7 +18,8 @@ class Groups extends Component{
         try {
             const userId = store.getState().id;
             // send id to get group information
-            axios.get('http://localhost:5000/groups_information').then((res)=>{
+            axios.defaults.crossDomain=true;
+            axios.get('http://localhost:5000/groups/'+userId).then((res)=>{
             // store the user id in store
             console.log(res)
             // const result = JSON.parse(res.data);
