@@ -6,3 +6,9 @@ Organised jira board, wrote some user stories.
 
 Week 3:
 Created the flow diagram for the report, got started on backend development.
+
+Week 4:
+Wrote most of the python backend, assisted with preparing for the demonstration by linking it with the frontend.
+
+Week 5:
+Continued working on development. Development is going very smoothly and on schedule according to the Jira taskboard.
