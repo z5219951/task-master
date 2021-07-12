@@ -13,3 +13,6 @@ Me and Wayne finish the frontend part in Sprint1. I finish user story CWC-36,37,
 
 Week5
 Me and Wayne check our backend port is working for our frontend page. I start writing our frontend page about cwc-50,47.
+
+Week6
+Participating our group meeting. As usual, me and Wayne check our backend port is working for our frontend page. I start writing our frontend page about cwc-71,46,72,63,52,48.

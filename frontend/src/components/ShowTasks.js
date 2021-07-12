@@ -28,6 +28,10 @@ const ShowTasks = (props) => {
       setFilter(state.value)
       setAll(false)
     }
+    if (state.value === 'Blocked') {
+      setFilter(state.value)
+      setAll(false)
+    }
 
   }
 

@@ -51,6 +51,7 @@ class Users(Resource):
                 VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}');
                 """
         c.execute(query)
+        print(query)
 
         query = f"""
                 SELECT  id
