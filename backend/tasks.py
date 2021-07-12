@@ -17,8 +17,12 @@ task_payload = api.model('task', {
     "description": fields.String,
     "creation_date": fields.String,
     "deadline": fields.String,
+    # "labels": fields.String,
     "current_state": fields.String,
+    "progress": fields.Integer,
     "time_estimate": fields.Integer,
+    "difficulty": fields.String,
+    "assigned": fields.String
 })
 
 @api.route('/create', methods=['POST'])
@@ -34,9 +38,12 @@ class Users(Resource):
         parser.add_argument('description', required=True)
         parser.add_argument('creation_date', required=True)
         parser.add_argument('deadline', required=False)
-        parser.add_argument('labels', required=False)
+        # parser.add_argument('labels', required=False)
         parser.add_argument('current_state', required=False, default='Not Started')
+        parser.add_argument('progress', required=False)
         parser.add_argument('time_estimate', required=False)
+        parser.add_argument('difficulty', required=False)
+        parser.add_argument('assigned', required=False)
         args = parser.parse_args()
         #print(args)
 
@@ -44,8 +51,8 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, time_estimate, labels)
-                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.current_state}', '{args.time_estimate}', '{args.labels}');
+                INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, progress, time_estimate, difficulty, assigned)
+                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.current_state}', '{args.progress}', '{args.time_estimate}', '{args.difficulty}', '{args.assigned}');
                 """
         c.execute(query)
 
@@ -110,6 +117,50 @@ class Users(Resource):
         return json.dumps(task_list)
 
 
+# get all tasks assigned to a user
+@api.route('/assigned/<int:owner>', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully retrieved task info')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Gets all tasks assigned to a user")
+    def get(self, owner):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate
+                FROM    tasks
+                WHERE   owner = '{owner}'
+                OR      assigned = '{owner}';
+                """
+
+        c.execute(query)
+        data = c.fetchone()
+        task_list = []
+
+        while (data is not None):
+            task_info = {
+                'id': f'{data[0]}',
+                'owner': f'{data[1]}',
+                'title': f'{data[2]}',
+                'description': f'{data[3]}',
+                'creation_date': f'{data[4]}',
+                'deadline': f'{data[5]}',
+                'labels': f'{data[6]}',
+                'current_state': f'{data[7]}',
+                'time_estimate': f'{data[8]}',
+            }
+            task_list.append(task_info)
+            data = c.fetchone()
+
+        # print(task_list)
+
+        c.close()
+        conn.close()
+
+        return json.dumps(task_list)
+
+
 # update task info
 update_payload = api.model('update info', {
     "id": fields.String,
@@ -122,7 +173,8 @@ update_payload = api.model('update info', {
     "current_state": fields.String,
     "progress": fields.Integer,
     "time_estimate": fields.Integer,
-    "difficulty": fields.String
+    "difficulty": fields.String,
+    "assigned": fields.String
 })
 
 @api.route('/update', methods=['PUT'])
@@ -144,6 +196,7 @@ class Users(Resource):
         parser.add_argument('progress')
         parser.add_argument('time_estimate')
         parser.add_argument('difficulty')
+        parser.add_argument('assigned')
         args = parser.parse_args()
         # print(args)
 
@@ -151,7 +204,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                UPDATE  users
+                UPDATE  tasks
                 SET     owner = '{args.owner}',
                         title = '{args.title}',
                         description = '{args.description}',
@@ -161,6 +214,7 @@ class Users(Resource):
                         progress = '{args.progress}'
                         time_estimate = '{args.time_estimate}'
                         difficulty = '{args.difficulty}'
+                        assigned = '{args.assigned}'
                 WHERE   id = '{args.id}';
                 """
         try:

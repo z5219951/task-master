@@ -45,8 +45,9 @@ if __name__ == '__main__':
                 labels          array        ,
                 current_state   text        not null,
                 time_estimate   integer     ,
-                assigned_to     integer     ,
+                assigned        integer     ,
                 foreign key     (owner)     references users (id)
+                foreign key     (assigned)  references users (id)
             );
             """
     c.execute(query)
