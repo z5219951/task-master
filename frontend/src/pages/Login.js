@@ -1,4 +1,4 @@
-import React, {useContext, Component, Fragment} from 'react'
+import React, { Component, Fragment} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
 import axios from 'axios'
@@ -76,6 +76,12 @@ class Login extends Component{
               value: "true"
             }
             store.dispatch(logged_in);
+            // set user email
+            const userEmail = {
+              type: 'user_email',
+              value: this.state.email
+            }
+            store.dispatch(userEmail);
             this.props.history.push('./taskboard');
           } else {
             // incorrect password

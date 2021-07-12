@@ -10,3 +10,19 @@ proposed user stories, made minor edits as most was already complete.
 Week 2:
 Participated in the weekly meeting, and wrote a minutes report for the meeting.
 Primarily worked on the project proposal - formatting, background research. 
+
+Week 3:
+Participated in the weekly meeting, and wrote a minutes report for the meeting.
+For the report, linked the user stories to project objects. Formatted the 
+completed report in latex. 
+Began looking into software stack.
+
+Week 4:
+Participated in the weekly meeting, and wrote a minutes report for the meeting.
+Made some progress on a task creation backend for the demostration next week, 
+however failed to complete it in time due to unfamiliarity with the flask-restx 
+api, using SQL databases, and the react frontend.
+
+Week 4:
+Participated in the weekly meeting, and wrote a minutes report for the meeting.
+Started and completed backend for the friends feature CWC47, CWC50.

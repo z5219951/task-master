@@ -13,3 +13,8 @@ Also written descriptions to those storyboards. Added a couple of user stories a
 Week 4
 Implemented the front end for the taskboard, a task creation page, a profile page and an update profile page covering user stories 
 cwc-51, cwc-68, cwc-39, and cwc-40.
+
+Week 5
+Worked on linking the front and back end ports with Charles and Justin and presented with Charles in progressive demo A.
+Also reworked the update profile page from a page with multiple buttons to a form, and implemented the update task 
+and view profile screen.

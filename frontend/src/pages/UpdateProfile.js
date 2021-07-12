@@ -2,43 +2,192 @@ import './Padding.css'
 import UpdateDetail from './UpdateDetail.js'
 import { useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
+import store from '../store';
+import axios from 'axios';
+import Card from "react-bootstrap/Card";
+import './Profile.css'
+import { Button, Modal } from 'react-bootstrap';
 
 const Profile = () => {
   const history = useHistory();
-  const [showDetail, setShowDetail] = useState(false)
-  const [detailProp, setDetailProp] = useState('')
-  const [labelProp, setLabelProp] = useState('')
-  
+  const [user, setUser] = useState({})
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [companyName, setCompanyName] = useState('')
+  const [removeNumber, setRemoveNumber] = useState(false)
+  const [removeCompany, setRemoveCompany] = useState(false)
+  const [passwordAlert, setPasswordAlert] = useState('')
+  const [show, setShow] = useState(false);
+
   function backClick () {
     history.push('./profile')
   }
 
-  function handleChange (detail, label) {
-    setShowDetail(true)
-    setDetailProp(detail)
-    setLabelProp(label)
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const currentUser = store.getState().id;
+  useEffect(() => {
+    axios.defaults.crossDomain=true;
+    axios.get('http://localhost:5000/user/'+currentUser).then((res) => {
+    setUser(JSON.parse(res.data))
+    }).then(() => {
+    })
+  },[])
+
+  function handleSubmit () {
+    if (currentPassword !== '' && newPassword !== '' && confirmPassword !== '') {
+      if (currentPassword !== user.password) {
+        setPasswordAlert('Incorrect Current Password')
+        return
+      }
+      if (newPassword !== confirmPassword) {
+        setPasswordAlert('New password and confirm password fields do not match!')
+        return
+      }
+      if (currentPassword === user.password && newPassword === confirmPassword) {
+        const testPass = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{6,16}$/
+        if (!testPass.test(newPassword)){
+          setPasswordAlert('New password must be alphanumeric, have at least one lower case and upper case letter, and one number with a total length of 6-16 characters')
+          return
+        }
+        const updateDet = {...user}; // Copy user into updateDet
+        console.log(updateDet)
+        updateDet.password = newPassword; // Change selected field
+        setUser(updateDet); //Set user
+        setPasswordAlert('')
+      }
+    } else if (currentPassword !== '' || newPassword !== '' || confirmPassword !== '') {
+      setPasswordAlert('Please fill every password field before submitting')
+      return
+    }
+
+    const updateDet = {...user}; // Copy user into updateDet
+
+    if (firstName !== '') {
+      updateDet.first_name = firstName; // Change selected field
+    }
+
+    if (lastName !== '') {
+      updateDet.last_name = lastName; // Change selected field
+    }
+    
+    if (removeNumber === true) {
+      updateDet.phone_number = ''; // Change selected field
+    }
+
+    if (removeNumber === false && phoneNumber !== '') {
+      updateDet.phone_number = phoneNumber; // Change selected field
+    }
+
+    if (removeCompany === true) {
+      updateDet.company = ''; // Change selected field
+    }
+
+    if (removeCompany === false && companyName !== '') {
+      updateDet.company = companyName; // Change selected field
+    }
+    
+    setUser(updateDet); //Set user
+    handleShow()
+
   }
+
+  function handleRemoveNumber () {
+    if (removeNumber === false) {
+      setRemoveNumber(true)
+    } else {
+      setRemoveNumber(false)
+    }
+  }
+
+  function handleRemoveCompany () {
+    if (removeCompany === false) {
+      setRemoveCompany(true)
+    } else {
+      setRemoveCompany(false)
+    }
+  }
+
+  useEffect(() => {
+    if (Object.keys(user).length !== 0) {
+      axios.put(`http://localhost:5000/update `, user)
+      console.log(user)
+    } 
+  }, [user])
 
   return (
     <>
     <div className='padding'> 
-      <div class="row">
-          <h1 class="col">Update your Profile</h1>
-          <button class="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
+    <div className="row">
+        <h1 className="col">Update your Profile</h1>
+        <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
+        <h3>Please enter the fields you wish to update</h3>
       <br/>
-      <div class="btn-group mr-2" role="group" aria-label="Button group example">
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('email', 'Email')}>Change email</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('password', 'Password')}>Change password</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('username', 'Username')}>Change username</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('first_name', 'First Name')}>Change first name</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('last_name', 'Last Name')}>Change last name</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('phone_number', 'Phone Number')}>Change phone number</button>
-        <button class="btn btn-primary btn-lg" onClick={() => handleChange('company', 'Company Name')}>Change company name</button>
+      <div className="form">
+      <div className="form-group row mb-5">
+          <label htmlFor="password" className="col-sm-3 col-form-label">Update Password</label>
+          <div className="col-sm-5">
+            <input type="password" className="form-control" id="currentPassword" placeholder="Current Password" onChange={(e) => setCurrentPassword(e.target.value)}></input>
+            <input type="password" className="form-control" id="newPassword" placeholder="New Password" onChange={(e) => setNewPassword(e.target.value)}></input>
+            <input type="password" className="form-control" id="confirmPassword" placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)}></input>
+            <font color="red">{passwordAlert}</font>
+          </div>
+        </div>
+        <div className="form-group row mb-5">
+          <label htmlFor="firstName" className="col-sm-3 col-form-label">Update First Name</label>
+          <div className="col-sm-5">
+            <input type="text" className="form-control" id="firstName" placeholder="First Name" onChange={(e) => setFirstName(e.target.value)}></input>
+            &nbsp;&nbsp;Current First Name - {user.first_name}
+          </div>
+        </div>
+        <div className="form-group row mb-5">
+          <label htmlFor="lastName" className="col-sm-3 col-form-label">Update Last Name</label>
+          <div className="col-sm-5">
+            <input type="text" className="form-control" id="lastName" placeholder="Last Name" onChange={(e) => setLastName(e.target.value)}></input>
+            &nbsp;&nbsp;Current Last Name - {user.last_name}
+          </div>
+        </div>
+        <div className="form-group row mb-5">
+          <label htmlFor="phoneNumber" className="col-sm-3 col-form-label">Update Phone Number</label>
+          <div className="col-sm-5">
+          <input type="text" className="form-control" id="phoneNumber" placeholder="Phone Number" onChange={(e) => setPhoneNumber(e.target.value)}></input>
+            &nbsp;&nbsp;Current Phone Number - {user.phone_number ? user.phone_number : 'Not entered'}
+          </div>
+          <div className="col-sm-3">
+            <input type="checkbox" id="noPhone" name="noPhone" checked={removeNumber} onChange={(e) => handleRemoveNumber()}></input>&nbsp;
+            <label htmlFor="noPhone"> Remove my Number</label><br></br>
+          </div>
+        </div>
+        <div className="form-group row mb-5">
+          <label htmlFor="company" className="col-sm-3 col-form-label">Update Company</label>
+          <div className="col-sm-5">
+            <input type="text" className="form-control" id="company" placeholder="Company"  onChange={(e) => setCompanyName(e.target.value)}></input>
+            &nbsp;&nbsp;Current Company Name - {user.company ? user.company : 'Not entered'}
+          </div>
+          <div className="col-sm-3">
+            <input type="checkbox" id="noCompany" name="noCompany" checked={removeCompany} onChange={(e) => handleRemoveCompany()}></input>&nbsp;
+            <label htmlFor="noCompany"> Remove my Company</label><br></br>
+          </div>
+        </div>
+        <button type="button" className="btn btn-primary" onClick={(e) => handleSubmit()}>Submit</button>
       </div>
-      <br/>
-      { showDetail ? <UpdateDetail detail={detailProp} label={labelProp}/>: null}
-    </div>
+      <Modal animation={false} show={show} onHide={handleClose}>
+        <Modal.Header>
+          <Modal.Title>Your Profile has been Updated!</Modal.Title>
+        </Modal.Header>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={(e) => handleClose()} >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      </div>
     </>
   )
 }

@@ -11,12 +11,13 @@ const SignedInNav = () => {
   return(
     <>
     <Navbar bg="dark" variant="dark">
-    <Navbar.Brand href="home">ClickDown</Navbar.Brand>
+    <Navbar.Brand href="taskboard">ClickDown</Navbar.Brand>
     <Navbar.Toggle aria-controls="basic-navbar-nav" />
     <Navbar.Collapse id="basic-navbar-nav">
       <div className='sign_bar_opt'>
         <Nav className="ml-auto">
           <Nav.Link href="profile">Profile</Nav.Link>
+          <Nav.Link href="calendar">Calendar</Nav.Link>
         </Nav>
         <Collaboration history = {history}/>
       </div>
