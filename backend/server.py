@@ -88,7 +88,19 @@ class Users(Resource):
 
         # at this point, all inputs should be valid
         # insert values into users table
-        insertUser(args.username, args.password, args.email, args.first_name, args.last_name, args.phone_number, args.company)
+        
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+                VALUES ('{args.username}', '{args.password}', '{args.email}', '{args.first_name}', '{args.last_name}', '{args.phone_number}', '{args.company}');
+                """
+        c.execute(query)
+
+        conn.commit()
+        c.close()
+        conn.close()
 
         return {'value': True}
 
@@ -118,16 +130,36 @@ class Users(Resource):
         
         recovery = -1
 
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
         # generate recovery code
         while True:
             recovery = ''.join([str(random.randint(0, 999)).zfill(3) for _ in range(2)])
             
-            count = recoveryMatch(recovery)
+            # is there a recovery code that matches?
+            query = f"""
+                SELECT  count(*)
+                FROM    users
+                WHERE   recovery = '{args.recovery}';
+                """
+            c.execute(query)
+            count = c.fetchone()[0]
 
             if (count == 0):
                 break
+        
+        # update in database
+        query = f"""
+                UPDATE  users
+                SET     recovery = '{recovery}'
+                WHERE   email = '{email}';
+                """
+        c.execute(query)
 
-        updateRecovery(email, recovery)
+        conn.commit()
+        c.close()
+        conn.close()
 
         # send email with code
         with app.app_context():
@@ -156,7 +188,20 @@ class Users(Resource):
         parser.add_argument('recovery', required=True)
         args = parser.parse_args()
 
-        count = recoveryMatch(args.recovery)
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # is there a recovery code that matches?
+        query = f"""
+                SELECT  count(*)
+                FROM    users
+                WHERE   recovery = '{args.recovery}';
+                """
+        c.execute(query)
+        count = c.fetchone()[0]
+
+        c.close()
+        conn.close()
 
         if (count != 1):
             return {'value': False}, 200
@@ -181,8 +226,22 @@ class Users(Resource):
         args = parser.parse_args()
         #print(args)
 
-        updatePassword(args.email, args.new_password)
-        return {'value': True},200
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # change the password and reset code
+        query = f"""
+                UPDATE  users
+                SET     password = '{args.new_password}', recovery = null
+                WHERE   email = '{args.email}';
+                """
+        c.execute(query)
+
+        conn.commit()
+        c.close()
+        conn.close()
+
+        return {'value': True}
 
 
 # TODO: redo function with proper login system
@@ -203,9 +262,23 @@ class Users(Resource):
         parser.add_argument('email', required=True)
         parser.add_argument('password', required=True)
         args = parser.parse_args()
+        
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
 
-        id = authCheck(args.email, args.password)
-        print(id)
+        # retrieve id using email and password
+        query = f"""
+                SELECT  id
+                FROM    users
+                WHERE   email = '{args.email}' and password = '{args.password}';
+                """
+        c.execute(query)
+        id = c.fetchone()
+        # print(id)
+
+        c.close()
+        conn.close()
+
         if (id is None):
             return json.dumps({'id':''}), 200
 
@@ -249,7 +322,4 @@ class Users(Resource):
 
 
 if __name__ == '__main__':
-    # params = config()
-    # conn = psycopg2.connect(**params)
-
     app.run(debug=True)

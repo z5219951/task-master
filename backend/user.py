@@ -68,15 +68,33 @@ class Users(Resource):
         parser.add_argument('company')
         args = parser.parse_args()
         # print(args)
+        
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
 
-        return updateUser(args.id, args.username, args.password, args.email, args.first_name, args.last_name, args.phone_number, args.company)
+        query = f"""
+                UPDATE  users
+                SET     username = '{args.username}',
+                        password = '{args.password}',
+                        email = '{args.email}',
+                        first_name = '{args.first_name}',
+                        last_name = '{args.last_name}',
+                        phone_number = '{args.phone_number}',
+                        company = '{args.company}'
+                WHERE   id = '{args.id}';
+                """
+        try:
+            c.execute(query)
+        except:
+            c.close()
+            conn.close()
+            # split up username and email later
+            return {'value': False}
 
+        conn.commit()
+        
+        c.close()
+        conn.close()
 
-# get all tasks for a user
-@api.route('/user/<int:owner>/tasks', methods=['GET'])
-class Users(Resource):
-    @api.response(200, 'Successfully retrieved task info')
-    @api.response(404, 'Not Found')
-    @api.doc(description="Gets all tasks for a user given their id")
-    def get(self, owner):
-        return json.dumps({'tasks': getTasks(owner)})
+        return {'value': True}
+

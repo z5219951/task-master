@@ -40,9 +40,74 @@ class Users(Resource):
         args = parser.parse_args()
         #print(args)
 
-        id = createTask(args.owner, args.title, args.description, args.creation_date, args.deadline, args.current_state, args.time_estimate, args.labels)
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, time_estimate, labels)
+                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.current_state}', '{args.time_estimate}', '{args.labels}');
+                """
+        c.execute(query)
+
+        query = f"""
+                SELECT  id
+                FROM    tasks
+                WHERE   owner = '{args.owner}'
+                AND     title = '{args.title}'
+                AND     description = '{args.description}'
+                AND     creation_date = '{args.creation_date}';
+                """
+        c.execute(query)
+        id = c.fetchone()[0]
+
+        conn.commit()
+        c.close()
+        conn.close()
 
         return {'id': id},200
+
+
+# get all tasks for a user
+@api.route('/<int:owner>', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully retrieved task info')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Gets all tasks for a user given their id")
+    def get(self, owner):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate
+                FROM    tasks
+                WHERE   owner = '{owner}';
+                """
+
+        c.execute(query)
+        data = c.fetchone()
+        task_list = []
+
+        while (data is not None):
+            task_info = {
+                'id': f'{data[0]}',
+                'owner': f'{data[1]}',
+                'title': f'{data[2]}',
+                'description': f'{data[3]}',
+                'creation_date': f'{data[4]}',
+                'deadline': f'{data[5]}',
+                'labels': f'{data[6]}',
+                'current_state': f'{data[7]}',
+                'time_estimate': f'{data[8]}',
+            }
+            task_list.append(task_info)
+            data = c.fetchone()
+
+        # print(task_list)
+
+        c.close()
+        conn.close()
+
+        return json.dumps(task_list)
 
 
 # update task info
@@ -66,7 +131,7 @@ class Users(Resource):
     @api.response(404, 'Not Found')
     @api.doc(description="Updates a task given its id")
     @api.expect(update_payload)
-    def put(self, id):
+    def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', required=True)
         parser.add_argument('owner')
@@ -82,40 +147,28 @@ class Users(Resource):
         args = parser.parse_args()
         # print(args)
 
-        id = args.id
-        owner = args.owner
-        title = args.title
-        description = args.description
-        creation_date = args.creation_date
-        deadline = args.deadline
-        # labels = args.labels
-        current_state = args.current_state
-        progress = args.progress
-        time_estimate = args.time_estimate
-        difficulty = args.difficulty
-
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
                 UPDATE  users
-                SET     owner = '{owner}',
-                        title = '{title}',
-                        description = '{description}',
-                        creation_date = '{creation_date}',
-                        deadline = '{deadline}',
-                        current_state = '{current_state}'
-                        progress = '{progress}'
-                        time_estimate = '{time_estimate}'
-                        difficulty = '{difficulty}'
-                WHERE   id = '{id}';
+                SET     owner = '{args.owner}',
+                        title = '{args.title}',
+                        description = '{args.description}',
+                        creation_date = '{args.creation_date}',
+                        deadline = '{args.deadline}',
+                        current_state = '{args.current_state}'
+                        progress = '{args.progress}'
+                        time_estimate = '{args.time_estimate}'
+                        difficulty = '{args.difficulty}'
+                WHERE   id = '{args.id}';
                 """
         try:
             c.execute(query)
         except:
             c.close()
             conn.close()
-            return {'value': False}, 200
+            return {'value': False}
         c.close()
         conn.close()
 
