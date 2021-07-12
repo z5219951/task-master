@@ -59,7 +59,6 @@ class CalendarCom extends Component{
   
   monthCellRender = (value)=> {
     const num = this.getMonthData(value);
-    console.log("month",value);
     return num ? (
       <div className="notes-month">
         <section>{num}</section>
@@ -79,7 +78,10 @@ class CalendarCom extends Component{
   componentDidMount(){
     // get task detail
     axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
-      const taskList = JSON.parse(res.data).tasks;
+      let taskList = JSON.parse(res.data);
+      if(!taskList) {
+        taskList = [];
+      }
       this.setState(()=>({
         taskLists:taskList
       }))
@@ -114,25 +116,9 @@ class CalendarCom extends Component{
     //   }
     // ))
   }
-  onPanelChange = (value)=>{
-    // set task event
-    // let tasks = this.state.taskLists;
-    // console.log("change", value);
-    // let selectedTask = [];
-    // const latest = this.state.latest;
-    // for(let i = 0; i < tasks.length;i++) {
-    //   const curr = new Date(tasks[i].deadline);
-    //   if(curr <=latest) {
-    //     selectedTask.push(tasks[i]);
-    //   }
-    // }
-  }
   onSelect = (value)=>{
     let listData = [];
     let tasks = this.state.taskLists;
-    if(!tasks) {
-      return;
-    }
     for(let i = 0; i < tasks.length;i++) {
       let end = new Date(tasks[i].deadline);
       end.setDate(end.getDate()+1);
@@ -145,6 +131,9 @@ class CalendarCom extends Component{
       }
     }
     console.log(listData);
+    if(!listData.length) {
+      return;
+    }
     this.setState(()=>(
       {
         selectedList:listData,
