@@ -42,12 +42,12 @@ if __name__ == '__main__':
                 description     text        not null,
                 creation_date   text        not null,
                 deadline        text        ,
-                labels          array        ,
+                labels          array       ,
                 current_state   text        not null,
                 time_estimate   integer     ,
-                assigned        integer     ,
+                assigned_to     integer     ,
                 foreign key     (owner)     references users (id)
-                foreign key     (assigned)  references users (id)
+                foreign key     (assigned_to)  references users (id)
             );
             """
     c.execute(query)

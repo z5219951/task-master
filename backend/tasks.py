@@ -19,10 +19,8 @@ task_payload = api.model('task', {
     "deadline": fields.String,
     "labels": fields.String,
     "current_state": fields.String,
-    "progress": fields.Integer,
     "time_estimate": fields.Integer,
-    "difficulty": fields.String,
-    "assigned": fields.String
+    "assigned_to": fields.String
 })
 
 @api.route('/create', methods=['POST'])
@@ -40,10 +38,8 @@ class Users(Resource):
         parser.add_argument('deadline', required=False)
         parser.add_argument('labels', required=False)
         parser.add_argument('current_state', required=False, default='Not Started')
-        parser.add_argument('progress', required=False)
         parser.add_argument('time_estimate', required=False)
-        parser.add_argument('difficulty', required=False)
-        parser.add_argument('assigned', required=False)
+        parser.add_argument('assigned_to', required=False)
         args = parser.parse_args()
         #print(args)
 
@@ -51,8 +47,8 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate, difficulty, assigned)
-                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.progress}', '{args.time_estimate}', '{args.difficulty}', '{args.assigned}');
+                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to)
+                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}');
                 """
         c.execute(query)
 
@@ -85,7 +81,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate, difficulty, assigned
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
                 FROM    tasks
                 WHERE   owner = '{owner}';
                 """
@@ -105,8 +101,7 @@ class Users(Resource):
                 'labels': f'{data[6]}',
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
-                'difficulty': f'{data[9]}',
-                'assigned': f'{data[10]}'
+                'assigned_to': f'{data[9]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -132,7 +127,7 @@ class Users(Resource):
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate
                 FROM    tasks
-                WHERE   assigned = '{owner}';
+                WHERE   assigned_to = '{owner}';
                 """
 
         c.execute(query)
@@ -150,8 +145,7 @@ class Users(Resource):
                 'labels': f'{data[6]}',
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
-                'difficulty': f'{data[9]}',
-                'assigned': f'{data[10]}'
+                'assigned_to': f'{data[9]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -174,10 +168,8 @@ update_payload = api.model('update info', {
     "deadline": fields.String,
     "labels": fields.String,
     "current_state": fields.String,
-    "progress": fields.Integer,
     "time_estimate": fields.Integer,
-    "difficulty": fields.String,
-    "assigned": fields.String
+    "assigned_to": fields.String
 })
 
 @api.route('/update', methods=['PUT'])
@@ -196,10 +188,8 @@ class Users(Resource):
         parser.add_argument('deadline')
         parser.add_argument('labels')
         parser.add_argument('current_state')
-        parser.add_argument('progress')
         parser.add_argument('time_estimate')
-        parser.add_argument('difficulty')
-        parser.add_argument('assigned')
+        parser.add_argument('assigned_to')
         args = parser.parse_args()
         # print(args)
 
@@ -215,10 +205,8 @@ class Users(Resource):
                         deadline = '{args.deadline}',
                         labels = '{args.labels}',
                         current_state = '{args.current_state}',
-                        progress = '{args.progress}',
                         time_estimate = '{args.time_estimate}',
-                        difficulty = '{args.difficulty}',
-                        assigned = '{args.assigned}'
+                        assigned_to = '{args.assigned_to}'
                 WHERE   id = '{args.id}';
                 """
         try:
