@@ -65,7 +65,7 @@ class Users(Resource):
         try:
             name = c.fetchone()[0]
         except:
-            return {'value': False}
+            return json.dumps([])
             
         print(f'name fetched is: {name}')
         group_list = []
