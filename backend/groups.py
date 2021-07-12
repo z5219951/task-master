@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify, Blueprint
 from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
 import sqlite3
 
-import db
+from db import *
 
 bp = Blueprint('groups', __name__, url_prefix='/groups')
 api = Namespace("groups", "Operations for groups")
