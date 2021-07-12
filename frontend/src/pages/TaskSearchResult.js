@@ -22,7 +22,7 @@ const TaskSearchResult = (props) => {
     })
     */
     
-   setSearchResult([{'id': '1', 'owner': '2', 'title': 'abc', 'description': 'est laborum', 'creation_date': '2021-7-10', 'deadline': '2021-07-16', 'labels': 'None', 'current_state': 'In Progress', 'time_estimate': '6'}, {'id': '2', 'owner': '2', 'title': 'cde', 'description': 'efg', 'creation_date': '2021-7-10', 'deadline': '', 'labels': 'None', 'current_state': 'Blocked', 'time_estimate': '0'}])
+   setSearchResult([{'id': '1', 'owner': '2', 'title': 'abc', 'description': 'est laborum', 'creation_date': '2021-7-10', 'deadline': '2021-07-16', 'labels': '', 'current_state': 'In Progress', 'time_estimate': '6', 'assigned_to': '1'}, {'id': '2', 'owner': '2', 'title': 'cde', 'description': 'efg', 'creation_date': '2021-7-10', 'deadline': '', 'labels': '', 'current_state': 'Blocked', 'time_estimate': '0', 'assigned_to': '1'}])
    if (searchResult.length === 0) {
     setEmpty('No results Found')
    }

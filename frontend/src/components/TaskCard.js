@@ -13,7 +13,8 @@ const TaskCard = (props) => {
   const [currentLabels, setCurrentLabels] = useState([])
   const [existingLabels, setExistingLabels] = useState('')
   const [updateLabel, setUpdateLabel] = useState(false)
-  
+  const [assigned, setAssigned] = useState('')
+
   function handleClick() {
     history.push({
       pathname: '/updateTask',
@@ -24,6 +25,12 @@ const TaskCard = (props) => {
   useEffect(() => {
      // test
      setExistingLabels([{label:'frontend', value:'frontend'},{label:'backend', value:'backend'}])
+     console.log(tasks)
+     if (tasks.assigned_to !== '' || tasks.assigned_to !== undefined) {
+      axios.get(`http://localhost:5000/user/${tasks.assigned_to}`).then((res) => {
+      setAssigned(JSON.parse(res.data).email)
+      })
+    }
   },[])
 
   // Obtain existing labels
@@ -37,11 +44,17 @@ const TaskCard = (props) => {
     if (parseInt(tasks.owner) === parseInt(store.getState().id)) {
       setUpdate(true)
     }
-    setCurrentLabels([])
-    JSON.parse(tasks.labels).map((label) => {
-      setCurrentLabels(currentLabels => [...currentLabels, ' ',label.value])
-    })
-    setExistingLabels([{label:'frontend', value:'frontend'},{label:'backend', value:'backend'}])
+    /*
+    if (tasks.labels !== '') {
+      setCurrentLabels([])
+      JSON.parse(tasks.labels).map((label) => {
+        setCurrentLabels(currentLabels => [...currentLabels, ' ',label.value])
+      })
+      setExistingLabels([{label:'frontend', value:'frontend'},{label:'backend', value:'backend'}])
+    } else {
+      setCurrentLabels('None')
+    }
+    */
   },[updateLabel])
 
   function handleLabels(labels) {
@@ -70,8 +83,8 @@ const TaskCard = (props) => {
         <p className="card-text"><em>Estimated completion time: {tasks.time_estimate} hours </em></p>
         <p className="card-text"><em>Task Status: {tasks.current_state}</em></p>
         <p className="card-text"><em>Labels: {currentLabels}</em></p>
-        
-        {update ? <div> <p className="card-text"><em>Edit Labels:</em></p> <CreatableSelect isMulti defaultValue={tasks.labels ? JSON.parse(tasks.labels) : ''} onChange={(e) => handleLabels(e)} placeholder='Create a label by typing here or select a label below' options={existingLabels}/></div> : ''}
+        <p className="card-text"><em>Assigned to: {assigned}</em></p>
+        {update ? <div> <p className="card-text"><em>Edit Labels:</em></p> <CreatableSelect isMulti defaultValue={tasks.labels !== '' ? JSON.parse(tasks.labels) : ''} onChange={(e) => handleLabels(e)} placeholder='Create a label by typing here or select a label below' options={existingLabels}/></div> : ''}
         <br />
       </div>
     </div>

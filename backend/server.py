@@ -315,6 +315,7 @@ task_payload = api.model('task', {
     "deadline": fields.String,
     "current_state": fields.String,
     "time_estimate": fields.Integer,
+    "assigned_to": fields.Integer,
 })
 
 @api.route('/create_task', methods=['POST'])
@@ -333,10 +334,11 @@ class Users(Resource):
         parser.add_argument('labels', required=False)
         parser.add_argument('current_state', required=False, default='Not Started')
         parser.add_argument('time_estimate', required=False)
+        parser.add_argument('assigned_to', required=True)
         args = parser.parse_args()
         #print(args)
 
-        id = createTask(args.owner, args.title, args.description, args.creation_date, args.deadline, args.current_state, args.time_estimate, args.labels)
+        id = createTask(args.owner, args.title, args.description, args.creation_date, args.deadline, args.current_state, args.time_estimate, args.labels, args.assigned_to)
 
         return {'id': id},200
 
@@ -359,9 +361,10 @@ update_task_payload = api.model('update info', {
     "description": fields.String,
     "creation_date": fields.String,
     "deadline": fields.String,
-    # "labels": fields.String,
+    "labels": fields.String,
     "current_state": fields.String,
     "time_estimate": fields.Integer,
+    "assigned_to": fields.Integer
 })
 
 @api.route('/tasks/update', methods=['PUT'])
@@ -381,6 +384,7 @@ class Users(Resource):
         parser.add_argument('labels')
         parser.add_argument('current_state')
         parser.add_argument('time_estimate')
+        parser.add_argument('assigned_to')
         args = parser.parse_args()
         print(args)
 
@@ -393,6 +397,7 @@ class Users(Resource):
         labels = args.labels
         current_state = args.current_state
         time_estimate = args.time_estimate
+        assigned_to = args.assigned_to
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
@@ -405,7 +410,8 @@ class Users(Resource):
                         deadline = '{deadline}',
                         labels = '{labels}',
                         current_state = '{current_state}',
-                        time_estimate = '{time_estimate}'
+                        time_estimate = '{time_estimate}',
+                        assigned_to = '{assigned_to}'
                 WHERE   id = '{id}';
                 """
         try:
