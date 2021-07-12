@@ -30,7 +30,8 @@ if __name__ == '__main__':
                 last_name       text        not null,
                 phone_number    text        not null,
                 company         text        ,
-                recovery        integer
+                recovery        integer     ,
+                labels          text
             );
             """
     c.execute(query)
@@ -84,33 +85,6 @@ if __name__ == '__main__':
                 id              integer     primary key,
                 name            text        not null,
                 user            integer     not null,
-                foreign key     (user)      references users (id)
-            );
-            """
-    c.execute(query)
-
-    # create table groups
-    query = """
-            CREATE TABLE IF NOT EXISTS groups (
-                id              integer     primary key,
-                creator         integer     not null,
-                title           text        not null,
-                description     text        not null,
-                creation_date   text        not null,
-                user            integer     not null,
-                foreign key     (creator)   references users (id)
-            );
-            """
-    c.execute(query)
-    conn.commit()
-
-    
-    # create table labels
-    query = """
-            CREATE TABLE IF NOT EXISTS labels (
-                id              integer     primary key,
-                user            integer     not null,
-                labels          text        ,
                 foreign key     (user)      references users (id)
             );
             """
