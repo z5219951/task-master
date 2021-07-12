@@ -11,7 +11,7 @@ api = Namespace("user", "Operations for user")
 
 
 # get user info
-@api.route('/user/<int:id>', methods=['GET'])
+@api.route('/<int:id>', methods=['GET'])
 class Users(Resource):
     @api.response(200, 'Successfully retrieved user info')
     @api.response(404, 'Not Found')
