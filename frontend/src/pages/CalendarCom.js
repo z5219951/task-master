@@ -20,7 +20,10 @@ class CalendarCom extends Component{
   }
   getListData=(value) => {
     let listData = [];
-    let tasks = this.state.taskLists;
+    const tasks = this.state.taskLists;
+    if(!tasks) {
+      return listData;
+    }
     for(let i = 0; i < tasks.length;i++) {
       let end = new Date(tasks[i].deadline);
       end.setDate(end.getDate()+1);
@@ -127,6 +130,9 @@ class CalendarCom extends Component{
   onSelect = (value)=>{
     let listData = [];
     let tasks = this.state.taskLists;
+    if(!tasks) {
+      return;
+    }
     for(let i = 0; i < tasks.length;i++) {
       let end = new Date(tasks[i].deadline);
       end.setDate(end.getDate()+1);
