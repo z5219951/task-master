@@ -16,6 +16,8 @@ if __name__ == '__main__':
     c.execute(query)
     query = 'drop table if exists groups'
     c.execute(query)
+    query = 'drop table if exists labels'
+    c.execute(query)
     
     # create table users
     query = """
@@ -86,8 +88,6 @@ if __name__ == '__main__':
             );
             """
     c.execute(query)
-    
-    conn.commit()
 
     # create table groups
     query = """
@@ -103,6 +103,18 @@ if __name__ == '__main__':
             """
     c.execute(query)
     conn.commit()
+
+    
+    # create table labels
+    query = """
+            CREATE TABLE IF NOT EXISTS labels (
+                id              integer     primary key,
+                user            integer     not null,
+                labels          text        ,
+                foreign key     (user)      references users (id)
+            );
+            """
+    c.execute(query)
 
     # insert test data
     query = f"""
