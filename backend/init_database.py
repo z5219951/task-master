@@ -45,8 +45,9 @@ if __name__ == '__main__':
                 labels          array        ,
                 current_state   text        not null,
                 time_estimate   integer     ,
-                assigned_to     integer     ,
+                assigned        integer     ,
                 foreign key     (owner)     references users (id)
+                foreign key     (assigned)  references users (id)
             );
             """
     c.execute(query)
@@ -86,6 +87,21 @@ if __name__ == '__main__':
             """
     c.execute(query)
     
+    conn.commit()
+
+    # create table groups
+    query = """
+            CREATE TABLE IF NOT EXISTS groups (
+                id              integer     primary key,
+                creator         integer     not null,
+                title           text        not null,
+                description     text        not null,
+                creation_date   text        not null,
+                user            integer     not null,
+                foreign key     (creator)   references users (id)
+            );
+            """
+    c.execute(query)
     conn.commit()
 
     # insert test data
