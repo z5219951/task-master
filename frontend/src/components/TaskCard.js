@@ -44,7 +44,7 @@ const TaskCard = (props) => {
     if (parseInt(tasks.owner) === parseInt(store.getState().id)) {
       setUpdate(true)
     }
-    /*
+    
     if (tasks.labels !== '') {
       setCurrentLabels([])
       JSON.parse(tasks.labels).map((label) => {
@@ -54,7 +54,6 @@ const TaskCard = (props) => {
     } else {
       setCurrentLabels('None')
     }
-    */
   },[updateLabel])
 
   function handleLabels(labels) {
