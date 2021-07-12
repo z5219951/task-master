@@ -84,7 +84,8 @@ class Users(Resource):
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
                 FROM    tasks
-                WHERE   owner = '{owner}';
+                WHERE   owner = '{owner}'
+                ORDER BY    deadline;
                 """
 
         c.execute(query)
@@ -128,7 +129,8 @@ class Users(Resource):
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate
                 FROM    tasks
-                WHERE   assigned_to = '{owner}';
+                WHERE   assigned_to = '{owner}'
+                ORDER BY    deadline;
                 """
 
         c.execute(query)
