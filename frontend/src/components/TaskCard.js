@@ -73,7 +73,7 @@ const TaskCard = (props) => {
       <div className="card-header">
         <div className="row display-5">
           <div className="col">Task ID #{tasks.id}: {tasks.title}</div>
-          <div className="col-md-2">{update ? <div><button className="btn btn-secondary btn-lg" onClick={() => handleClick()}>Update Task</button><br/></div> : ''}</div>
+          <div className="col-md-2 btn btn-secondary btn-sm">{update ? <div><button className="btn btn-secondary btn-lg" onClick={() => handleClick()}>Update Task</button><br/></div> : ''}</div>
         </div>
       </div>
       <div className="card-body" padding="100px">
