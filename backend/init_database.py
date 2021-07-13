@@ -103,6 +103,18 @@ if __name__ == '__main__':
                 """
     c.execute(query)
     
+    query = f"""
+                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+                VALUES ('testA', 'Testing123', '2@gmail.com', 'Test', 'A', '54321', '321');
+                """
+    c.execute(query)
+    
+    query = f"""
+                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+                VALUES ('testB', 'Testing123', '3@gmail.com', 'Test', 'B', '54321', '321');
+                """
+    c.execute(query)
+    
     conn.commit()
     c.close()
     conn.close()

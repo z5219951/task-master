@@ -27,6 +27,8 @@ app.register_blueprint(friends.bp)
 api.add_namespace(friends.api)
 app.register_blueprint(groups.bp)
 api.add_namespace(groups.api)
+app.register_blueprint(tasks.bp)
+api.add_namespace(tasks.api)
 
 cors = CORS(app)
 
