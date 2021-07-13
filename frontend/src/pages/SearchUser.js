@@ -88,7 +88,7 @@ class SearchUser extends Component{
         try {
             const email = this.state.email;
             // check format, avoid empty string
-            
+            email = email.trim();
             if(email.length === 0) {
                 this.setState(()=>({
                 email:'',
