@@ -73,7 +73,7 @@ class CreateGroup extends Component{
         const users = this.state.list;
         for(let i = 0; i < lists.length; i++) {
             if(lists[i]) {
-                selectedMember.push(users[i].requestedUser);
+                selectedMember.push(Number(users[i].requestedUser));
             }
         }
         // check whether name is valid
