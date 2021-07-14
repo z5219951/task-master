@@ -27,6 +27,7 @@ const UpdateTask = (props) => {
   const [friends, setFriends] = useState([{label: 'Myself', value:''}])
   const [assigned_to, setAssigned_to] = useState('')
   const [assigned, setAssigned] = useState('')
+  const [noDeadline, setNoDeadline] = useState(false)
 
   // Get task
   const [task, setTask] = useState('')
@@ -77,8 +78,12 @@ const UpdateTask = (props) => {
       updateTask.assigned_to = assigned_to;
     }
 
-    if (dueD !== '') {
+    if (noDeadline === false && dueD !== 'None') {
       updateTask.deadline = dueD;
+    }
+
+    if (noDeadline === true) {
+      updateTask.deadline = 'None'
     }
     
     setTask(updateTask)
@@ -104,6 +109,14 @@ const UpdateTask = (props) => {
     setAssigned_to(assigned.value)
     if (assigned.value === '') {
       setAssigned_to(store.getState().id)
+    }
+  }
+
+  function handleRemoveDeadline () {
+    if (noDeadline === false) {
+      setNoDeadline(true)
+    } else {
+      setNoDeadline(false)
     }
   }
 
@@ -155,9 +168,13 @@ const UpdateTask = (props) => {
           <label htmlFor="dueD" className="col-sm-3 col-form-label">Update Deadline</label>
           <div className="col-sm-4">
             <input className="form-control input-sm" type="date" id="DueD" onChange={(e) => setDueD(e.target.value)}></input>
-            &nbsp;&nbsp;Current Deadline - {task.deadline}
+            &nbsp;&nbsp;Current Deadline - {task.deadline !== 'None' ? task.deadline : 'No deadline'} 
             <br/>
             <font color="red">{dueDAlert}</font>
+          </div>
+            <div className="col-sm-3">
+            <input type="checkbox" id="noDeadline" name="noDeadline" checked={noDeadline} onChange={(e) => handleRemoveDeadline()}></input>&nbsp;
+            <label htmlFor="noDeadline"> Remove deadline</label><br></br>
           </div>
         </div>
         <div className="form-group row mb-5">
