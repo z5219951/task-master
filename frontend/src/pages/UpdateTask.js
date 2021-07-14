@@ -76,6 +76,10 @@ const UpdateTask = (props) => {
     if (assigned_to !== '') {
       updateTask.assigned_to = assigned_to;
     }
+
+    if (dueD !== '') {
+      updateTask.deadline = dueD;
+    }
     
     setTask(updateTask)
     handleShow()
