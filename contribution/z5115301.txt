@@ -27,3 +27,7 @@ Week 5:
 Refactored server.py so that db functionality was encapsulated in db.py
 Began dialogueflow preliminary tests and setting up webhooks via IFTTT.
 
+Week 6: 
+Wrote basic dialogflow chatbot and sorted two way communication between chatbot.py and Google Cloud Platform.
+Now working on getting a basic front end together for chatbot so that messages can be sent directly via text field.
+
