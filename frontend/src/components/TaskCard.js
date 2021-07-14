@@ -78,7 +78,7 @@ const TaskCard = (props) => {
       </div>
       <div className="card-body" padding="100px">
         <p className="card-text"><em>{tasks.description}</em></p>
-        <p className="card-text"><em>Deadline: {tasks.deadline ? tasks.deadline : 'No deadline'} </em></p>
+        <p className="card-text"><em>Deadline: {tasks.deadline !== 'None' ? tasks.deadline : 'No deadline'} </em></p>
         <p className="card-text"><em>Estimated completion time: {tasks.time_estimate} hours </em></p>
         <p className="card-text"><em>Task Status: {tasks.current_state}</em></p>
         <p className="card-text"><em>Labels: {currentLabels}</em></p>
