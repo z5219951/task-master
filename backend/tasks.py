@@ -42,16 +42,12 @@ class Users(Resource):
         args = parser.parse_args()
         #print(args)
 
-        deadline = args.deadline
-        if deadline is '':
-            deadline = None
-
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
                 INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to)
-                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}');
+                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}');
                 """
         c.execute(query)
         print(query)
