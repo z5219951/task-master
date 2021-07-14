@@ -3,8 +3,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
 import axios from 'axios'
 import store from '../store';
-import Photo from './Photo';
-import UploadFile from './UploadFile';
 
 
 

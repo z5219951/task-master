@@ -5,10 +5,14 @@ import axios from 'axios'
 import store from '../store';
 import { Button, Modal } from 'react-bootstrap';
 import './UserRequest.css'
+import ViewProfileButton from '../components/ViewProfileButton';
 
 class UserRequest extends Component{
     constructor(props) {
         super(props);
+        if (store.getState() === undefined || store.getState().id === "") {
+            this.props.history.push('/home')
+        }
         // get id
         const id = Number(store.getState().id);
         this.state = {
@@ -34,16 +38,7 @@ class UserRequest extends Component{
             // store the user id in store
             console.log(res)
             // const result = JSON.parse(res.data);
-            const testResult = [
-                {
-                    requestUser:123,
-                    userName:'test1'
-                },
-                {
-                    requestUser:331,
-                    userName:'test2'
-                }
-            ];
+            const testResult = res.data;
             let warn = ''
             if(testResult.length === 0) {
                 warn = 'No Request'
@@ -98,13 +93,13 @@ class UserRequest extends Component{
     handleAccept = ()=>{
         const id  = Number(this.state.id);
         const requestUser = Number(this.state.requestUser);
-        const data = {userId:id,requestUser:requestUser}
+        const data = {userId:id,requestedUser:requestUser}
         const inform = this.state.inform;
         let url = '';
         if(inform === 'Accept the connection?') {
-            url = 'http://localhost:5000/user_request_accept'
+            url = 'http://localhost:5000/friends/accept'
         } else if (inform === 'Decline the request?'){
-            url = 'http://localhost:5000/user_request_decline'
+            url = 'http://localhost:5000/friends/decline'
         } else {
             this.setState(()=>(
                 {
@@ -134,12 +129,7 @@ class UserRequest extends Component{
                 // store the user id in store
                 console.log(res)
                 // const result = JSON.parse(res.data);
-                const testResult = [
-                    {
-                        requestUser:123,
-                        userName:'test1'
-                    }
-                ];
+                const testResult = res.data
                 let warn = ''
                 if(testResult.length === 0) {
                     warn = 'No Request'
@@ -167,7 +157,7 @@ class UserRequest extends Component{
             this.state.list.map((item,index)=><div key = {index}className="user_request_box">
                 <p className="user_request_name">{item.userName}</p>
                 <div className='buttonBox'>
-                    <Button variant="secondary" name="profile" value={item.requestUser} onClick={this.handleShow}>View Profile</Button>
+                    <ViewProfileButton id={item.requestUser}></ViewProfileButton>
                     <Button variant="primary" name="accept" value={item.requestUser} onClick={this.handleShow}>Accept</Button>
                     <Button variant="danger" name="decline" value={item.requestUser} onClick={this.handleShow}>Decline</Button>
                 </div>

@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify, Blueprint
 from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
 import sqlite3
 
-import db
+from db import *
 
 bp = Blueprint('groups', __name__, url_prefix='/groups')
 api = Namespace("groups", "Operations for groups")
@@ -62,7 +62,11 @@ class Users(Resource):
                 """
         c.execute(query)
 
-        name = c.fetchone()[0]
+        try:
+            name = c.fetchone()[0]
+        except:
+            return json.dumps([])
+            
         print(f'name fetched is: {name}')
         group_list = []
 

@@ -10,6 +10,9 @@ import ViewProfileButton from '../components/ViewProfileButton'
 class SearchUser extends Component{
     constructor(props) {
         super(props);
+        if (store.getState() === undefined || store.getState().id === "") {
+            this.props.history.push('/home')
+        }
         // get id
         const id = Number(store.getState().id);
         this.state = {
@@ -83,9 +86,9 @@ class SearchUser extends Component{
     }
     handleSubmit = ()=>{
         try {
-            const email = this.state.email.trim();
+            const email = this.state.email;
             // check format, avoid empty string
-            
+            email = email.trim();
             if(email.length === 0) {
                 this.setState(()=>({
                 email:'',
@@ -101,19 +104,24 @@ class SearchUser extends Component{
                 url = 'http://localhost:5000/request_search_user';
             }
             axios.post(url,data).then((res)=>{
-                // store the user id in store
-                console.log(res)
-                // const result = JSON.parse(res.data);
                 const testResult = JSON.parse(res.data);
+                console.log(testResult);
                 let warn = ''
                 if(testResult.length === 0) {
                     warn = 'No result'
                 }
-                const requestUser = testResult.requestUser;
+                // avoid adding themselves
+                for(let i = 0; i < testResult.length; i++) {
+                    if(testResult[i].requestUser === Number(this.state.id)) {
+                        testResult.splice(i,1);
+                        warn = "Can't add yourself!";
+                        break;
+                    }
+                }
+                const requestUser = testResult;
                 this.setState(()=>({
                     list:testResult,
                     noResult:warn,
-                    requestUser:requestUser
                 }))
             })
         } catch (error) {
