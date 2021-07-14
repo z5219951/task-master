@@ -25,7 +25,7 @@ class Users(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('userId', required=True)
         parser.add_argument('groupName', required=True)
-        parser.add_argument('userList', required=True)
+        # parser.add_argument('userList', required=True)
         args = parser.parse_args()
         
         name = args.groupName
