@@ -229,7 +229,7 @@ task_search_payload = api.model('search', {
     "currentUser": fields.Integer
 })
 
-@api.route('/searchTasks', methods=['POST'])
+@api.route('/search', methods=['POST'])
 class Tasks(Resource):
     @api.response(200, 'Sucessfully searched for tasks')
     @api.response(400, 'Not implemented')
@@ -242,18 +242,47 @@ class Tasks(Resource):
         parser.add_argument('currentUser', required=True)
         args = parser.parse_args()
         
-        needle = args.searchTerm
+        needle = args.searchTerm.lower()
         userId = args.currentUser
         
-        full_task_list = db.getTasks(userId)
-            
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
+                FROM    tasks
+                WHERE   assigned_to = '{userId}'
+                OR      owner = '{userId}'
+                ORDER BY    deadline ASC
+                """
+
+        c.execute(query)
+        data_list = c.fetchall()
+        conn.close()
+        
+        full_task_list = []
+        for data in data_list:
+            task_info = {
+                'id': f'{data[0]}',
+                'owner': f'{data[1]}',
+                'title': f'{data[2]}',
+                'description': f'{data[3]}',
+                'creation_date': f'{data[4]}',
+                'deadline': f'{data[5]}',
+                'labels': f'{data[6]}',
+                'current_state': f'{data[7]}',
+                'time_estimate': f'{data[8]}',
+                'assigned_to': f'{data[9]}'
+            }
+            full_task_list.append(task_info)
+        
         res_list = []
         for task_info in full_task_list:
             # Seach based on id, name, label, desc, deadline
             if ((task_info.get("id") == needle) or \
                 (needle in task_info.get("deadline")) or \
-                (needle in task_info.get("title")) or  \
-                (needle in task_info.get("description"))):
+                (needle in task_info.get("title").lower()) or  \
+                (needle in task_info.get("description").lower())):
                 res_list.append(task_info)
                 
         return json.dumps(res_list), 200
