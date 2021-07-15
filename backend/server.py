@@ -17,6 +17,7 @@ import friends
 import groups
 import tasks
 import user
+import labels
 
 app = Flask(__name__)
 api = Api(app,
@@ -32,6 +33,8 @@ app.register_blueprint(tasks.bp)
 api.add_namespace(tasks.api)
 app.register_blueprint(user.bp)
 api.add_namespace(user.api)
+app.register_blueprint(labels.bp)
+api.add_namespace(labels.api)
 
 cors = CORS(app)
 

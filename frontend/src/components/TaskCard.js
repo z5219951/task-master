@@ -31,15 +31,13 @@ const TaskCard = (props) => {
       setAssigned(JSON.parse(res.data).email)
       })
     }
+    axios.get(`http://localhost:5000/labels/${store.getState().id}`).then((res) => {
+      console.log(res.data)
+    })
   },[])
 
   // Obtain existing labels
-  /*
-  axios.get(`http://localhost:5000/labels/${store.getState().id}`).then((res) => {
-    const labelList = JSON.parse(res.data)
-    const temp = labelList.map((label) =>)
-  })*/
-
+  
   useEffect(() => {
     if (parseInt(tasks.owner) === parseInt(store.getState().id)) {
       setUpdate(true)
@@ -50,7 +48,7 @@ const TaskCard = (props) => {
       JSON.parse(tasks.labels).map((label) => {
         setCurrentLabels(currentLabels => [...currentLabels, ' ',label.value])
       })
-      setExistingLabels([{label:'frontend', value:'frontend'},{label:'backend', value:'backend'}])
+      //setExistingLabels([{label:'frontend', value:'frontend'},{label:'backend', value:'backend'}])
     } else {
       setCurrentLabels('None')
     }
@@ -65,7 +63,19 @@ const TaskCard = (props) => {
       setUpdateLabel(true)
     }
     // Post new labels
-    //axios.post(`http://localhost:5000/labels/${store.getState().id}`, labels)
+    if (labels !== []) {
+      console.log(labels)
+      labels.map((label) => {
+        const data = {'labels': label.value}
+        axios.post(`http://localhost:5000/labels/${store.getState().id}`, data).then((res) => {
+          console.log(res)
+        })
+        axios.get(`http://localhost:5000/labels/${store.getState().id}`).then((res) => {
+          console.log(res.data)
+        })
+      })
+    }
+   
   }
 
   return (<>

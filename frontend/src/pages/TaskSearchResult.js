@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import ShowTasks from '../components/ShowTasks'
+import store from '../store';
 
 const TaskSearchResult = (props) => {
 
@@ -16,18 +17,16 @@ const TaskSearchResult = (props) => {
   }
 
   useEffect(() => {
-    /*
-    axios.post('http://localhost:5000/searchTask', searchTerm, id).then((res)=> {
+    const data = {
+      'searchTerm': searchTerm,
+      'currentUser': store.getState().id
+    }
+    axios.post('http://localhost:5000/tasks/search', data).then((res)=> {
       setSearchResult(JSON.parse(res.data))
+      console.log(res)
     })
-    */
-    
-   setSearchResult([{'id': '1', 'owner': '2', 'title': 'abc', 'description': 'est laborum', 'creation_date': '2021-7-10', 'deadline': '2021-07-16', 'labels': '', 'current_state': 'In Progress', 'time_estimate': '6', 'assigned_to': '1'}, {'id': '2', 'owner': '2', 'title': 'cde', 'description': 'efg', 'creation_date': '2021-7-10', 'deadline': '', 'labels': '', 'current_state': 'Blocked', 'time_estimate': '0', 'assigned_to': '1'}])
-   if (searchResult.length === 0) {
-    setEmpty('No results Found')
-   }
 
-  },[])
+  },[props.location])
 
   return(
     <>

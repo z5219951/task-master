@@ -34,7 +34,10 @@ const ShowTasks = (props) => {
     }
 
   }
-
+  
+  useEffect(() => {
+    setTasks(props.tasks)
+  }, [props])
   return(
     <>
     <div className="card">
