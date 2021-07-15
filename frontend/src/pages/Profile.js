@@ -18,6 +18,7 @@ const Profile = () => {
     }).then(() => {
       // console.log(user)
     })
+
   },[])
 
   function backClick () {
@@ -67,7 +68,7 @@ const Profile = () => {
         </table>
       </div>
     </div>
-    </>
+  </>
   )
 }
 

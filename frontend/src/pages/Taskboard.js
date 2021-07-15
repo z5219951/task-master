@@ -10,8 +10,9 @@ import { ToggleButton } from 'react-bootstrap';
 const Taskboard = () => {
   const history = useHistory();
   const [createdTasks, setCreatedTasks] = useState('');
+  const [assignedTasks, setAssignedTasks] = useState('');
   const [toggleBool, setToggleBool] = useState(false)
-  const [toggleLabel, setToggleLabel] = useState('View Assigned Tasks');
+  const [toggleLabel, setToggleLabel] = useState('View Created Tasks');
 
   if (store.getState() === undefined || store.getState().id === "") {
     history.push('/home')
@@ -29,15 +30,21 @@ const Taskboard = () => {
       const taskList = JSON.parse(res.data);
       setCreatedTasks(taskList)
     })
+
+    axios.get(`http://localhost:5000/tasks/assigned/${store.getState().id}`).then((res) => {
+      console.log(res)
+      const taskList = JSON.parse(res.data);
+      setAssignedTasks(taskList)
+    })
   }, [])
 
   function toggleButton () {
     if (!toggleBool) {
       setToggleBool(true)
-      setToggleLabel('View Created Tasks')
+      setToggleLabel('View Assigned Tasks')
     } else {
       setToggleBool(false)
-      setToggleLabel('View Assigned Tasks')
+      setToggleLabel('View Created Tasks')
     }
   }
 
@@ -51,9 +58,15 @@ const Taskboard = () => {
         <button type="button" className="btn btn-secondary btn-lg w-100" onClick={() => { createTask()}}> Create Task </button></div>
       <br/>
         <button type="button" className="btn btn-primary btn-lg mb-5" onClick={() => { toggleButton()}}>{toggleLabel}</button>
-        {toggleBool?  <div> <h2 className="card-title">Tasks I am assigned to:</h2> </div>: <div>
-        <h2 className="card-title">Tasks I created:</h2>
-        <ShowTasks key={createdTasks} tasks={createdTasks} update="true"/>
+        {toggleBool?  
+        <div>
+          <h2 className="card-title">Tasks I created:</h2>
+          <ShowTasks key={createdTasks} tasks={createdTasks} update="true"/>
+       </div>
+        : 
+        <div> 
+          <h2 className="card-title">Tasks I am assigned to:</h2> 
+          <ShowTasks key={createdTasks} tasks={assignedTasks} update="true"/>
         </div>
         }
       </div>

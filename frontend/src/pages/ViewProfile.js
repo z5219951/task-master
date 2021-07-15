@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios'
+import ShowTasks from '../components/ShowTasks'
 
 const ViewProfile = (props) => {
   const history = useHistory()
   const [user, setUser] = useState({})
+  const [assignedTasks, setAssignedTasks] = useState('')
   const id = props.location.state.id
 
   function backClick () {
@@ -22,6 +24,12 @@ const ViewProfile = (props) => {
     setUser(JSON.parse(res.data))
     }).then(() => {
       // console.log(user)
+    })
+
+    axios.get(`http://localhost:5000/tasks/assigned/${id}`).then((res) => {
+      console.log(res)
+      const taskList = JSON.parse(res.data);
+      setAssignedTasks(taskList)
     })
   },[])
 
@@ -59,6 +67,10 @@ const ViewProfile = (props) => {
             </tr>
           </tbody>
         </table>
+      </div>
+      <div className="mt-5"> 
+        <h2 className="card-title">Tasks {user.first_name} is assigned to:</h2> 
+        <ShowTasks key={assignedTasks} tasks={assignedTasks} update="true"/>
       </div>
     </div>
     </>
