@@ -24,20 +24,11 @@ class CreateGroup extends Component{
             const userId = store.getState().id;
             // send id to get group information
             axios.defaults.crossDomain=true;
-            axios.get('http://localhost:5000/groups_connected_user').then((res)=>{
+            axios.get('http://localhost:5000/friends/lists/'+userId).then((res)=>{
             // store the user id in store
             console.log(res)
             // const result = JSON.parse(res.data);
-            const testResult = [
-                {
-                    requestedUser:123,
-                    name:'member1'
-                },
-                {
-                    requestedUser:331,
-                    name:'member2'
-                }
-            ];
+            const testResult = JSON.parse(res.data);
             const selectList = new Array(testResult.length).fill(false);
             this.setState(()=>({
                 list:testResult,
@@ -82,7 +73,7 @@ class CreateGroup extends Component{
         const users = this.state.list;
         for(let i = 0; i < lists.length; i++) {
             if(lists[i]) {
-                selectedMember.push(users[i].requestedUser);
+                selectedMember.push(Number(users[i].requestedUser));
             }
         }
         // check whether name is valid
@@ -114,7 +105,7 @@ class CreateGroup extends Component{
                 userList:selectedMember
             }
             axios.defaults.crossDomain=true;
-            axios.post('http://localhost:5000/create_group', data).then((res)=>{
+            axios.post('http://localhost:5000/groups/create', data).then((res)=>{
                 console.log(res.data);
                 const result = true;
                 let inform = '';

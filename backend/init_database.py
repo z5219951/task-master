@@ -30,7 +30,8 @@ if __name__ == '__main__':
                 last_name       text        not null,
                 phone_number    text        not null,
                 company         text        ,
-                recovery        integer
+                recovery        integer     ,
+                labels          text
             );
             """
     c.execute(query)
@@ -89,33 +90,6 @@ if __name__ == '__main__':
             """
     c.execute(query)
 
-    # create table groups
-    query = """
-            CREATE TABLE IF NOT EXISTS groups (
-                id              integer     primary key,
-                creator         integer     not null,
-                title           text        not null,
-                description     text        not null,
-                creation_date   text        not null,
-                user            integer     not null,
-                foreign key     (creator)   references users (id)
-            );
-            """
-    c.execute(query)
-    conn.commit()
-
-    
-    # create table labels
-    query = """
-            CREATE TABLE IF NOT EXISTS labels (
-                id              integer     primary key,
-                user            integer     not null,
-                labels          text        ,
-                foreign key     (user)      references users (id)
-            );
-            """
-    c.execute(query)
-
     # insert test data
     query = f"""
             INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
@@ -126,6 +100,18 @@ if __name__ == '__main__':
     query = f"""
                 INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
                 VALUES ('gavin', 'Testing123', '1@gmail.com', 'Gavin', 'Wang', '54321', '321');
+                """
+    c.execute(query)
+    
+    query = f"""
+                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+                VALUES ('testA', 'Testing123', '2@gmail.com', 'Test', 'A', '54321', '321');
+                """
+    c.execute(query)
+    
+    query = f"""
+                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+                VALUES ('testB', 'Testing123', '3@gmail.com', 'Test', 'B', '54321', '321');
                 """
     c.execute(query)
     

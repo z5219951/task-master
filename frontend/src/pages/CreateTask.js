@@ -45,7 +45,7 @@ const CreateTask = () => {
       setDescriptionAlert('');
     }
 
-    if (dueD !== '' && Date.parse(dueD) < Date.parse(currentDate)) {
+    if (dueD !== 'null' && Date.parse(dueD) < Date.parse(currentDate)) {
       setDueDAlert('Please enter a valid deadline')
       return
     }
@@ -120,7 +120,7 @@ const CreateTask = () => {
         <div className="form-group">
           <div className="col-md-3">
             <label htmlFor="endD">Deadline (Optional)</label>
-            <input className="form-control input-sm" type="date" id="endD" onChange={(e) => setDueD(e.target.value)}></input>
+            <input className="form-control input-sm" type="date" defaultValue='null' id="endD" onChange={(e) => setDueD(e.target.value)}></input>
           </div>
         <div><font color="red">{dueDAlert}</font></div>
         </div>

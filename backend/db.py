@@ -95,6 +95,9 @@ def friendRequestAdd(user_from, user_to):
     user = getUserByID(user_to)
     if user == []:
         return False
+    
+    if user_from == user_to:
+        return False
         
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
@@ -189,6 +192,39 @@ def friendListAdd(userA, userB):
             """
     c.execute(query)
     conn.commit()
+
+def friendsListGet(userId):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    # Find all entries that "user a" is friends with "user b", vice versa
+    query = f"""
+            CREATE TEMP TABLE friends
+            AS SELECT user_a
+            FROM friend_list
+            WHERE user_b = '{userId}'
+            UNION
+            SELECT user_b
+            FROM friend_list
+            WHERE user_a = '{userId}'
+            """
+    c.execute(query)
+
+    query = f"""
+            SELECT id, first_name, last_name
+            FROM users
+            INNER JOIN friends ON users.id = friends.user_a
+            """
+    c.execute(query)
+    
+    data = c.fetchall()    
+    conn.close()
+    
+    res = []
+    for d in data:
+        res.append({"requestedUser" : d[0],
+                    "name" : d[1] + " " + d[2]})
+    return res
     
 def searchUsers(needle):
     conn = sqlite3.connect('clickdown.db')

@@ -89,6 +89,7 @@ const TaskCard = (props) => {
           <p className="card-text col m-1">Estimated completion time: {tasks.time_estimate} hours</p>
         </div>
       </div>
+<<<<<<< HEAD
       <div className="card-body text-muted" padding="100px">
         <p className="card-text">Description: <br/>{tasks.description}</p>
         <p className="card-text">Assigned to: {assigned}</p>
@@ -96,6 +97,16 @@ const TaskCard = (props) => {
       <div className="card-footer text-muted" padding="100px">
         <p className="card-text m-1"><em>Labels: {currentLabels}</em></p>
         {update ? <div> <p className="card-text m-1"><em>Edit Labels:</em></p> <CreatableSelect isMulti defaultValue={tasks.labels !== '' ? JSON.parse(tasks.labels) : ''} onChange={(e) => handleLabels(e)} placeholder='Create a label by typing here or select a label below' options={existingLabels}/></div> : ''}
+=======
+      <div className="card-body" padding="100px">
+        <p className="card-text"><em>{tasks.description}</em></p>
+        <p className="card-text"><em>Deadline: {tasks.deadline !== 'None' ? tasks.deadline : 'No deadline'} </em></p>
+        <p className="card-text"><em>Estimated completion time: {tasks.time_estimate} hours </em></p>
+        <p className="card-text"><em>Task Status: {tasks.current_state}</em></p>
+        <p className="card-text"><em>Labels: {currentLabels}</em></p>
+        <p className="card-text"><em>Assigned to: {assigned}</em></p>
+        {update ? <div> <p className="card-text"><em>Edit Labels:</em></p> <CreatableSelect isMulti defaultValue={tasks.labels !== '' ? JSON.parse(tasks.labels) : ''} onChange={(e) => handleLabels(e)} placeholder='Create a label by typing here or select a label below' options={existingLabels}/></div> : ''}
+>>>>>>> main
         <br />
       </div>
     </div>

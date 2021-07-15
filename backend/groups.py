@@ -25,12 +25,13 @@ class Users(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('userId', required=True)
         parser.add_argument('groupName', required=True)
-        parser.add_argument('userList', required=True)
+        # parser.add_argument('userList', required=True)
         args = parser.parse_args()
         
         name = args.groupName
         user_list = args.userList
         print(f"type of user_list is: {type(user_list)}")
+        print(f"list is: {user_list}")
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()

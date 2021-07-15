@@ -101,12 +101,6 @@ class Users(Resource):
                 """
         c.execute(query)
 
-        query = f"""
-                INSERT INTO labels (user)
-                VALUES ('{args.user}');
-                """
-        c.execute(query)
-
         conn.commit()
         c.close()
         conn.close()

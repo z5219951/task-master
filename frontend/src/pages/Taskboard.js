@@ -66,7 +66,7 @@ const Taskboard = () => {
         : 
         <div> 
           <h2 className="card-title">Tasks I am assigned to:</h2> 
-          <ShowTasks key={createdTasks} tasks={assignedTasks} update="true"/>
+          <ShowTasks key={assignedTasks} tasks={assignedTasks} update="true"/>
         </div>
         }
       </div>
