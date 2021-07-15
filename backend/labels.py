@@ -19,10 +19,6 @@ class Users(Resource):
     def get(self, user):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
-<<<<<<< HEAD
-=======
-
->>>>>>> main
         query = f"""
                 SELECT  labels
                 FROM    users
@@ -30,10 +26,6 @@ class Users(Resource):
                 """
 
         c.execute(query)
-<<<<<<< HEAD
-
-=======
->>>>>>> main
         data = []
 
         try:
@@ -62,21 +54,15 @@ class Users(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('labels', required=True)
         args = parser.parse_args()
-<<<<<<< HEAD
-        conn = sqlite3.connect('clickdown.db')
-        c = conn.cursor()
-=======
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
->>>>>>> main
         query = f"""
                 SELECT  labels
                 FROM    users
                 WHERE   id = '{user}';
                 """
-<<<<<<< HEAD
         existing = ''
         query = ''
         try:
@@ -87,33 +73,14 @@ class Users(Resource):
                     WHERE   id = '{user}';
                     """
             print('try')
-=======
-
-        existing = ''
-        query = ''
-        try:
-            existing = c.fetchone[0]
-            query = f"""
-                    UPDATE  users
-                    SET     labels = {args.labels}
-                    WHERE   id = '{user}';
-                    """
->>>>>>> main
         except:
             existing = ''
             query = f"""
                     UPDATE  users
-<<<<<<< HEAD
                     SET     labels = '{existing + ', ' + args.labels}'
                     WHERE   id = '{user}';
                     """
             print('except')
-=======
-                    SET     labels = {existing + ', ' + args.labels}
-                    WHERE   id = '{user}';
-                    """
-
->>>>>>> main
         c.execute(query)
 
         conn.commit()
