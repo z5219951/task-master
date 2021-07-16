@@ -38,7 +38,7 @@ def getUserByID(id):
     c = conn.cursor()
     #Should we be grabbing the password from here?
     query = f"""
-            SELECT  id, username, password, email, first_name, last_name, phone_number, company
+            SELECT  id, username, password, email, first_name, last_name, phone_number, company, labels
             FROM    users
             WHERE   id = '{id}';
             """
@@ -55,7 +55,7 @@ def getUserByEmail(email):
     c = conn.cursor()
     #Should we be grabbing the password from here?
     query = f"""
-            SELECT  id, username, password, email, first_name, last_name, phone_number, company
+            SELECT  id, username, password, email, first_name, last_name, phone_number, company, labels
             FROM    users
             WHERE   email = '{email}';
             """
@@ -79,7 +79,8 @@ def userDict(data):
             "first_name":   data[4],
             "last_name":    data[5],
             "phone_number": data[6],
-            "company":      data[7]
+            "company":      data[7],
+            "labels":       data[8]
         }
     
     return userDict
@@ -211,7 +212,7 @@ def friendsListGet(userId):
     c.execute(query)
 
     query = f"""
-            SELECT id, first_name, last_name
+            SELECT id, first_name, last_name, email
             FROM users
             INNER JOIN friends ON users.id = friends.user_a
             """
@@ -223,7 +224,8 @@ def friendsListGet(userId):
     res = []
     for d in data:
         res.append({"requestedUser" : d[0],
-                    "name" : d[1] + " " + d[2]})
+                    "name" : d[1] + " " + d[2],
+                    "email": d[3]})
     return res
     
 def searchUsers(needle):

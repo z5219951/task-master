@@ -19,6 +19,7 @@ class Users(Resource):
     def get(self, user):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
+
         query = f"""
                 SELECT  labels
                 FROM    users
@@ -63,24 +64,24 @@ class Users(Resource):
                 FROM    users
                 WHERE   id = '{user}';
                 """
+        c.execute(query)
         existing = ''
         query = ''
         try:
-            existing = c.fetchall()
-            query = f"""
-                    UPDATE  users
-                    SET     labels = '{existing + ',' + args.labels}'
-                    WHERE   id = '{user}';
-                    """
-            print('try')
-        except:
-            existing = ''
+            existing = c.fetchone()[0]
             query = f"""
                     UPDATE  users
                     SET     labels = '{existing + ', ' + args.labels}'
                     WHERE   id = '{user}';
                     """
-            print('except')
+        except:
+            existing = ''
+            query = f"""
+                    UPDATE  users
+                    SET     labels = '{args.labels}'
+                    WHERE   id = '{user}';
+                    """
+        print(query)
         c.execute(query)
 
         conn.commit()
@@ -88,5 +89,3 @@ class Users(Resource):
         conn.close()
 
         return {'value': True}
-
-

@@ -24,7 +24,7 @@ const UpdateTask = (props) => {
   const [labels, setLabels] = useState('')
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [friends, setFriends] = useState([{label: 'Myself', value:''}])
+  const [friends, setFriends] = useState([{label: 'Myself', value:store.getState().id}])
   const [assigned_to, setAssigned_to] = useState('')
   const [assigned, setAssigned] = useState('')
   const [noDeadline, setNoDeadline] = useState(false)
@@ -48,10 +48,14 @@ const UpdateTask = (props) => {
       // temp = JSON.parse(res.data)
     })
     */
-    const temp = [{'id': '1', 'username': 'gavin', 'password': 'Testing123', 'email': '1105282259@qq.com', 'first_name': 'Gavin', 'last_name': 'Wang', 'phone_number': '54321', 'company': '321'}, {'id': '2', 'username': 'gavin', 'password': 'Testing123', 'email': '1@gmail.com', 'first_name': 'Gavin', 'last_name': 'Wang', 'phone_number': '54321', 'company': '321'}]
+   //Obtain connected users
+   axios.get(`http://localhost:5000/friends/lists/${store.getState().id}`).then((res) => {
+    const temp = JSON.parse(res.data)
     temp.map((user) => {
-      setFriends(friends => [...friends,{'value': user.id, 'label': user.email}])
+      setFriends(friends => [...friends,{'value': user.requestedUser, 'label': user.email}])
     })
+    console.log(JSON.parse(res.data))
+  })
   }, [])
 
   function handleSubmit () {

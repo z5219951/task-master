@@ -26,13 +26,11 @@ const Taskboard = () => {
   axios.defaults.crossDomain=true;
   useEffect(() => {
     axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
-      console.log(res)
       const taskList = JSON.parse(res.data);
       setCreatedTasks(taskList)
     })
 
     axios.get(`http://localhost:5000/tasks/assigned/${store.getState().id}`).then((res) => {
-      console.log(res)
       const taskList = JSON.parse(res.data);
       setAssignedTasks(taskList)
     })

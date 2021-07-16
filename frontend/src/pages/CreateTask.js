@@ -11,7 +11,7 @@ const CreateTask = () => {
   const history = useHistory();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [dueD, setDueD] = useState('');
+  const [dueD, setDueD] = useState(null);
   const [cState, setCState] = useState('Not Started');
   const [dueDAlert, setDueDAlert] = useState('')
   const [nameAlert, setNameAlert] = useState('')
@@ -20,7 +20,8 @@ const CreateTask = () => {
   const [owner, setOwner] = useState('')
   const [labels, setLabels] = useState('')
   const [existingLabels, setExistingLabels] = useState('')
-  const [friends, setFriends] = useState([{label: 'Myself', value:''}])
+  const [formattedLabels, setFormattedLabels] = useState('')
+  const [friends, setFriends] = useState([{label: 'Myself', value:store.getState().id}])
   const [assigned_to, setAssigned_to] = useState(store.getState().id)
 
   var today = new Date();
@@ -63,33 +64,55 @@ const CreateTask = () => {
   
   useEffect(() => {
     setOwner(store.getState().id)
-    // test
-    /*
-    Obtain connected users
-    axios.get(`http://localhost:5000/getFriends/${store.getState().id}`).then((res) => {
-      // temp = JSON.parse(res.data)
+    
+    //Obtain connected users
+    axios.get(`http://localhost:5000/friends/lists/${store.getState().id}`).then((res) => {
+      const temp = JSON.parse(res.data)
+      temp.map((user) => {
+        setFriends(friends => [...friends,{'value': user.requestedUser, 'label': user.email}])
+      })
     })
-    */
-    setExistingLabels([{label:'frontend', value:'frontend'},{label:'backend', value:'backend'}])
-    const temp = [{'id': '1', 'username': 'gavin', 'password': 'Testing123', 'email': '1105282259@qq.com', 'first_name': 'Gavin', 'last_name': 'Wang', 'phone_number': '54321', 'company': '321'}, {'id': '2', 'username': 'gavin', 'password': 'Testing123', 'email': '1@gmail.com', 'first_name': 'Gavin', 'last_name': 'Wang', 'phone_number': '54321', 'company': '321'}]
-    temp.map((user) => {
-      setFriends(friends => [...friends,{'value': user.id, 'label': user.email}])
-    })
+    
+    handleExistingLabels()
+
   }, [])
 
-  // Obtain existing labels
-  /*
-  axios.get(`http://localhost:5000/labels/${store.getState().id}`).then((res) => {
-    const labelList = JSON.parse(res.data)
-    const temp = labelList.map((label) =>)
-  })*/
+  // Set formatted labels 
+  useEffect(()=> {
+    setFormattedLabels('')
+    if (existingLabels.length !== 0) {
+      existingLabels.map((label) => {
+        const data = ({label: label, value: label})
+        setFormattedLabels(formattedLabels=>[...formattedLabels, data])
+      })
+    }
+  }, [existingLabels])
   
+  // Handles labels when they are changed
   function handleLabels(labels) {
     setLabels(JSON.stringify(labels))
-    // Post new labels
-    //axios.post(`http://localhost:5000/labels/${store.getState().id}`)
+    const temp = labels
+    temp.map((label) => {
+      console.log(existingLabels, label, existingLabels.includes(label.value))
+      if (existingLabels.includes(label.value) === false) {
+        const data = {'labels': JSON.stringify(label.value)}
+        axios.post(`http://localhost:5000/labels/${store.getState().id}`, data)
+        setExistingLabels(existingLabels => [...existingLabels, label.value])
+      }
+    })
   }
 
+  // Obtains existing labels from server
+  function handleExistingLabels() {
+    setExistingLabels('')
+    axios.get(`http://localhost:5000/labels/${store.getState().id}`).then((res) => {
+      if (res.data != 'null') {
+        const temp = JSON.parse(res.data).replace(/['"]+/g, '').split(', ')
+        setExistingLabels(temp)
+      }
+    })
+  }
+  
   function handleAssigned(assigned) {
     console.log(assigned)
     setAssigned_to(assigned.value)
@@ -136,10 +159,11 @@ const CreateTask = () => {
             <Select placeholder='Search for a user to assign this task to' defaultValue='' options={friends} onChange={(e) => handleAssigned(e)}/>
           </div>
         </div>
+        {JSON.stringify(existingLabels)}
         <div className="form-group">
           <div className="col-md-6">
             <label htmlFor="assign">Labels</label>
-            <CreatableSelect isMulti placeholder='Create a label by typing here or select a label below' onChange={(e) => handleLabels(e)} options={existingLabels}/>
+            <CreatableSelect isMulti placeholder='Create a label by typing here or select a label below' options={formattedLabels} onChange={(e) => handleLabels(e)}/>
           </div>
         </div>
         <br/>

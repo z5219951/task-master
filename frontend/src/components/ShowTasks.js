@@ -4,7 +4,6 @@ import Select from 'react-select';
 
 const ShowTasks = (props) => {
 
-  console.log(props)
   const update = props.update;
   const [tasks, setTasks] = useState(props.tasks);
   const [filter, setFilter] = useState('')

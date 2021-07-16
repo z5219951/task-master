@@ -12,6 +12,7 @@ const TaskCard = (props) => {
   const history = useHistory();
   const [currentLabels, setCurrentLabels] = useState([])
   const [existingLabels, setExistingLabels] = useState('')
+  const [formattedLabels, setFormattedLabels] = useState('')
   const [updateLabel, setUpdateLabel] = useState(false)
   const [assigned, setAssigned] = useState('')
 
@@ -23,32 +24,32 @@ const TaskCard = (props) => {
   }
 
   useEffect(() => {
-     // test
-     setExistingLabels([{label:'frontend', value:'frontend'},{label:'backend', value:'backend'}])
-     console.log(tasks)
+ 
+     handleExistingLabels()
+    
+     // Find user assigned to task
      if (tasks.assigned_to !== '' || tasks.assigned_to !== undefined) {
       axios.get(`http://localhost:5000/user/${tasks.assigned_to}`).then((res) => {
       setAssigned(JSON.parse(res.data).email)
       })
     }
-    axios.get(`http://localhost:5000/labels/${store.getState().id}`).then((res) => {
-      console.log(res.data)
-    })
-  },[])
 
-  // Obtain existing labels
-  
-  useEffect(() => {
+    // If the task is owned by or assigned to the user, the update button is visible
     if (parseInt(tasks.owner) === parseInt(store.getState().id)) {
       setUpdate(true)
+    } else if (parseInt(tasks.assigned_to) === parseInt(store.getState().id)) {
+      setUpdate(true)
     }
+  },[])
+
+  useEffect(() => {
     
+    // Set Labels field
     if (tasks.labels !== '') {
       setCurrentLabels([])
       JSON.parse(tasks.labels).map((label) => {
         setCurrentLabels(currentLabels => [...currentLabels, ' ',label.value])
       })
-      //setExistingLabels([{label:'frontend', value:'frontend'},{label:'backend', value:'backend'}])
     } else {
       setCurrentLabels('None')
     }
@@ -57,35 +58,56 @@ const TaskCard = (props) => {
   function handleLabels(labels) {
     tasks.labels = JSON.stringify(labels)
     axios.put(`http://localhost:5000/tasks/update `, tasks)
+
+    // Trigger updateLabel useEffect
     if (updateLabel) {
       setUpdateLabel(false)
     } else {
       setUpdateLabel(true)
     }
-    // Post new labels
+
+    // Post new labels when they are changed
     if (labels !== []) {
-      console.log(labels)
       labels.map((label) => {
-        const data = {'labels': label.value}
-        axios.post(`http://localhost:5000/labels/${store.getState().id}`, data).then((res) => {
-          console.log(res)
-        })
-        axios.get(`http://localhost:5000/labels/${store.getState().id}`).then((res) => {
-          console.log(res.data)
-        })
+        if (existingLabels.includes(label.value) === false) {
+          const data = {'labels': JSON.stringify(label.value)}
+          axios.post(`http://localhost:5000/labels/${store.getState().id}`, data)
+          setExistingLabels(existingLabels => [...existingLabels, label.value])
+        }
       })
     }
-   
   }
+
+  // Obtains existing labels from server
+  function handleExistingLabels() {
+    setExistingLabels('')
+    axios.get(`http://localhost:5000/labels/${store.getState().id}`).then((res) => {
+      if (res.data != 'null') {
+        const temp = JSON.parse(res.data).replace(/['"]+/g, '').split(', ')
+        setExistingLabels(temp)
+      }
+    })
+  }
+
+  // Set Formatted Labels
+  useEffect(()=> {
+    setFormattedLabels('')
+    if (existingLabels.length !== 0) {
+      existingLabels.map((label) => {
+        const data = ({label: label, value: label})
+        setFormattedLabels(formattedLabels=>[...formattedLabels, data])
+      })
+    }
+  }, [existingLabels])
 
   return (<>
     <div className="card my-2 mx-5"> 
       <div className="card-header">
         <div className="row display-5">
           <div className="col">Task ID #{tasks.id}: {tasks.title}</div>
-          <div className="col-md-2 btn btn-secondary btn-sm">{update ? <div><button className="btn btn-secondary btn-lg" onClick={() => handleClick()}>Update Task</button><br/></div> : ''}</div>
+          {update ? <div className="col-md-2 btn btn-secondary btn-sm"><button className="btn btn-secondary btn-lg" onClick={() => handleClick()}>Update Task</button><br/></div> : ''}
           <p className="card-text m-1">Task Status: {tasks.current_state}</p>
-          <p className="card-text col m-1"><em>Deadline: {tasks.deadline ? tasks.deadline : 'No deadline'} </em></p>
+          <p className="card-text col m-1"><em>Deadline: {tasks.deadline !== 'None' ? tasks.deadline : 'No deadline'} </em></p>
           <p className="card-text col m-1">Estimated completion time: {tasks.time_estimate} hours</p>
         </div>
       </div>
@@ -95,7 +117,7 @@ const TaskCard = (props) => {
       </div>
       <div className="card-footer text-muted" padding="100px">
         <p className="card-text m-1"><em>Labels: {currentLabels}</em></p>
-        {update ? <div> <p className="card-text m-1"><em>Edit Labels:</em></p> <CreatableSelect isMulti defaultValue={tasks.labels !== '' ? JSON.parse(tasks.labels) : ''} onChange={(e) => handleLabels(e)} placeholder='Create a label by typing here or select a label below' options={existingLabels}/></div> : ''}
+        {update ? <div> <p className="card-text m-1"><em>Edit Labels:</em></p> <CreatableSelect isMulti defaultValue={tasks.labels !== '' ? JSON.parse(tasks.labels) : ''} onChange={(e) => handleLabels(e)} placeholder='Create a label by typing here or select a label below' options={formattedLabels}/></div> : ''}
         <br />
       </div>
     </div>
