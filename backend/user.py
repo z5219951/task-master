@@ -102,3 +102,21 @@ class Users(Resource):
 
         return {'value': True}
 
+# upload a profile picture
+@api.route('/upload', methods=['POST'])
+class Users(Resource):
+    @api.response(200, 'Successfully uploaded a profile picture')
+    @api.response(400, 'Bad Request')
+    @api.doc(description="Receives a picture file and stores it in the backend")
+    def post(self):
+        id = request.get_json()['id']
+        print(f'upload received id is: {id}')
+        image = request.files['file']
+        print(f'upload received filetype is: {type(image)}')
+
+        if image.filename != '':
+            image.save(f'/{id}/display/{image.filename}')
+        else:
+            return {'value': False}
+
+        return {'value': True}
