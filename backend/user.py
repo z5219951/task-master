@@ -1,4 +1,5 @@
 import json
+from pathlib import PurePath, Path
 import os
 from werkzeug.utils import secure_filename
 
@@ -111,7 +112,6 @@ class Users(Resource):
     @api.response(400, 'Bad Request')
     @api.doc(description="Receives a picture file and stores it in the backend")
     def post(self, id):
-        id = id
         print(f'upload received user_id is: {id}')
         image = request.files['image']
         print(f'upload received filetype is: {type(image)}')
@@ -121,8 +121,9 @@ class Users(Resource):
             # file_ext = os.path.splitext(filename)[1]
             # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
                 # break
-            path = f'/users/{str(id)}/{filename}'
+            path = PurePath(Path(__file__).parent.resolve(), 'users', str(id), filename)
             # path example: '/users/123/picture.png'
+            print(f'path type is: {type(path)}')
             print(f'path name is: {path}')
             image.save(path)
         else:

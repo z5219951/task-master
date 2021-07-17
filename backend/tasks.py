@@ -1,4 +1,5 @@
 import json
+from pathlib import PurePath, Path
 import os
 from werkzeug.utils import secure_filename
 
@@ -291,13 +292,12 @@ class Tasks(Resource):
 
 
 # upload to a task
-@api.route('/upload', methods=['POST'])
+@api.route('/upload<int:id>', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully attached file to a task')
     @api.response(400, 'Bad Request')
     @api.doc(description="Receives a file and stores it in the backend")
-    def post(self):
-        id = request.get_json()['id']
+    def post(self, id):
         print(f'upload received task_id is: {id}')
         file = request.files['file']
         print(f'upload received filetype is: {type(file)}')
@@ -307,8 +307,9 @@ class Users(Resource):
             # file_ext = os.path.splitext(filename)[1]
             # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
                 # break
-            path = f'/tasks/{str(id)}/{filename}'
-            # path example: '/tasks/5218/file.pdf'
+            path = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id), filename)
+            # path example: 'tasks/123/file.png'
+            print(f'path type is: {type(path)}')
             print(f'path name is: {path}')
             file.save(path)
         else:
