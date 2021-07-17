@@ -1,4 +1,6 @@
 import json
+import os
+from werkzeug.utils import secure_filename
 
 from flask import Flask, request, jsonify, Blueprint
 from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
@@ -286,3 +288,30 @@ class Tasks(Resource):
                 res_list.append(task_info)
                 
         return json.dumps(res_list), 200
+
+
+# upload to a task
+@api.route('/upload', methods=['POST'])
+class Users(Resource):
+    @api.response(200, 'Successfully attached file to a task')
+    @api.response(400, 'Bad Request')
+    @api.doc(description="Receives a file and stores it in the backend")
+    def post(self):
+        id = request.get_json()['id']
+        print(f'upload received task_id is: {id}')
+        file = request.files['file']
+        print(f'upload received filetype is: {type(file)}')
+        filename = secure_filename(file.filename)
+
+        if filename != '':
+            # file_ext = os.path.splitext(filename)[1]
+            # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
+                # break
+            path = f'/tasks/{str(id)}/{filename}'
+            # path example: '/tasks/5218/file.pdf'
+            print(f'path name is: {path}')
+            file.save(path)
+        else:
+            return {'value': False}
+
+        return {'value': True}

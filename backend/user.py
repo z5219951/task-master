@@ -1,4 +1,6 @@
 import json
+import os
+from werkzeug.utils import secure_filename
 
 from flask import Flask, request, jsonify, Blueprint
 from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
@@ -110,12 +112,19 @@ class Users(Resource):
     @api.doc(description="Receives a picture file and stores it in the backend")
     def post(self):
         id = request.get_json()['id']
-        print(f'upload received id is: {id}')
+        print(f'upload received user_id is: {id}')
         image = request.files['file']
         print(f'upload received filetype is: {type(image)}')
+        filename = secure_filename(image.filename)
 
-        if image.filename != '':
-            image.save(f'/{id}/display/{image.filename}')
+        if filename != '':
+            # file_ext = os.path.splitext(filename)[1]
+            # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
+                # break
+            path = f'/users/{str(id)}/{filename}'
+            # path example: '/users/123/picture.png'
+            print(f'path name is: {path}')
+            image.save(path)
         else:
             return {'value': False}
 
