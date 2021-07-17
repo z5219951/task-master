@@ -307,7 +307,9 @@ class Users(Resource):
             # file_ext = os.path.splitext(filename)[1]
             # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
                 # break
-            path = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id), filename)
+            path = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id))
+            os.makedirs(dir, exists_ok=True)
+            path = PurePath(dir, filename)
             # path example: 'tasks/123/file.png'
             print(f'path type is: {type(path)}')
             print(f'path name is: {path}')
