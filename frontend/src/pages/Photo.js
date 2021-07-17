@@ -4,6 +4,8 @@ import 'antd/dist/antd.css';
 import './Photo.css'
 import React from 'react'
 import { Fragment } from 'react';
+import store from '../store';
+import axios from 'axios';
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -16,7 +18,7 @@ function beforeUpload(file) {
   if (!isJpgOrPng) {
     message.error('You can only upload JPG/PNG file!');
   }
-  const isLt2M = file.size / 1024 / 1024 < 2;
+  const isLt2M = file.size / 2048 / 2048 < 2;
   if (!isLt2M) {
     message.error('Image must smaller than 2MB!');
   }
@@ -37,7 +39,18 @@ class Photo extends React.Component {
   sendUrl = ()=>{
       this.props.sendUrl(this.state.imageUrl);
   }
-
+  submitPhoto = (options) =>{
+    try { 
+      axios.defaults.crossDomain=true;
+      let formdata = new FormData();
+      formdata.append("image",options.file);
+      axios.post(this.state.postUrl+'/'+store.getState().id, formdata, {headers:{'Content-Type':'multipart/form-data'}}).then((res)=>{
+          console.log(res);
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
   handleChange = info => {
     if (info.file.status === 'uploading') {
       this.setState({ loading: true });
@@ -68,6 +81,7 @@ class Photo extends React.Component {
         <div style={{ marginTop: 8 }}>Upload</div>
       </div>
     );
+    const id = store.getState().id;
     // action is the post url.
     return (
         <Fragment>
@@ -76,7 +90,7 @@ class Photo extends React.Component {
             listType="picture-card"
             className="avatar-uploader"
             showUploadList={false}
-            action={this.state.postUrl}
+            customRequest = {this.submitPhoto}
             beforeUpload={beforeUpload}
             onChange={this.handleChange}
             maxCount = {1}

@@ -105,15 +105,15 @@ class Users(Resource):
         return {'value': True}
 
 # upload a profile picture
-@api.route('/upload', methods=['POST'])
+@api.route('/upload/<int:id>', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully uploaded a profile picture')
     @api.response(400, 'Bad Request')
     @api.doc(description="Receives a picture file and stores it in the backend")
-    def post(self):
-        id = request.get_json()['id']
+    def post(self, id):
+        id = id
         print(f'upload received user_id is: {id}')
-        image = request.files['file']
+        image = request.files['image']
         print(f'upload received filetype is: {type(image)}')
         filename = secure_filename(image.filename)
 

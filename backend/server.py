@@ -36,7 +36,6 @@ api.add_namespace(user.api)
 app.register_blueprint(labels.bp)
 api.add_namespace(labels.api)
 
-cors = CORS(app)
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
@@ -49,6 +48,8 @@ mail_settings = {
 
 app.config.update(mail_settings)
 mail = Mail(app)
+
+cors = CORS(app)
 
 # Register an account
 register_payload = api.model('register account', {

@@ -11,7 +11,7 @@ class TestPage extends Component{
         super(props);
         // modify this part to set the post url where the backend will receive data.
         this.state={
-            photoPost:"http://test",
+            photoPost:"http://localhost:5000/user/upload",
             filePost:"htp://test"
         }
     }
