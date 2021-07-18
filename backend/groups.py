@@ -30,7 +30,7 @@ class Users(Resource):
         
         name = args.groupName
         # user_list = args.userList
-        user_list = request.get_json()['user_list']
+        user_list = request.get_json()['userList']
         print(f"type of user_list is: {type(user_list)}")
         print(f"list is: {user_list}")
 
