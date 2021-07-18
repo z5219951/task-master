@@ -45,7 +45,11 @@ class Photo extends React.Component {
       let formdata = new FormData();
       formdata.append("image",options.file);
       axios.post(this.state.postUrl+'/'+store.getState().id, formdata, {headers:{'Content-Type':'multipart/form-data'}}).then((res)=>{
-          console.log(res);
+          options.onSuccess();
+          this.setState({
+            imageUrl:'123'
+          });
+          this.sendUrl();
       })
     } catch (error) {
       console.log(error);
@@ -69,7 +73,6 @@ class Photo extends React.Component {
             loading: false,
         }),
         );
-        this.sendUrl();
     }
   };
 
@@ -98,7 +101,7 @@ class Photo extends React.Component {
             {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
         </Upload>
         <p className="ant-upload-hint">
-        Photo must small than 2MB and no more than 1024*1024
+        Photo must small than 2MB and no more than 2048*2048
         </p>
         </Fragment>
     );

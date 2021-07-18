@@ -292,7 +292,7 @@ class Tasks(Resource):
 
 
 # upload to a task
-@api.route('/upload<int:id>', methods=['POST'])
+@api.route('/upload/<int:id>', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully attached file to a task')
     @api.response(400, 'Bad Request')
@@ -308,7 +308,7 @@ class Users(Resource):
             # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
                 # break
             path = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id))
-            os.makedirs(dir, exists_ok=True)
+            os.makedirs(dir, exist_ok=True)
             path = PurePath(dir, filename)
             # path example: 'tasks/123/file.png'
             print(f'path type is: {type(path)}')

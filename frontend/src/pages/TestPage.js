@@ -12,18 +12,17 @@ class TestPage extends Component{
         // modify this part to set the post url where the backend will receive data.
         this.state={
             photoPost:"http://localhost:5000/user/upload",
-            filePost:"htp://test"
+            filePost:"http://localhost:5000/tasks/upload"
         }
     }
     photoUrl = (value)=>{
         console.log(value);
-        alert(value);
     }
     render (){
         return(
             <Fragment>
                 <Photo sendUrl = {this.photoUrl} postUrl={this.state.photoPost}></Photo>
-                <UploadFile postUrl={this.state.filePost}></UploadFile>
+                <UploadFile postUrl={this.state.filePost} sendUrl = {this.photoUrl}></UploadFile>
             </Fragment>
         )
     }
