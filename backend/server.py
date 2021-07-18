@@ -14,10 +14,13 @@ import sqlite3
 # from config import config
 from db import *
 import friends
+
 import groups
 import tasks
 import user
 import labels
+
+
 
 app = Flask(__name__)
 api = Api(app,
@@ -323,6 +326,7 @@ class Users(Resource):
         conn.close()
 
         return {'value': True}
+
 
 
 if __name__ == '__main__':
