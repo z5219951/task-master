@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import axios from 'axios'
+import ShowTasks from '../components/ShowTasks'
 
 const ViewProfile = (props) => {
   const history = useHistory()
   const [user, setUser] = useState({})
+  const [assignedTasks, setAssignedTasks] = useState('')
   const id = props.location.state.id
 
   function backClick () {
     history.goBack()
   }
-
+/*
   useEffect(() => {
     setUser({'id': '1', 'username': 'abcdefgh', 'password': 'Abc123', 'email': 'abcd@gmail.com', 'first_name': 'abcd', 'last_name': 'efgh', 'phone_number': '0123', 'company': ''})
   },[])
 
-  /*
+  */
   useEffect(() => {
     axios.defaults.crossDomain=true;
     axios.get(`http://localhost:5000/user/${id}`).then((res) => {
@@ -22,8 +25,14 @@ const ViewProfile = (props) => {
     }).then(() => {
       // console.log(user)
     })
+
+    axios.get(`http://localhost:5000/tasks/assigned/${id}`).then((res) => {
+      console.log(res)
+      const taskList = JSON.parse(res.data);
+      setAssignedTasks(taskList)
+    })
   },[])
-*/
+
   return(
     <>
      <div className='padding'> 
@@ -58,6 +67,10 @@ const ViewProfile = (props) => {
             </tr>
           </tbody>
         </table>
+      </div>
+      <div className="mt-5"> 
+        <h2 className="card-title">Tasks {user.first_name} is assigned to:</h2> 
+        <ShowTasks key={assignedTasks} tasks={assignedTasks} update="true"/>
       </div>
     </div>
     </>

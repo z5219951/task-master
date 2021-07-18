@@ -23,20 +23,12 @@ class CreateGroup extends Component{
         try {
             const userId = store.getState().id;
             // send id to get group information
-            axios.get('http://localhost:5000/groups_connected_user').then((res)=>{
+            axios.defaults.crossDomain=true;
+            axios.get('http://localhost:5000/friends/lists/'+userId).then((res)=>{
             // store the user id in store
             console.log(res)
             // const result = JSON.parse(res.data);
-            const testResult = [
-                {
-                    requestUser:123,
-                    userName:'member1'
-                },
-                {
-                    requestUser:331,
-                    userName:'member2'
-                }
-            ];
+            const testResult = JSON.parse(res.data);
             const selectList = new Array(testResult.length).fill(false);
             this.setState(()=>({
                 list:testResult,
@@ -69,7 +61,7 @@ class CreateGroup extends Component{
             this.state.list.map((item,index)=>
             <div className="form-check" key = {index}>
                 <label className="form-check-label createGroup_item">
-                <input type="checkbox" className="form-check-input" onClick={this.handleSelect} key={index} value={index}/>{item.userName}
+                <input type="checkbox" className="form-check-input" onClick={this.handleSelect} key={index} value={index}/>{item.name}
                 </label>
             </div>)
         )
@@ -81,7 +73,7 @@ class CreateGroup extends Component{
         const users = this.state.list;
         for(let i = 0; i < lists.length; i++) {
             if(lists[i]) {
-                selectedMember.push(users[i].requestUser);
+                selectedMember.push(Number(users[i].requestedUser));
             }
         }
         // check whether name is valid
@@ -112,7 +104,8 @@ class CreateGroup extends Component{
                 groupName:name,
                 userList:selectedMember
             }
-            axios.post('http://localhost:5000/create_group', data).then((res)=>{
+            axios.defaults.crossDomain=true;
+            axios.post('http://localhost:5000/groups/create', data).then((res)=>{
                 console.log(res.data);
                 const result = true;
                 let inform = '';

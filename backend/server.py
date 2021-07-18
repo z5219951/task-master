@@ -14,10 +14,15 @@ import sqlite3
 # from config import config
 from db import *
 import friends
-from chatbot import *
+
+import groups
+import tasks
+import user
+import labels
+
+
 
 app = Flask(__name__)
-cors = CORS(app)
 api = Api(app,
           default="ClickDown",  # Default namespace
           title="Capstone Project COMP3900",  # Documentation Title
@@ -25,6 +30,15 @@ api = Api(app,
 
 app.register_blueprint(friends.bp)
 api.add_namespace(friends.api)
+app.register_blueprint(groups.bp)
+api.add_namespace(groups.api)
+app.register_blueprint(tasks.bp)
+api.add_namespace(tasks.api)
+app.register_blueprint(user.bp)
+api.add_namespace(user.api)
+app.register_blueprint(labels.bp)
+api.add_namespace(labels.api)
+
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
@@ -37,6 +51,8 @@ mail_settings = {
 
 app.config.update(mail_settings)
 mail = Mail(app)
+
+cors = CORS(app)
 
 # Register an account
 register_payload = api.model('register account', {
@@ -72,14 +88,26 @@ class Users(Resource):
         # DELETE THIS IF FRONTEND ALREADY CHECKS VALIDITY
         if (email_exists(args.email)):
             return {'message': f'A user with that email already exists',
-                    'value': False}, 400
+                    'value': False}, 200
         if (user_exists(args.username)):
             return {'message': f'A user with that username already exists',
-                    'value': False}, 400
+                    'value': False}, 200
 
         # at this point, all inputs should be valid
         # insert values into users table
-        insertUser(args.id, args.username, args.password, args.email, args.first_name, args.last_name, args.phone_number, args.company)
+        
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+                VALUES ('{args.username}', '{args.password}', '{args.email}', '{args.first_name}', '{args.last_name}', '{args.phone_number}', '{args.company}');
+                """
+        c.execute(query)
+
+        conn.commit()
+        c.close()
+        conn.close()
 
         return {'value': True}
 
@@ -105,21 +133,40 @@ class Users(Resource):
         email = args.email
         # return  false if no such user
         if (not email_exists(email)):
-            return {'value': False},200
-        
+            return {'value': False},200    
         
         recovery = -1
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
 
         # generate recovery code
         while True:
             recovery = ''.join([str(random.randint(0, 999)).zfill(3) for _ in range(2)])
             
-            count = recoveryMatch(recovery)
+            # is there a recovery code that matches?
+            query = f"""
+                SELECT  count(*)
+                FROM    users
+                WHERE   recovery = '{args.recovery}';
+                """
+            c.execute(query)
+            count = c.fetchone()[0]
 
             if (count == 0):
                 break
+        
+        # update in database
+        query = f"""
+                UPDATE  users
+                SET     recovery = '{recovery}'
+                WHERE   email = '{email}';
+                """
+        c.execute(query)
 
-        updateRecovery(email, recovery)
+        conn.commit()
+        c.close()
+        conn.close()
 
         # send email with code
         with app.app_context():
@@ -148,7 +195,20 @@ class Users(Resource):
         parser.add_argument('recovery', required=True)
         args = parser.parse_args()
 
-        count = recoveryMatch(args.recovery)
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # is there a recovery code that matches?
+        query = f"""
+                SELECT  count(*)
+                FROM    users
+                WHERE   recovery = '{args.recovery}';
+                """
+        c.execute(query)
+        count = c.fetchone()[0]
+
+        c.close()
+        conn.close()
 
         if (count != 1):
             return {'value': False}, 200
@@ -171,10 +231,24 @@ class Users(Resource):
         parser.add_argument('email', required=True)
         parser.add_argument('new_password', required=True)
         args = parser.parse_args()
-        print(args)
+        #print(args)
 
-        updatePassword(args.email, args.new_password)
-        return {'value': True},200
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # change the password and reset code
+        query = f"""
+                UPDATE  users
+                SET     password = '{args.new_password}', recovery = null
+                WHERE   email = '{args.email}';
+                """
+        c.execute(query)
+
+        conn.commit()
+        c.close()
+        conn.close()
+
+        return {'value': True}
 
 
 # TODO: redo function with proper login system
@@ -195,9 +269,23 @@ class Users(Resource):
         parser.add_argument('email', required=True)
         parser.add_argument('password', required=True)
         args = parser.parse_args()
+        
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
 
-        id = authCheck(args.email, args.password)
-        print(id)
+        # retrieve id using email and password
+        query = f"""
+                SELECT  id
+                FROM    users
+                WHERE   email = '{args.email}' and password = '{args.password}';
+                """
+        c.execute(query)
+        id = c.fetchone()
+        # print(id)
+
+        c.close()
+        conn.close()
+
         if (id is None):
             return json.dumps({'id':''}), 200
 
@@ -240,131 +328,6 @@ class Users(Resource):
         return {'value': True}
 
 
-# get user info
-@api.route('/user/<int:id>', methods=['GET'])
-class Users(Resource):
-    @api.response(200, 'Successfully retrieved user info')
-    @api.response(404, 'Not Found')
-    @api.doc(description="Gets info for a user given their id")
-    def get(self, id):
-        data = getUserByID(id)
-
-        if (data is None):
-            return {'message': f'User not found'}, 404
-
-        resp =  {
-            'id': f'{data[0]}',
-            'username': f'{data[1]}',
-            'password': f'{data[2]}',
-            'email': f'{data[3]}',
-            'first_name': f'{data[4]}',
-            'last_name': f'{data[5]}',
-            'phone_number': f'{data[6]}',
-            'company': f'{data[7]}'
-        }
-        
-        print(resp)
-        
-        return json.dumps(resp)
-
-
-# update user info
-update_payload = api.model('update info', {
-    "id": fields.String,
-    "username": fields.String,
-    "password": fields.String,
-    "email": fields.String,
-    "first_name": fields.String,
-    "last_name": fields.String,
-    "phone_number": fields.String,
-    "company": fields.String,
-})
-
-@api.route('/update', methods=['PUT'])
-class Users(Resource):
-    @api.response(200, 'Successfully updated user info')
-    @api.response(400, 'Bad Request')
-    @api.doc(description="Updates info for a user")
-    @api.expect(update_payload)
-    def put(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('id', required=True)
-        parser.add_argument('username', required=True)
-        parser.add_argument('password', required=True)
-        parser.add_argument('email', required=True)
-        parser.add_argument('first_name', required=True)
-        parser.add_argument('last_name', required=True)
-        parser.add_argument('phone_number', required=True)
-        parser.add_argument('company', required=False, default=None)
-        args = parser.parse_args()
-        # print(args)
-
-        return updateUser(args.id, args.username, args.password, args.email, args.first_name, args.last_name, args.phone_number, args.company)
-
-
-# create task
-task_payload = api.model('task', {
-    "owner": fields.Integer,
-    "title": fields.String,
-    "description": fields.String,
-    "creation_date": fields.String,
-    "deadline": fields.String,
-    "current_state": fields.String,
-    "progress": fields.Integer,
-    "time_estimate": fields.Integer,
-    "difficulty": fields.String
-})
-
-@api.route('/create_task', methods=['POST'])
-class Users(Resource):
-    @api.response(200, 'Successfully created task')
-    @api.response(400, 'Bad Request')
-    @api.doc(description="Creates a task with the given info")
-    @api.expect(task_payload)
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('owner', required=True)
-        parser.add_argument('title', required=True)
-        parser.add_argument('description', required=True)
-        parser.add_argument('creation_date', required=True)
-        parser.add_argument('deadline', required=False)
-        # parser.add_argument('labels', required=False)
-        parser.add_argument('current_state', required=False, default='Not Started')
-        parser.add_argument('progress', required=False, default=0)
-        parser.add_argument('time_estimate', required=False)
-        parser.add_argument('difficulty', required=False)
-        args = parser.parse_args()
-        # print(args)
-
-        id = createTask(args.owner, args.title, args.description, args.creation_date, args.deadline, args.current_state, args.progress, args.time_estimate, args.difficulty)
-
-        return {'id': id},200
-
-
-# get user info
-@api.route('/user/<int:owner>/tasks', methods=['GET'])
-class Users(Resource):
-    @api.response(200, 'Successfully retrieved task info')
-    @api.response(404, 'Not Found')
-    @api.doc(description="Gets all tasks for a user given their id")
-    def get(self, owner):
-        return json.dumps({'tasks': getTasks(owner)})
-
-# listener route for chatbot
-@api.route('/webhook', methods=['POST'])
-class Webhook(Resource):
-    def post(self):
-        req = request.get_json(force=True)
-        print(json.dumps(req, indent=4, sort_keys=True))
-        #friendly reminder that the response is a json so it can be accessed like an array/dict
-        intent = req["queryResult"]["intent"]['displayName']
-
-        response = parseIntent(intent, req)
-
-        return response,200
 
 if __name__ == '__main__':
-    # params = config()
-    # conn = psycopg2.connect(**params)
-
     app.run(debug=True)

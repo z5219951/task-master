@@ -3,6 +3,8 @@ import axios from 'axios';
 import store from '../store';
 import { useHistory } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
+import CreatableSelect from 'react-select/creatable';
+import Select from 'react-select';
 
 const UpdateTask = (props) => {
   
@@ -15,29 +17,45 @@ const UpdateTask = (props) => {
   const [startD, setStartD] = useState('');
   const [dueD, setDueD] = useState('');
   const [cState, setCState] = useState('');
-  const [difficulty, setDifficulty] = useState('');
   const [startDAlert, setStartDAlert] = useState('')
   const [dueDAlert, setDueDAlert] = useState('')
   const [timeEst, setTimeEst] = useState('')
-  const [progress, setProgress] = useState('')
   const [show, setShow] = useState(false);
-
+  const [labels, setLabels] = useState('')
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [friends, setFriends] = useState([{label: 'Myself', value:store.getState().id}])
+  const [assigned_to, setAssigned_to] = useState('')
+  const [assigned, setAssigned] = useState('')
+  const [noDeadline, setNoDeadline] = useState(false)
 
   // Get task
   const [task, setTask] = useState('')
   const taskID = props.location.state.id;
   useEffect(() => {
-    axios.get(`http://localhost:5000/user/${store.getState().id}/tasks`).then((res) => {
-      const taskList = JSON.parse(res.data).tasks;
+    axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
+      const taskList = JSON.parse(res.data);
       for (let i = 0; i < taskList.length; i++) {
         if (taskList[i].id === taskID) {
-          console.log(taskList[i])
           setTask(taskList[i])
         }
       }
     })
+    // test
+    /*
+    Obtain connected users
+    axios.get(`http://localhost:5000/getFriends/${store.getState().id}`).then((res) => {
+      // temp = JSON.parse(res.data)
+    })
+    */
+   //Obtain connected users
+   axios.get(`http://localhost:5000/friends/lists/${store.getState().id}`).then((res) => {
+    const temp = JSON.parse(res.data)
+    temp.map((user) => {
+      setFriends(friends => [...friends,{'value': user.requestedUser, 'label': user.email}])
+    })
+    console.log(JSON.parse(res.data))
+  })
   }, [])
 
   function handleSubmit () {
@@ -56,40 +74,20 @@ const UpdateTask = (props) => {
       updateTask.time_estimate = timeEst;
     }
 
-    if (progress !== '') {
-      updateTask.progress = progress;
-    }
-
-    if (difficulty !== '') {
-      updateTask.difficulty = difficulty;
-    }
-
     if (cState !== '') {
       updateTask.current_state = cState;
     }
 
-    if (dueD !== '' && startD === '') {
-      if (dueD < updateTask.creation_date) {
-        setDueDAlert('Please enter a due date after the start date')
-      }
-      updateTask.deadline = dueD
+    if (assigned_to !== '') {
+      updateTask.assigned_to = assigned_to;
     }
 
-    if (dueD === '' && startD !== '') {
-      if (startD > updateTask.deadline) {
-        setStartDAlert('Please enter a start date before the due date')
-        return
-      }
-      updateTask.creation_date = startD
+    if (noDeadline === false && dueD !== 'None') {
+      updateTask.deadline = dueD;
     }
 
-    if (dueD !== '' && startD !== '') {
-      if (dueD < startD) {
-        setDueDAlert('Please enter a due date after the start date')
-        return
-      }
-      updateTask.deadline = dueD
-      updateTask.creation_date = startD
+    if (noDeadline === true) {
+      updateTask.deadline = 'None'
     }
     
     setTask(updateTask)
@@ -99,8 +97,32 @@ const UpdateTask = (props) => {
   }
 
   useEffect(() => {
-    console.log(task)
+    if (Object.keys(task).length !== 0) {
+      axios.put(`http://localhost:5000/tasks/update `, task)
+      
+      if (task.assigned_to !== '' || task.assigned_to !== undefined) {
+        axios.get(`http://localhost:5000/user/${task.assigned_to}`).then((res) => {
+        setAssigned(JSON.parse(res.data).email)
+      })}
+    } 
+
   },[task])
+
+  function handleAssigned(assigned) {
+    console.log(assigned)
+    setAssigned_to(assigned.value)
+    if (assigned.value === '') {
+      setAssigned_to(store.getState().id)
+    }
+  }
+
+  function handleRemoveDeadline () {
+    if (noDeadline === false) {
+      setNoDeadline(true)
+    } else {
+      setNoDeadline(false)
+    }
+  }
 
   return(
     <>
@@ -111,7 +133,27 @@ const UpdateTask = (props) => {
       </div>
       <h3>Please enter the fields you wish to update</h3>
       <br/>
+      <div className="form-group row mb-5">
+        <label htmlFor="cState" className="col-sm-3 col-form-label">Update Completion State</label>
+        <div className="col-sm-5">
+          <select className="form-control input-sm" id="state" type="text" onChange={(e) => setCState(e.target.value)}>
+            <option value=''></option>
+            <option>Not Started</option>
+            <option>In Progress</option>
+            <option>Blocked</option>
+            <option>Completed</option>
+          </select>
+          &nbsp;&nbsp;Current Completion State - {task.current_state}
+        </div>
+      </div>
       <div className="form">
+        <div className="form-group row mb-5">
+          <label htmlFor="assign" className="col-sm-3 col-form-label">Assign Task</label>
+          <div className="col-md-6">
+            <Select placeholder='Search for a user to assign this task to' options={friends} onChange={(e) => handleAssigned(e)}/>
+            Currently assigned to - {assigned}
+          </div>
+        </div>
         <div className="form-group row mb-5">
           <label htmlFor="name" className="col-sm-3 col-form-label">Update Task Name</label>
           <div className="col-sm-5">
@@ -127,29 +169,16 @@ const UpdateTask = (props) => {
           </div>
         </div>
         <div className="form-group row mb-5">
-          <label htmlFor="startD" className="col-sm-3 col-form-label">Update Start Date</label>
-          <div className="col-sm-4">
-          <input className="form-control input-sm" type="date" id="startD" onChange={(e) => setStartD(e.target.value)}></input>
-            &nbsp;&nbsp;Current Start Date - {task.creation_date}
-            <br />
-            <font color="red">{startDAlert}</font>
-          </div>
-        </div>
-        <div className="form-group row mb-5">
-          <label htmlFor="dueD" className="col-sm-3 col-form-label">Update Due Date</label>
+          <label htmlFor="dueD" className="col-sm-3 col-form-label">Update Deadline</label>
           <div className="col-sm-4">
             <input className="form-control input-sm" type="date" id="DueD" onChange={(e) => setDueD(e.target.value)}></input>
-            &nbsp;&nbsp;Current Due Date - {task.deadline}
+            &nbsp;&nbsp;Current Deadline - {task.deadline !== 'None' ? task.deadline : 'No deadline'} 
             <br/>
             <font color="red">{dueDAlert}</font>
           </div>
-        </div>
-        <div className="form-group row mb-5">
-          <label htmlFor="description" className="col-sm-3 col-form-label">Update Progress (%)</label>
-          <div className="col-sm-4">
-          <input className="form-control input-lg" type="number" min="0" max="100" onChange={(e) => setProgress(e.target.value)}></input>
-            <progress value={task.progress} max="100"> </progress>
-            &nbsp;&nbsp;Current Progress - {task.progress}%
+            <div className="col-sm-3">
+            <input type="checkbox" id="noDeadline" name="noDeadline" checked={noDeadline} onChange={(e) => handleRemoveDeadline()}></input>&nbsp;
+            <label htmlFor="noDeadline"> Remove deadline</label><br></br>
           </div>
         </div>
         <div className="form-group row mb-5">
@@ -159,33 +188,7 @@ const UpdateTask = (props) => {
             &nbsp;&nbsp;Current Time Estimate - {task.time_estimate} hours
           </div>
         </div>
-        <div className="form-group row mb-5">
-          <label htmlFor="difficulty" className="col-sm-3 col-form-label">Update Difficulty</label>
-          <div className="col-sm-5">
-            <select className="form-control input-sm" id="state" type="text" onChange={(e) => setDifficulty(e.target.value)}>
-              <option value=''></option>
-              <option value="Very Easy">Very Easy</option>
-              <option value="Easy">Easy</option>
-              <option value="Medium">Medium</option>
-              <option value="Hard">Hard</option>
-              <option value="Very Hard">Very Hard</option>
-            </select>
-            &nbsp;&nbsp;Current Difficulty - {task.difficulty}
-          </div>
-        </div>
-        <div className="form-group row mb-5">
-          <label htmlFor="cState" className="col-sm-3 col-form-label" onChange={(e) => setCState(e.target.value)}>Update Completion State</label>
-          <div className="col-sm-5">
-            <select className="form-control input-sm" id="state" type="text">
-              <option value=''></option>
-              <option>Not Started</option>
-              <option>In Progress</option>
-              <option>Blocked</option>
-              <option>Completed</option>
-            </select>
-            &nbsp;&nbsp;Current Completion State - {task.current_state}
-          </div>
-        </div>
+        <br/>
         <button type="button" className="btn btn-primary" onClick={(e) => handleSubmit()}>Submit</button>
       </div>
       <Modal animation={false} show={show} onHide={handleClose}>

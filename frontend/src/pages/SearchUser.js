@@ -10,6 +10,9 @@ import ViewProfileButton from '../components/ViewProfileButton'
 class SearchUser extends Component{
     constructor(props) {
         super(props);
+        if (store.getState() === undefined || store.getState().id === "") {
+            this.props.history.push('/home')
+        }
         // get id
         const id = Number(store.getState().id);
         this.state = {
@@ -39,8 +42,14 @@ class SearchUser extends Component{
         } else {
             try {
                 const userId = Number(this.state.id);
-                const data = {userId:userId,requestUser:requestUser};
-                axios.post("http://localhost:5000/request_search_email", data).then((res)=>{
+                const data = {userId:userId,requestedUser:requestUser};
+                axios.defaults.crossDomain=true;
+                let url = "http://localhost:5000/friends/sendRequest";
+                if(store.getState().testMod) {
+                    url = "http://localhost:5000/request_search_email";
+                }
+                axios.post(url, data).then((res)=>{
+                    console.log(res);
                     const result = true;
                     if(result) {
                         this.setState(()=>({
@@ -77,9 +86,9 @@ class SearchUser extends Component{
     }
     handleSubmit = ()=>{
         try {
-            const email = this.state.email.trim();
+            const email = this.state.email;
             // check format, avoid empty string
-            
+            email.trim();
             if(email.length === 0) {
                 this.setState(()=>({
                 email:'',
@@ -89,25 +98,30 @@ class SearchUser extends Component{
             }
             // send user email to check
             const data = {input:email}
-            axios.post('http://localhost:5000/request_search_user',data).then((res)=>{
-                // store the user id in store
-                console.log(res)
-                // const result = JSON.parse(res.data);
-                const testResult = [
-                    {
-                        requestUser:123,
-                        userName:'test1'
-                    }
-                ];
+            axios.defaults.crossDomain=true;
+            let url = "http://localhost:5000/friends/searchUser"
+            if(store.getState().testMod) {
+                url = 'http://localhost:5000/request_search_user';
+            }
+            axios.post(url,data).then((res)=>{
+                const testResult = JSON.parse(res.data);
+                console.log(testResult);
                 let warn = ''
                 if(testResult.length === 0) {
                     warn = 'No result'
                 }
-                const requestUser = testResult.requestUser;
+                // avoid adding themselves
+                for(let i = 0; i < testResult.length; i++) {
+                    if(testResult[i].requestUser === Number(this.state.id)) {
+                        testResult.splice(i,1);
+                        warn = "Can't add yourself!";
+                        break;
+                    }
+                }
+                const requestUser = testResult;
                 this.setState(()=>({
                     list:testResult,
                     noResult:warn,
-                    requestUser:requestUser
                 }))
             })
         } catch (error) {
@@ -117,7 +131,7 @@ class SearchUser extends Component{
     getItem = ()=>{
         return (
             this.state.list.map((item,index)=><div key = {index}className="user_request_box">
-                <p className="user_request_name">{item.userName}</p>
+                <p className="user_request_name">{item.username}</p>
                 <div className='buttonBox'>
                     <ViewProfileButton id={item.requestUser}></ViewProfileButton>
                     <Button variant="primary" name="accept" value={item.requestUser} onClick={this.handleShow}>Request Connection</Button>

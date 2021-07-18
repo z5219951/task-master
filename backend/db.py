@@ -38,7 +38,7 @@ def getUserByID(id):
     c = conn.cursor()
     #Should we be grabbing the password from here?
     query = f"""
-            SELECT  id, username, password, email, first_name, last_name, phone_number, company
+            SELECT  id, username, password, email, first_name, last_name, phone_number, company, labels
             FROM    users
             WHERE   id = '{id}';
             """
@@ -55,7 +55,7 @@ def getUserByEmail(email):
     c = conn.cursor()
     #Should we be grabbing the password from here?
     query = f"""
-            SELECT  id, username, password, email, first_name, last_name, phone_number, company
+            SELECT  id, username, password, email, first_name, last_name, phone_number, company, labels
             FROM    users
             WHERE   email = '{email}';
             """
@@ -79,193 +79,25 @@ def userDict(data):
             "first_name":   data[4],
             "last_name":    data[5],
             "phone_number": data[6],
-            "company":      data[7]
+            "company":      data[7],
+            "labels":       data[8]
         }
     
     return userDict
         
-    
-
-def updateUser(id, username, password, email, first_name, last_name, phone_number, company):
-    conn = sqlite3.connect('clickdown.db')
-    c = conn.cursor()
-
-    query = f"""
-            UPDATE  users
-            SET     username = '{username}',
-                    password = '{password}',
-                    email = '{email}',
-                    first_name = '{first_name}',
-                    last_name = '{last_name}',
-                    phone_number = '{phone_number}',
-                    company = '{company}'
-            WHERE   id = '{id}';
-            """
-    try:
-        c.execute(query)
-    except:
-        c.close()
-        conn.close()
-        # split up username and email later
-        return {'value': False}, 200
-
-    conn.commit()
-    
-    c.close()
-    conn.close()
-
-    return {'value': True},200
-
-def insertUser(id, username, password, email, first_name, last_name, phone_number, company):
-    conn = sqlite3.connect('clickdown.db')
-    c = conn.cursor()
-
-    query = f"""
-            INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
-            VALUES ('{username}', '{password}', '{email}', '{first_name}', '{last_name}', '{phone_number}', '{company}');
-            """
-    c.execute(query)
-    conn.commit()
-
-    c.close()
-    conn.close()
-
-def createTask(owner, title, description, creation_date, deadline, current_state, progress, time_estimate, difficulty):
-    conn = sqlite3.connect('clickdown.db')
-    c = conn.cursor()
-
-    query = f"""
-            INSERT INTO tasks (owner, title, description, creation_date, deadline, current_state, progress, time_estimate, difficulty)
-            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{current_state}', '{progress}', '{time_estimate}', '{difficulty}');
-            """
-    c.execute(query)
-    conn.commit()
-
-    query = f"""
-            SELECT  id
-            FROM    tasks
-            WHERE   owner = '{owner}'
-            AND     title = '{title}'
-            AND     description = '{description}'
-            AND     creation_date = '{creation_date}';
-            """
-    c.execute(query)
-    id = c.fetchone()[0]
-
-    c.close()
-    conn.close()
-    return id
-
-def getTasks(owner):
-    conn = sqlite3.connect('clickdown.db')
-    c = conn.cursor()
-
-    query = f"""
-            SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, progress, time_estimate, difficulty
-            FROM    tasks
-            WHERE   owner = '{owner}';
-            """
-
-    print(query)
-    c.execute(query)
-    data = c.fetchone()
-    task_list = []
-
-    while (data is not None):
-        task_info = {
-            'id': f'{data[0]}',
-            'owner': f'{data[1]}',
-            'title': f'{data[2]}',
-            'description': f'{data[3]}',
-            'creation_date': f'{data[4]}',
-            'deadline': f'{data[5]}',
-            'labels': f'{data[6]}',
-            'current_state': f'{data[7]}',
-            'progress': f'{data[8]}',
-            'time_estimate': f'{data[9]}',
-            'difficulty': f'{data[10]}'
-        }
-        task_list.append(task_info)
-        data = c.fetchone()
-
-    print(task_list)
-
-    c.close()
-    conn.close()
-    return task_list
-
-def authCheck(email, password):
-    conn = sqlite3.connect('clickdown.db')
-    c = conn.cursor()
-
-    # retrieve id using email and password
-    query = f"""
-            SELECT  id
-            FROM    users
-            WHERE   email = '{email}' and password = '{password}';
-            """
-    c.execute(query)
-    id = c.fetchone()
-    c.close()
-    conn.close()
-    return id
-
-def updatePassword(email, new_password):
-    conn = sqlite3.connect('clickdown.db')
-    c = conn.cursor()
-
-    # change the password and reset code
-    query = f"""
-            UPDATE  users
-            SET     password = '{new_password}', recovery = null
-            WHERE   email = '{email}';
-            """
-    c.execute(query)
-    conn.commit()
-
-    c.close()
-    conn.close()
-
-def recoveryMatch(recovery):
-    conn = sqlite3.connect('clickdown.db')
-    c = conn.cursor()
-
-    # is there a recovery code that matches?
-    query = f"""
-            SELECT  count(*)
-            FROM    users
-            WHERE   recovery = '{recovery}';
-            """
-    c.execute(query)
-    count = c.fetchone()[0]
-    c.close()
-    conn.close()
-    print(count)
-    return count
-
-def updateRecovery(recovery, email):
-    conn = sqlite3.connect('clickdown.db')
-    c = conn.cursor()
-    query = f"""
-            UPDATE  users
-            SET     recovery = '{recovery}'
-            WHERE   email = '{email}';
-            """
-    c.execute(query)
-    conn.commit()
-    c.close()
-    conn.close()
 
 ### Friend database functions ### 
 def friendRequestAdd(user_from, user_to):
     # Check that users from args exists
-    print("in add")
     user = getUserByID(user_from)
     if user == []:
         return False
     
     user = getUserByID(user_to)
     if user == []:
+        return False
+    
+    if user_from == user_to:
         return False
         
     conn = sqlite3.connect('clickdown.db')
@@ -316,8 +148,7 @@ def friendRequestGet(email):
             "userName"   : userInfo["first_name"] + " " +
                            userInfo["last_name"]
         }
-        
-    requests_list.append(userJson)
+        requests_list.append(userJson)
     
     return requests_list
     
@@ -362,3 +193,80 @@ def friendListAdd(userA, userB):
             """
     c.execute(query)
     conn.commit()
+
+def friendsListGet(userId):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    # Find all entries that "user a" is friends with "user b", vice versa
+    query = f"""
+            CREATE TEMP TABLE friends
+            AS SELECT user_a
+            FROM friend_list
+            WHERE user_b = '{userId}'
+            UNION
+            SELECT user_b
+            FROM friend_list
+            WHERE user_a = '{userId}'
+            """
+    c.execute(query)
+
+    query = f"""
+            SELECT id, first_name, last_name, email
+            FROM users
+            INNER JOIN friends ON users.id = friends.user_a
+            """
+    c.execute(query)
+    
+    data = c.fetchall()    
+    conn.close()
+    
+    res = []
+    for d in data:
+        res.append({"requestedUser" : d[0],
+                    "name" : d[1] + " " + d[2],
+                    "email": d[3]})
+    return res
+    
+def searchUsers(needle):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    needle = needle.lower()
+    query = f"""
+            SELECT  *
+            FROM    users
+            WHERE   lower(email) = '{needle}'
+            or      lower(first_name) = '{needle}'
+            or      lower(last_name) = '{needle}'
+            or      phone_number = '{needle}'
+            or      lower(company) = '{needle}';
+            """
+    
+    c.execute(query)
+    data = c.fetchall()
+    
+    split = needle.split()
+    # If len > 1 assume input string is FIRST LAST
+    if len(split) > 1:
+        first_name = split[0]
+        last_name = split[1]
+        
+        query = f"""
+        SELECT  *
+        FROM    users
+        WHERE   lower(first_name) = '{first_name}'
+        AND     lower(last_name) = '{last_name}'
+        """
+        
+        c.execute(query)
+        data.append(c.fetchone())
+
+    res = []
+    for d in data:
+        if d == None:
+            break
+        res.append({"requestUser": d[0],
+                    "username": d[4] + " " + d[5]})
+    
+    return res

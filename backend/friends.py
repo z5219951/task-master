@@ -28,7 +28,6 @@ class Users(Resource):
         
         user_from = args.userId
         user_to = args.requestedUser
-        print("Entered")
         res = db.friendRequestAdd(user_from, user_to)
         
         return {'value': res},200
@@ -40,7 +39,7 @@ class Users(Resource):
     @api.doc(description="Search for pending friend requests")
     def get(self, email):
         res = db.friendRequestGet(email)
-        
+        print(res)
         return res, 200
         
 @api.route('/decline', methods=['POST'])
@@ -71,7 +70,7 @@ class Users(Resource):
 @api.route('/accept', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Accept command OK')
-    @api.response(400, 'Bad request - Friend request does is not valid')
+    @api.response(400, 'Bad request - Friend request is not valid')
     @api.doc(description="Link two account IDs as friends")
     @api.expect(request_payload)
     def post(self):
@@ -94,14 +93,35 @@ class Users(Resource):
         return {'value': True},200
 
 
-#TODO
+@api.route('/lists/<int:userId>', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Sucessfully searched for connected users')
+    @api.response(400, 'Bad request')
+    @api.doc(description= "Returns all users that is connected to the given user")
+    def get(self, userId):
+        res_list = []
+        
+        res_list = db.friendsListGet(userId)
+        print(res_list)
+        
+        return json.dumps(res_list), 200
+        
+search_payload = api.model('search', {
+    "input": fields.String
+})
 @api.route('/searchUser', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Sucessfully searched for requests')
-    @api.response(400, 'Bad request')
-    @api.doc(description="Search for pending friend requests")
+    @api.response(400, 'Not implemented')
+    @api.expect(search_payload)
+    @api.doc(description="Search for users based on name, email, company, phone")
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('username', required=True)
+        parser.add_argument('input', required=True)
+        args = parser.parse_args()
         
-        return False
+        search_string = args.input
+        
+        res = db.searchUsers(search_string)
+        
+        return json.dumps(res), 200

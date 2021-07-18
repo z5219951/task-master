@@ -18,38 +18,12 @@ class Groups extends Component{
         try {
             const userId = store.getState().id;
             // send id to get group information
-            axios.get('http://localhost:5000/groups_information').then((res)=>{
+            axios.defaults.crossDomain=true;
+            axios.get('http://localhost:5000/groups/'+userId).then((res)=>{
             // store the user id in store
             console.log(res)
             // const result = JSON.parse(res.data);
-            const testResult = [
-                {
-                    groupName:"group1",
-                    members:[
-                        {
-                            requestUser:123,
-                            userName:'member1'
-                        },
-                        {
-                            requestUser:331,
-                            userName:'member2'
-                        }
-                    ]
-                },
-                {
-                    groupName:"group2",
-                    members:[
-                        {
-                            requestUser:1,
-                            userName:'member3'
-                        },
-                        {
-                            requestUser:3,
-                            userName:'member5'
-                        }
-                    ]
-                }
-            ];
+            const testResult = JSON.parse(res.data);
             let warn = ''
             if(testResult.length === 0) {
                 warn = 'No Groups'

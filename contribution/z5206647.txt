@@ -22,3 +22,11 @@ Participated in the weekly meeting, and wrote a minutes report for the meeting.
 Made some progress on a task creation backend for the demostration next week, 
 however failed to complete it in time due to unfamiliarity with the flask-restx 
 api, using SQL databases, and the react frontend.
+
+Week 5:
+Participated in the weekly meeting, and wrote a minutes report for the meeting.
+Started and completed backend for the friends feature CWC47, CWC50.
+
+Week 7:
+Participated in the weekly meeting, and wrote a minutes report for the meeting.
+Added api for searching of connected users and tasks.
