@@ -299,6 +299,7 @@ class Users(Resource):
     @api.doc(description="Receives a file and stores it in the backend")
     def post(self, id):
         print(f'upload received task_id is: {id}')
+        # file = request.files.getlist('file')
         file = request.files['file']
         print(f'upload received filetype is: {type(file)}')
         filename = secure_filename(file.filename)
@@ -307,7 +308,7 @@ class Users(Resource):
             # file_ext = os.path.splitext(filename)[1]
             # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
                 # break
-            path = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id))
+            dir = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id))
             os.makedirs(dir, exist_ok=True)
             path = PurePath(dir, filename)
             # path example: 'tasks/123/file.png'
