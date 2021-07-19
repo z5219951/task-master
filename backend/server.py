@@ -2,9 +2,12 @@
 import json
 import random
 import sys
+from pathlib import PurePath, Path
+import os
 
 # third-party imports
 from flask import Flask, request, jsonify, Blueprint
+from flask.helpers import send_from_directory
 from flask_cors import CORS
 from flask_mail import Mail, Message
 from flask_restx import Resource, Api, fields, inputs, reqparse
@@ -327,7 +330,13 @@ class Users(Resource):
 
         return {'value': True}
 
-
+@api.route('/uploads/<path:path>', methods=['GET'])
+class Uploads(Resource):
+    @api.response(200, 'Successfully retrieved file')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Gets a file from the backend directory given a path")
+    def get(path):
+        return send_from_directory(PurePath(Path(__file__).parent.resolve()), path)
 
 if __name__ == '__main__':
     app.run(debug=True)
