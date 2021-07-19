@@ -34,7 +34,8 @@ class Users(Resource):
             'last_name': f'{data[5]}',
             'phone_number': f'{data[6]}',
             'company': f'{data[7]}',
-            'labels': f'{data[8]}'
+            'labels': f'{data[8]}',
+            'image_path': f'{data[9]}'
         }
         
         print(resp)

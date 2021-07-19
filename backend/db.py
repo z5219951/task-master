@@ -38,7 +38,7 @@ def getUserByID(id):
     c = conn.cursor()
     #Should we be grabbing the password from here?
     query = f"""
-            SELECT  id, username, password, email, first_name, last_name, phone_number, company, labels
+            SELECT  id, username, password, email, first_name, last_name, phone_number, company, labels, image_path
             FROM    users
             WHERE   id = '{id}';
             """
