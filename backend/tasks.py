@@ -87,7 +87,7 @@ class Users(Resource):
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
                 FROM    tasks
                 WHERE   owner = '{owner}'
-                ORDER BY    deadline NULLS LAST;
+                ORDER BY    deadline;
                 """
 
         c.execute(query)
@@ -132,7 +132,7 @@ class Users(Resource):
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
                 FROM    tasks
                 WHERE   assigned_to = '{owner}'
-                ORDER BY    deadline NULLS LAST;
+                ORDER BY    deadline;
                 """
 
         c.execute(query)
@@ -299,23 +299,22 @@ class Users(Resource):
     @api.doc(description="Receives a file and stores it in the backend")
     def post(self, id):
         print(f'upload received task_id is: {id}')
-        # file = request.files.getlist('file')
-        file = request.files['file']
-        print(f'upload received filetype is: {type(file)}')
-        filename = secure_filename(file.filename)
+        files = request.files.getlist('file')
 
-        if filename != '':
-            # file_ext = os.path.splitext(filename)[1]
-            # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
-                # break
-            dir = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id))
-            os.makedirs(dir, exist_ok=True)
-            path = PurePath(dir, filename)
-            # path example: 'tasks/123/file.png'
-            print(f'path type is: {type(path)}')
-            print(f'path name is: {path}')
-            file.save(path)
-        else:
-            return {'value': False}
+        for file in files:
+            print(f'upload received filetype is: {type(file)}')
+            filename = secure_filename(file.filename)
+
+            if filename != '':
+                dir = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id))
+                os.makedirs(dir, exist_ok=True)
+                path = PurePath(dir, filename)
+                # path example: 'tasks/123/file.png'
+                
+                print(f'path type is: {type(path)}')
+                print(f'path name is: {path}')
+                file.save(path)
+            else:
+                return {'value': False}
 
         return {'value': True}
