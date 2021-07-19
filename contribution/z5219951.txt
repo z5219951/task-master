@@ -16,3 +16,6 @@ Me and Wayne check our backend port is working for our frontend page. I start wr
 
 Week6
 Participating our group meeting. As usual, me and Wayne check our backend port is working for our frontend page. I start writing our frontend page about cwc-71,46,72,63,52,48.
+
+Week7
+Participating our group meeting. As usual, me and Wayne check our backend port is working for our frontend page. Testing upload photo and files are working. Checking whether creating group is working.

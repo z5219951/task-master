@@ -14,10 +14,13 @@ import sqlite3
 # from config import config
 from db import *
 import friends
+
 import groups
 import tasks
 import user
 import labels
+
+
 
 app = Flask(__name__)
 api = Api(app,
@@ -36,7 +39,6 @@ api.add_namespace(user.api)
 app.register_blueprint(labels.bp)
 api.add_namespace(labels.api)
 
-cors = CORS(app)
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
@@ -49,6 +51,8 @@ mail_settings = {
 
 app.config.update(mail_settings)
 mail = Mail(app)
+
+cors = CORS(app)
 
 # Register an account
 register_payload = api.model('register account', {
@@ -322,6 +326,7 @@ class Users(Resource):
         conn.close()
 
         return {'value': True}
+
 
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@ import axios from 'axios';
 import Card from "react-bootstrap/Card";
 import './Profile.css'
 import { Button, Modal } from 'react-bootstrap';
+import Photo from './Photo'
 
 const Profile = () => {
   const history = useHistory();
@@ -130,6 +131,12 @@ const Profile = () => {
         <h3>Please enter the fields you wish to update</h3>
       <br/>
       <div className="form">
+      <div className="form-group row mb-5">
+          <label htmlFor="password" className="col-sm-3 col-form-label">Update Photo</label>
+          <div className="col-sm-5">
+            <Photo></Photo>
+          </div>
+        </div>
       <div className="form-group row mb-5">
           <label htmlFor="password" className="col-sm-3 col-form-label">Update Password</label>
           <div className="col-sm-5">

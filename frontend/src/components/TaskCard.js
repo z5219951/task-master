@@ -5,6 +5,7 @@ import './TaskCard.css'
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import axios from 'axios'
+import UploadFile from '../pages/UploadFile'
 
 const TaskCard = (props) => {
   const tasks = props.task
@@ -120,6 +121,9 @@ const TaskCard = (props) => {
         <p className="card-text m-1"><em>Labels: {currentLabels}</em></p>
         {update ? <div> <p className="card-text m-1"><em>Edit Labels:</em></p> <CreatableSelect isMulti defaultValue={tasks.labels !== '' ? JSON.parse(tasks.labels) : ''} onChange={(e) => handleLabels(e)} placeholder='Create a label by typing here or select a label below' options={formattedLabels}/></div> : ''}
         <br />
+        Upload Files:
+        <br/>
+        <UploadFile taskID={tasks.id}></UploadFile>
       </div>
     </div>
   </>

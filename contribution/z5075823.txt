@@ -12,3 +12,9 @@ Wrote most of the python backend, assisted with preparing for the demonstration 
 
 Week 5:
 Continued working on development. Development is going very smoothly and on schedule according to the Jira taskboard.
+
+Week 6:
+Developed backend routes and implementation for task update, groups, and labels.
+
+Week 7:
+Implemented backend for file uploads. Bug fixed my implementation with feedback from Charles and Wayne in the frontend.

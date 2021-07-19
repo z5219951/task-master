@@ -1,4 +1,7 @@
 import json
+from pathlib import PurePath, Path
+import os
+from werkzeug.utils import secure_filename
 
 from flask import Flask, request, jsonify, Blueprint
 from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
@@ -286,3 +289,32 @@ class Tasks(Resource):
                 res_list.append(task_info)
                 
         return json.dumps(res_list), 200
+
+
+# upload to a task
+@api.route('/upload/<int:id>', methods=['POST'])
+class Users(Resource):
+    @api.response(200, 'Successfully attached file to a task')
+    @api.response(400, 'Bad Request')
+    @api.doc(description="Receives a file and stores it in the backend")
+    def post(self, id):
+        print(f'upload received task_id is: {id}')
+        files = request.files.getlist('file')
+
+        for file in files:
+            print(f'upload received filetype is: {type(file)}')
+            filename = secure_filename(file.filename)
+
+            if filename != '':
+                dir = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id))
+                os.makedirs(dir, exist_ok=True)
+                path = PurePath(dir, filename)
+                # path example: 'tasks/123/file.png'
+                
+                print(f'path type is: {type(path)}')
+                print(f'path name is: {path}')
+                file.save(path)
+            else:
+                return {'value': False}
+
+        return {'value': True}

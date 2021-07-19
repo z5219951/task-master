@@ -13,6 +13,9 @@ class Groups extends Component{
             list:[],
             noResult:''
         }
+        if (store.getState() === undefined || store.getState().id === "") {
+            this.props.history.push('/home')
+        }
     }
     componentDidMount = ()=>{
         try {

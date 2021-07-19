@@ -1,4 +1,7 @@
 import json
+from pathlib import PurePath, Path
+import os
+from werkzeug.utils import secure_filename
 
 from flask import Flask, request, jsonify, Blueprint
 from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
@@ -102,3 +105,30 @@ class Users(Resource):
 
         return {'value': True}
 
+# upload a profile picture
+@api.route('/upload/<int:id>', methods=['POST'])
+class Users(Resource):
+    @api.response(200, 'Successfully uploaded a profile picture')
+    @api.response(400, 'Bad Request')
+    @api.doc(description="Receives a picture file and stores it in the backend")
+    def post(self, id):
+        print(f'upload received user_id is: {id}')
+        image = request.files['image']
+        print(f'upload received filetype is: {type(image)}')
+        filename = secure_filename(image.filename)
+
+        if filename != '':
+            # file_ext = os.path.splitext(filename)[1]
+            # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
+                # break
+            dir = PurePath(Path(__file__).parent.resolve(), 'users', str(id))
+            os.makedirs(dir, exist_ok=True)
+            path = PurePath(dir, filename)
+            # path example: '/users/123/picture.png'
+            print(f'path type is: {type(path)}')
+            print(f'path name is: {path}')
+            image.save(path)
+        else:
+            return {'value': False}
+
+        return {'value': True}
