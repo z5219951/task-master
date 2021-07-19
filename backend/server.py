@@ -24,7 +24,6 @@ import user
 import labels
 
 
-
 app = Flask(__name__)
 api = Api(app,
           default="ClickDown",  # Default namespace
@@ -42,6 +41,7 @@ api.add_namespace(user.api)
 app.register_blueprint(labels.bp)
 api.add_namespace(labels.api)
 
+app.config["UPLOADS"] = PurePath(Path(__file__).parent.resolve())
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
@@ -336,7 +336,7 @@ class Uploads(Resource):
     @api.response(400, 'Bad request')
     @api.doc(description="Gets a file from the backend directory given a path")
     def get(path):
-        return send_from_directory(PurePath(Path(__file__).parent.resolve()), path)
+        return send_from_directory(PurePath(app.config['UPLOADS']), path, as_attachment=False)
 
 if __name__ == '__main__':
     app.run(debug=True)
