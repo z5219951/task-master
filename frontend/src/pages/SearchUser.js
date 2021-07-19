@@ -99,7 +99,7 @@ class SearchUser extends Component{
             // send user email to check
             const data = {input:email}
             axios.defaults.crossDomain=true;
-            let url = "http://localhost:5000/friends/searchUser"
+            let url = "http://localhost:5000/user/search"
             if(store.getState().testMod) {
                 url = 'http://localhost:5000/request_search_user';
             }

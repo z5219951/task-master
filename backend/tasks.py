@@ -232,7 +232,7 @@ task_search_payload = api.model('search', {
 @api.route('/search', methods=['POST'])
 class Tasks(Resource):
     @api.response(200, 'Sucessfully searched for tasks')
-    @api.response(400, 'Not implemented')
+    @api.response(400, 'Unexpected error')
     @api.expect(task_search_payload)
     @api.doc(description="Search for tasks related to given user based on \
     id, name, label, description and/or deadline")
@@ -281,7 +281,8 @@ class Tasks(Resource):
             # Seach based on id, name, label, desc, deadline
             if ((task_info.get("id") == needle) or \
                 (needle in task_info.get("deadline")) or \
-                (needle in task_info.get("title").lower()) or  \
+                (needle in task_info.get("title").lower()) or \
+                (needle in task_info.get("labels").lower()) or \
                 (needle in task_info.get("description").lower())):
                 res_list.append(task_info)
                 

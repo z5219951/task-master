@@ -98,3 +98,59 @@ class Users(Resource):
 
         return {'value': True}
 
+
+search_payload = api.model('search', {
+    "input": fields.String,
+})
+@api.route('/search', methods=['POST'])
+class Users(Resource):
+    @api.response(200, 'Sucessfully searched for requests')
+    @api.response(400, 'Not implemented')
+    @api.expect(search_payload)
+    @api.doc(description="Search for users based on name, email, company, phone")
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('input', required=True)
+        args = parser.parse_args()
+                
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        
+        needle = args.input.lower()
+        query = f"""
+                SELECT  *
+                FROM    users
+                WHERE   lower(email) = '{needle}'
+                or      lower(first_name) = '{needle}'
+                or      lower(last_name) = '{needle}'
+                or      phone_number = '{needle}'
+                or      lower(company) = '{needle}';
+                """
+        
+        c.execute(query)
+        data = c.fetchall()
+        
+        # Check if search needle matches FIRST LAST
+        split = needle.split()
+        if len(split) > 1:
+            first_name = split[0]
+            last_name = split[1]
+            
+            query = f"""
+            SELECT  *
+            FROM    users
+            WHERE   lower(first_name) = '{first_name}'
+            AND     lower(last_name) = '{last_name}'
+            """
+            
+            c.execute(query)
+            data.append(c.fetchone())
+        
+        res = []
+        for d in data:
+            if d == None:
+                break
+            res.append({"requestUser": d[0],
+                        "username": d[4] + " " + d[5]})
+        
+        return json.dumps(res), 200
