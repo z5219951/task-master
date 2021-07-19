@@ -31,7 +31,8 @@ if __name__ == '__main__':
                 phone_number    text        not null,
                 company         text        ,
                 recovery        integer     ,
-                labels          text
+                labels          text        ,
+                image_path      text
             );
             """
     c.execute(query)

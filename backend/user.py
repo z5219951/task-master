@@ -117,18 +117,31 @@ class Users(Resource):
         print(f'upload received filetype is: {type(image)}')
         filename = secure_filename(image.filename)
 
-        if filename != '':
-            # file_ext = os.path.splitext(filename)[1]
-            # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
-                # break
-            dir = PurePath(Path(__file__).parent.resolve(), 'users', str(id))
-            os.makedirs(dir, exist_ok=True)
-            path = PurePath(dir, filename)
-            # path example: '/users/123/picture.png'
-            print(f'path type is: {type(path)}')
-            print(f'path name is: {path}')
-            image.save(path)
-        else:
+        if filename == '':
             return {'value': False}
+
+        dir = PurePath(Path(__file__).parent.resolve(), 'users', str(id))
+        os.makedirs(dir, exist_ok=True)
+        path = PurePath(dir, filename)
+
+        # path example: '/users/123/picture.png'
+        print(f'path type is: {type(path)}')
+        print(f'path name is: {path}')
+        image.save(path)
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f'''
+                UPDATE  users
+                SET     image_path = {id + '/' + filename}
+                WHERE   id = {id};
+                '''
+
+        print(f"stored in database: {id + '/' + filename}")
+
+        conn.commit()
+        c.close()
+        conn.close()
 
         return {'value': True}
