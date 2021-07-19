@@ -16,7 +16,10 @@ class UploadFile extends React.Component {
         uploading: false,
         taskId:props.taskId
     };
-}
+  }
+  sendResponse = (res)=>{
+    this.props.sendResponse(res);
+  }
 
   handleUpload = () => {
     const { fileList } = this.state;
@@ -34,12 +37,13 @@ class UploadFile extends React.Component {
       method: 'post',
       processData: false,
       data: formData,
-      success: () => {
+      success: (res) => {
         this.setState({
           fileList: [],
           uploading: false,
         });
         message.success('upload successfully.');
+        this.sendResponse(res);
       },
       error: () => {
         this.setState({

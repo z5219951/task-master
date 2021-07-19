@@ -30,9 +30,11 @@ class Photo extends React.Component {
       super(props);
       this.state = {
         loading: false,
-        postUrl:props.postUrl,
-        imageUrl:''
+        imageUrl:props.imageUrl
       };
+  }
+  sendResponse = (res)=>{
+    this.props.sendResponse(res);
   }
   submitPhoto = (options) =>{
     try { 
@@ -41,6 +43,7 @@ class Photo extends React.Component {
       formdata.append("image",options.file);
       axios.post("http://localhost:5000/user/upload/"+store.getState().id, formdata, {headers:{'Content-Type':'multipart/form-data'}}).then((res)=>{
           options.onSuccess();
+          this.sendResponse(res);
       })
     } catch (error) {
       console.log(error);

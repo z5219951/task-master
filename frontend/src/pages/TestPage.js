@@ -11,18 +11,20 @@ class TestPage extends Component{
         super(props);
         // modify this part to set the post url where the backend will receive data.
         this.state={
-            photoPost:"http://localhost:5000/user/upload",
             taskId:1
         }
     }
     photoUrl = (value)=>{
         console.log(value);
     }
+    getRes = (res)=>{
+        console.log(res);
+    }
     render (){
         return(
             <Fragment>
-                <Photo ></Photo>
-                <UploadFile taskId = {this.state.taskId}></UploadFile>
+                <Photo sendResponse = {this.getRes} imageUrl = "http//url"></Photo>
+                <UploadFile sendResponse = {this.getRes} taskId = {this.state.taskId}></UploadFile>
             </Fragment>
         )
     }
