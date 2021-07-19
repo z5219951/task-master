@@ -34,22 +34,13 @@ class Photo extends React.Component {
         imageUrl:''
       };
   }
-  // <Photo sendUrl = {this.getUrl}></Photo>
-  // in your parent, send a getUrl function to get image url
-  sendUrl = ()=>{
-      this.props.sendUrl(this.state.imageUrl);
-  }
   submitPhoto = (options) =>{
     try { 
       axios.defaults.crossDomain=true;
       let formdata = new FormData();
       formdata.append("image",options.file);
-      axios.post(this.state.postUrl+'/'+store.getState().id, formdata, {headers:{'Content-Type':'multipart/form-data'}}).then((res)=>{
+      axios.post("http://localhost:5000/user/upload/"+store.getState().id, formdata, {headers:{'Content-Type':'multipart/form-data'}}).then((res)=>{
           options.onSuccess();
-          this.setState({
-            imageUrl:'123'
-          });
-          this.sendUrl();
       })
     } catch (error) {
       console.log(error);

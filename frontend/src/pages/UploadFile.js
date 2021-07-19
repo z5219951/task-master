@@ -14,6 +14,7 @@ class UploadFile extends React.Component {
     this.state = {
         fileList: [],
         uploading: false,
+        taskId:props.taskId
     };
 }
 
@@ -29,7 +30,7 @@ class UploadFile extends React.Component {
     });
     // You can use any AJAX library you like
     reqwest({
-      url: this.props.postUrl+'/'+store.getState().id,
+      url: "http://localhost:5000/tasks/upload/"+this.state.taskId,
       method: 'post',
       processData: false,
       data: formData,
