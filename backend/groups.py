@@ -98,7 +98,7 @@ class Users(Resource):
             }
             group_list.append(group_info)
 
-            name = c.fetchone()
+            group_name = c.fetchone()
         
         print(f'Completed group list is: {group_list}')
             
