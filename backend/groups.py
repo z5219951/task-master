@@ -65,7 +65,8 @@ class Users(Resource):
         c.execute(query)
 
         group_list = []
-
+        group_name = ''
+        
         try:
             group_name = c.fetchone()
         except:
