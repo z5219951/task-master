@@ -47,7 +47,7 @@ class Groups extends Component{
             list.map((item,index)=>
                 <div className="group_member_box" key = {index}>
                     <p className="group_user">{item.userName}</p>
-                    <ViewProfileButton id={item.requestUser}></ViewProfileButton>
+                    <ViewProfileButton id={item.userId}></ViewProfileButton>
                 </div>
             )
         )
