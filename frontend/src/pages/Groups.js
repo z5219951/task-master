@@ -9,12 +9,13 @@ import ViewProfileButton from '../components/ViewProfileButton'
 class Groups extends Component{
     constructor(props){
         super(props);
-        this.state = {
-            list:[],
-            noResult:''
-        }
+
         if (store.getState() === undefined || store.getState().id === "") {
             this.props.history.push('/home')
+        }
+        this.state = {
+            list:[],
+            noResult:""
         }
     }
     componentDidMount = ()=>{
