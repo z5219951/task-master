@@ -40,6 +40,7 @@ const TaskCard = (props) => {
     } else if (parseInt(tasks.assigned_to) === parseInt(store.getState().id)) {
       setUpdate(true)
     }
+    console.log(tasks.labels)
   },[])
 
   useEffect(() => {

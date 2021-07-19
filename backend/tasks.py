@@ -129,7 +129,7 @@ class Users(Resource):
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
                 FROM    tasks
                 WHERE   assigned_to = '{owner}'
-                ORDER BY    deadline NULLS LAST;
+                ORDER BY    deadline;
                 """
 
         c.execute(query)

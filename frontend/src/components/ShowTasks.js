@@ -8,7 +8,6 @@ const ShowTasks = (props) => {
   const [tasks, setTasks] = useState(props.tasks);
   const [filter, setFilter] = useState('')
   const [all, setAll] = useState(true)
-
   const completionState = [{label: 'All', value: 'All'}, {label: 'Not Started', value: 'Not Started'},{label: 'In Progress', value: 'In Progress'},{label: 'Completed', value: 'Completed'},{label: 'Blocked', value: 'Blocked'} ]
   
   function handleFilter(state) {

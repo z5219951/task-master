@@ -159,7 +159,6 @@ const CreateTask = () => {
             <Select placeholder='Search for a user to assign this task to' defaultValue='' options={friends} onChange={(e) => handleAssigned(e)}/>
           </div>
         </div>
-        {JSON.stringify(existingLabels)}
         <div className="form-group">
           <div className="col-md-6">
             <label htmlFor="assign">Labels</label>
