@@ -64,10 +64,14 @@ class Users(Resource):
                 """
         c.execute(query)
 
-        group_name = c.fetchone()
+        group_list = []
+
+        try:
+            group_name = c.fetchone()
+        except:
+            return json.dumps(group_list)
             
         print(f'name fetched is: {group_name}')
-        group_list = []
 
         while (group_name is not None):
             name = group_name[0]
@@ -98,7 +102,7 @@ class Users(Resource):
             }
             group_list.append(group_info)
 
-            name = c.fetchone()
+            group_name = c.fetchone()
         
         print(f'Completed group list is: {group_list}')
             
