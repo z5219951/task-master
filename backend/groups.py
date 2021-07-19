@@ -15,6 +15,7 @@ create_payload = api.model('create group payload', {
     "userList": fields.List(fields.Integer)
 })
 
+
 @api.route('/create', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Group successfully created')
@@ -27,7 +28,7 @@ class Users(Resource):
         parser.add_argument('groupName', required=True)
         parser.add_argument('userList', required=True)
         args = parser.parse_args()
-        
+
         name = args.groupName
         # user_list = args.userList
         user_list = request.get_json()['userList']
@@ -45,8 +46,9 @@ class Users(Resource):
             c.execute(query)
 
         conn.commit()
-            
+
         return {'value': True}
+
 
 @api.route('/<int:id>', methods=['GET'])
 class Users(Resource):
@@ -65,13 +67,13 @@ class Users(Resource):
         c.execute(query)
 
         group_list = []
+
         group_name = ''
-        
         try:
             group_name = c.fetchone()
         except:
             return json.dumps(group_list)
-            
+
         print(f'name fetched is: {group_name}')
 
         while (group_name is not None):
@@ -96,7 +98,7 @@ class Users(Resource):
                 }
                 members.append(user_info)
                 user = c2.fetchone()
-            
+
             group_info = {
                 "groupName": name,
                 "members": members
@@ -104,7 +106,7 @@ class Users(Resource):
             group_list.append(group_info)
 
             group_name = c.fetchone()
-        
+
         print(f'Completed group list is: {group_list}')
-            
+
         return json.dumps(group_list)
