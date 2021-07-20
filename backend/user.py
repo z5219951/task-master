@@ -107,13 +107,13 @@ class Users(Resource):
         return {'value': True}
 
 # upload a profile picture
-@api.route('/upload/<int:id>', methods=['POST'])
+@api.route('/upload/<int:user_id>', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully uploaded a profile picture')
     @api.response(400, 'Bad Request')
     @api.doc(description="Receives a picture file and stores it in the backend")
-    def post(self, id):
-        print(f'upload received user_id is: {id}')
+    def post(self, user_id):
+        print(f'upload received user_id is: {user_id}')
         image = request.files['image']
         print(f'upload received filetype is: {type(image)}')
         filename = secure_filename(image.filename)
@@ -121,7 +121,7 @@ class Users(Resource):
         if filename == '':
             return {'value': False}
 
-        dir = PurePath(Path(__file__).parent.resolve(), 'users', str(id))
+        dir = PurePath(Path(__file__).parent.resolve(), 'users', str(user_id))
         os.makedirs(dir, exist_ok=True)
         path = PurePath(dir, filename)
 
@@ -133,13 +133,15 @@ class Users(Resource):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
+        url = 'localhost/uploads/users/' + str(user_id) + '/' + filename
+
         query = f'''
                 UPDATE  users
-                SET     image_path = {id + '/' + filename}
-                WHERE   id = {id};
+                SET     image_path = {url}
+                WHERE   id = {user_id};
                 '''
 
-        print(f"stored in database: {id + '/' + filename}")
+        print(f"stored in database: {url}")
 
         conn.commit()
         c.close()
