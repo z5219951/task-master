@@ -84,7 +84,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
                 FROM    tasks
                 WHERE   owner = '{owner}'
                 ORDER BY    deadline;
@@ -105,7 +105,8 @@ class Users(Resource):
                 'labels': f'{data[6]}',
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
-                'assigned_to': f'{data[9]}'
+                'assigned_to': f'{data[9]}',
+                'file_paths': f'{data[10]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -129,7 +130,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
                 FROM    tasks
                 WHERE   assigned_to = '{owner}'
                 ORDER BY    deadline;
@@ -150,7 +151,8 @@ class Users(Resource):
                 'labels': f'{data[6]}',
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
-                'assigned_to': f'{data[9]}'
+                'assigned_to': f'{data[9]}',
+                'file_paths': f'{data[10]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -293,21 +295,25 @@ class Tasks(Resource):
 
 
 # upload to a task
-@api.route('/upload/<int:id>', methods=['POST'])
+@api.route('/upload/<int:task_id>', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully attached file to a task')
     @api.response(400, 'Bad Request')
     @api.doc(description="Receives a file and stores it in the backend")
-    def post(self, id):
-        print(f'upload received task_id is: {id}')
+    def post(self, task_id):
+        print(f'upload received task_id is: {task_id}')
         files = request.files.getlist('file')
+        url_list = []
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
 
         for file in files:
             print(f'upload received filetype is: {type(file)}')
             filename = secure_filename(file.filename)
 
             if filename != '':
-                dir = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id))
+                dir = PurePath(Path(__file__).parent.resolve(), 'tasks', str(task_id))
                 os.makedirs(dir, exist_ok=True)
                 path = PurePath(dir, filename)
                 # path example: 'tasks/123/file.png'
@@ -315,7 +321,21 @@ class Users(Resource):
                 print(f'path type is: {type(path)}')
                 print(f'path name is: {path}')
                 file.save(path)
-            else:
-                return {'value': False}
 
-        return {'value': True}
+                url = 'localhost/uploads/tasks/' + str(task_id) + '/' + filename
+                url_list.append(url)
+
+                print(f"appended to list: {url}")
+
+        query = f'''
+                UPDATE  tasks
+                SET     file_paths = {url_list}
+                WHERE   id = {task_id};
+                '''
+        c.execute(query)
+        
+        conn.commit()
+        c.close()
+        conn.close()
+
+        return json.dumps(url_list)

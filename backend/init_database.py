@@ -50,6 +50,7 @@ if __name__ == '__main__':
                 current_state   text        not null,
                 time_estimate   integer     ,
                 assigned_to     integer     ,
+                file_paths      text        ,
                 foreign key     (owner)     references users (id)
                 foreign key     (assigned_to)  references users (id)
             );

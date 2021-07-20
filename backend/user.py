@@ -140,14 +140,15 @@ class Users(Resource):
                 SET     image_path = {url}
                 WHERE   id = {user_id};
                 '''
-
+        c.execute(query)
+        
         print(f"stored in database: {url}")
 
         conn.commit()
         c.close()
         conn.close()
 
-        return {'value': True}
+        return {'url': {url}}
 
 search_payload = api.model('search', {
     "input": fields.String,
