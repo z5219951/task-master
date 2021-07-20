@@ -122,7 +122,7 @@ const TaskCard = (props) => {
         <br />
         Upload Files:
         <br/>
-        <UploadFile taskID={tasks.id}></UploadFile>
+        <UploadFile taskId={tasks.id}></UploadFile>
       </div>
     </div>
   </>

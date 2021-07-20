@@ -34,7 +34,9 @@ class Photo extends React.Component {
       };
   }
   sendResponse = (res)=>{
-    this.props.sendResponse(res);
+    if(this.props.sendResponse) {
+      this.props.sendResponse(res);
+    }
   }
   submitPhoto = (options) =>{
     try { 
