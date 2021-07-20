@@ -335,7 +335,7 @@ class Uploads(Resource):
     @api.response(200, 'Successfully retrieved file')
     @api.response(400, 'Bad request')
     @api.doc(description="Gets a file from the backend directory given a path")
-    def get(path):
+    def get(self,path):
         print(f'path obtained is: {path}')
         return send_from_directory(PurePath(app.config['UPLOADS']), path, as_attachment=False)
 
