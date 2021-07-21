@@ -329,7 +329,7 @@ class Users(Resource):
 
         query = f'''
                 UPDATE  tasks
-                SET     file_paths = {url_list}
+                SET     file_paths = '{url_list}'
                 WHERE   id = {task_id};
                 '''
         c.execute(query)
