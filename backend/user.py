@@ -137,7 +137,7 @@ class Users(Resource):
 
         query = f'''
                 UPDATE  users
-                SET     image_path = {url}
+                SET     image_path = '{url}'
                 WHERE   id = {user_id};
                 '''
         c.execute(query)
