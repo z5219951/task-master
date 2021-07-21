@@ -49,10 +49,10 @@ const UpdateTask = (props) => {
     })
     */
    //Obtain connected users
-   axios.get(`http://localhost:5000/friends/lists/${store.getState().id}`).then((res) => {
+   axios.get('http://localhost:5000/friends/lists/'+store.getState().id).then((res) => {
     const temp = JSON.parse(res.data)
     temp.map((user) => {
-      setFriends(friends => [...friends,{'value': user.requestedUser, 'label': user.email}])
+      setFriends(friends => [...friends,{'value': user.requestedUser, 'label': user.name}])
     })
     console.log(JSON.parse(res.data))
   })
