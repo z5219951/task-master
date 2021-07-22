@@ -53,7 +53,7 @@ const UpdateTask = (props) => {
     const temp = JSON.parse(res.data)
     console.log(res)
     temp.map((user) => {
-      setFriends(friends => [...friends,{'value': user.requestedUser, 'label': user.name}])
+      setFriends(friends => [...friends,{'value': user.requestedUser, 'label': user.email}])
     })
     console.log(JSON.parse(res.data))
   })

@@ -17,7 +17,7 @@ const Connections = () => {
       <h1>Users I am connected with:</h1>
       <br/>
       {friends.map((friend) => {
-        return <div key={friend.requestedUser} className="card my-2 mx-5"> <h3 className="mx-2">{friend.name}</h3> <ViewProfileButton id={friend.requestedUser}></ViewProfileButton></div>
+        return <div key={friend.requestedUser} className="card my-2 mx-5"> <h3 className="mx-2">{friend.name} ({friend.email}) </h3> <ViewProfileButton id={friend.requestedUser}></ViewProfileButton></div>
       })}
     </div>
     </>
