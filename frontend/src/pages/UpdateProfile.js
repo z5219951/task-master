@@ -116,7 +116,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (Object.keys(user).length !== 0) {
-      axios.put(`http://localhost:5000/update `, user)
+      axios.put(`http://localhost:5000/user/update `, user)
       console.log(user)
     } 
   }, [user])
@@ -134,7 +134,7 @@ const Profile = () => {
       <div className="form-group row mb-5">
           <label htmlFor="password" className="col-sm-3 col-form-label">Update Photo</label>
           <div className="col-sm-5">
-            <Photo></Photo>
+            <Photo ></Photo>
           </div>
         </div>
       <div className="form-group row mb-5">

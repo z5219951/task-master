@@ -155,6 +155,7 @@ class Users(Resource):
         conn.close()
         
         res = []
+        print(data)
         for d in data:
             res.append({"requestedUser" : d[0],
                         "name" : d[1] + " " + d[2]})
