@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select';
+import Slider from '@material-ui/core/Slider';
 
 const UpdateTask = (props) => {
   
@@ -28,6 +29,7 @@ const UpdateTask = (props) => {
   const [assigned_to, setAssigned_to] = useState('')
   const [assigned, setAssigned] = useState('')
   const [noDeadline, setNoDeadline] = useState(false)
+  const [completionValue, setCompletionValue] = useState('')
 
   // Get task
   const [task, setTask] = useState('')
@@ -41,13 +43,7 @@ const UpdateTask = (props) => {
         }
       }
     })
-    // test
-    /*
-    Obtain connected users
-    axios.get(`http://localhost:5000/getFriends/${store.getState().id}`).then((res) => {
-      // temp = JSON.parse(res.data)
-    })
-    */
+
    //Obtain connected users
    axios.get('http://localhost:5000/friends/lists/'+store.getState().id).then((res) => {
     const temp = JSON.parse(res.data)
@@ -75,7 +71,7 @@ const UpdateTask = (props) => {
       updateTask.time_estimate = timeEst;
     }
 
-    if (cState !== '') {
+    if (cState !== 0) {
       updateTask.current_state = cState;
     }
 
@@ -83,7 +79,7 @@ const UpdateTask = (props) => {
       updateTask.assigned_to = assigned_to;
     }
 
-    if (noDeadline === false && dueD !== 'None') {
+    if (noDeadline === false && dueD !== '') {
       updateTask.deadline = dueD;
     }
 
@@ -125,6 +121,42 @@ const UpdateTask = (props) => {
     }
   }
 
+  const marks = [
+    { 
+      value: 0,
+      label: '',
+    },
+    {
+      value: 25,
+      label: 'Blocked',
+    },
+    {
+      value: 50,
+      label: 'Not Started',
+    },
+    {
+      value: 75,
+      label: 'In Progress',
+    },
+    {
+      value: 100,
+      label: 'Completed',
+    },
+  ];
+
+  const handleStatusChange = (event, newValue) => {
+    console.log(newValue)
+    if (newValue === 25) {
+      setCState('Blocked')
+    } else if (newValue === 50) {
+      setCState('Not Started')
+    } else if (newValue === 75) {
+      setCState('In Progress') 
+    } else if (newValue === 100) {
+      setCState('Completed')
+    }
+  }
+
   return(
     <>
       <div className="m-5">
@@ -137,13 +169,13 @@ const UpdateTask = (props) => {
       <div className="form-group row mb-5">
         <label htmlFor="cState" className="col-sm-3 col-form-label">Update Completion State</label>
         <div className="col-sm-5">
-          <select className="form-control input-sm" id="state" type="text" onChange={(e) => setCState(e.target.value)}>
-            <option value=''></option>
-            <option>Not Started</option>
-            <option>In Progress</option>
-            <option>Blocked</option>
-            <option>Completed</option>
-          </select>
+          <Slider
+          defaultValue={0}
+          aria-labelledby="discrete-slider-custom"
+          step={null}
+          marks={marks}
+          onChangeCommitted={handleStatusChange}
+        />
           &nbsp;&nbsp;Current Completion State - {task.current_state}
         </div>
       </div>
