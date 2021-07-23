@@ -69,7 +69,7 @@ const CreateTask = () => {
     axios.get(`http://localhost:5000/friends/lists/${store.getState().id}`).then((res) => {
       const temp = JSON.parse(res.data)
       temp.map((user) => {
-        setFriends(friends => [...friends,{'value': user.requestedUser, 'label': user.name}])
+        setFriends(friends => [...friends,{'value': user.requestedUser, 'label': user.email}])
       })
     })
     
@@ -159,7 +159,6 @@ const CreateTask = () => {
             <Select placeholder='Search for a user to assign this task to' defaultValue='' options={friends} onChange={(e) => handleAssigned(e)}/>
           </div>
         </div>
-        {JSON.stringify(existingLabels)}
         <div className="form-group">
           <div className="col-md-6">
             <label htmlFor="assign">Labels</label>

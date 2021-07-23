@@ -313,9 +313,11 @@ class Users(Resource):
             filename = secure_filename(file.filename)
 
             if filename != '':
-                dir = PurePath(Path(__file__).parent.resolve(), 'tasks', str(task_id))
+                dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tasks', str(task_id))
+                # dir = PurePath(Path(__file__).parent.resolve(), 'tasks', str(task_id))
                 os.makedirs(dir, exist_ok=True)
-                path = PurePath(dir, filename)
+                path = os.path.join(dir, filename)
+                # path = PurePath(dir, filename)
                 # path example: 'tasks/123/file.png'
                 
                 print(f'path type is: {type(path)}')
