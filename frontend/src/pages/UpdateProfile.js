@@ -116,7 +116,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (Object.keys(user).length !== 0) {
-      axios.put(`http://localhost:5000/update `, user)
+      axios.put(`http://localhost:5000/user/update `, user)
       console.log(user)
     } 
   }, [user])
