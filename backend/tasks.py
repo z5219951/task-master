@@ -341,4 +341,4 @@ class Users(Resource):
         c.close()
         conn.close()
 
-        return json.dumps({url_list})
+        return json.dumps(url_list)
