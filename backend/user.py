@@ -150,7 +150,7 @@ class Users(Resource):
         c.close()
         conn.close()
 
-        return {'url': {url}}
+        return {'url': url}
 
 search_payload = api.model('search', {
     "input": fields.String,

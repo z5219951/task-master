@@ -331,9 +331,10 @@ class Users(Resource):
 
         query = f'''
                 UPDATE  tasks
-                SET     file_paths = '{url_list}'
+                SET     file_paths = "{url_list}"
                 WHERE   id = {task_id};
                 '''
+        print(query)
         c.execute(query)
         
         conn.commit()

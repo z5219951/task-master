@@ -15,11 +15,16 @@ class Collaboration extends Component{
     handleGroup = () =>{
         this.props.history.push('./groups');
     }
+    handleView = () =>{
+        this.props.history.push('./connections');
+    }
+    
     render(){
         return (
             <DropdownButton id="t1" className="t1" title="Users">
                 <Dropdown.Item onClick={this.handleSearch} href="">Search User</Dropdown.Item>
-                <Dropdown.Item onClick={this.handleClick} href="">Request</Dropdown.Item>
+                <Dropdown.Item onClick={this.handleClick} href="">Requests</Dropdown.Item>
+                <Dropdown.Item onClick={this.handleView} href="">My Connections</Dropdown.Item>
                 <Dropdown.Item onClick={this.handleGroup} href="">Groups</Dropdown.Item>
             </DropdownButton>
         )

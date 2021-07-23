@@ -145,7 +145,7 @@ class Users(Resource):
         c.execute(query)
     
         query = f"""
-                SELECT id, first_name, last_name
+                SELECT id, first_name, last_name, email
                 FROM users
                 INNER JOIN friends ON users.id = friends.user_a
                 """
@@ -155,9 +155,11 @@ class Users(Resource):
         conn.close()
         
         res = []
+        print(data)
         for d in data:
             res.append({"requestedUser" : d[0],
-                        "name" : d[1] + " " + d[2]})
+                        "name" : d[1] + " " + d[2],
+                        "email": d[3]})
         
         return json.dumps(res), 200
         
