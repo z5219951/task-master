@@ -121,9 +121,11 @@ class Users(Resource):
         if filename == '':
             return {'value': False}
 
-        dir = PurePath(Path(__file__).parent.resolve(), 'users', str(user_id))
+        dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'users', str(user_id))
+        # dir = PurePath(Path(__file__).parent.resolve(), 'users', str(user_id))
         os.makedirs(dir, exist_ok=True)
-        path = PurePath(dir, filename)
+        path = os.path.join(dir, filename)
+        # path = PurePath(dir, filename)
 
         # path example: '/users/123/picture.png'
         print(f'path type is: {type(path)}')
