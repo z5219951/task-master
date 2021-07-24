@@ -17,11 +17,11 @@ import sqlite3
 # from config import config
 from db import *
 import friends
-
 import groups
 import tasks
 import user
 import labels
+import projects
 
 
 app = Flask(__name__)

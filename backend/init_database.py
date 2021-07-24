@@ -37,6 +37,29 @@ if __name__ == '__main__':
             """
     c.execute(query)
 
+    # create table groups
+    query = """
+            CREATE TABLE IF NOT EXISTS groups (
+                id              integer     primary key,
+                name            text        not null,
+                user            integer     not null,
+                foreign key     (user)      references users (id)
+            );
+            """
+    c.execute(query)
+
+    # create table projects
+    query = """
+            CREATE TABLE IF NOT EXISTS projects (
+                id              integer     primary key,
+                group           integer     not null,
+                name            text        not null,
+                description     text        ,
+                foreign key     (group)     references groups (id)
+            );
+            """
+    c.execute(query)
+
     # create table tasks
     query = """
             CREATE TABLE IF NOT EXISTS tasks (
@@ -51,8 +74,10 @@ if __name__ == '__main__':
                 time_estimate   integer     ,
                 assigned_to     integer     ,
                 file_paths      text        ,
+                project         integer     ,
                 foreign key     (owner)     references users (id)
                 foreign key     (assigned_to)  references users (id)
+                foreign key     (project)   references projects (id)
             );
             """
     c.execute(query)
@@ -79,17 +104,6 @@ if __name__ == '__main__':
             );
             """
     
-    c.execute(query)
-
-    # create table groups
-    query = """
-            CREATE TABLE IF NOT EXISTS groups (
-                id              integer     primary key,
-                name            text        not null,
-                user            integer     not null,
-                foreign key     (user)      references users (id)
-            );
-            """
     c.execute(query)
 
     # insert test data
