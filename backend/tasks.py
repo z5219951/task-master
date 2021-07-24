@@ -324,7 +324,8 @@ class Users(Resource):
                 print(f'path name is: {path}')
                 file.save(path)
 
-                url = 'localhost/uploads/tasks/' + str(task_id) + '/' + filename
+                url = 'http://localhost:5000/uploads/tasks/' + str(task_id) + '/' + filename 
+                print(url)
                 url_list.append(url)
 
                 print(f"appended to list: {url}")
@@ -341,4 +342,4 @@ class Users(Resource):
         c.close()
         conn.close()
 
-        return json.dumps({url_list})
+        return json.dumps(url_list)

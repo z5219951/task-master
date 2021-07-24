@@ -9,6 +9,7 @@ import UploadFile from '../pages/UploadFile'
 
 const TaskCard = (props) => {
   const tasks = props.task
+  console.log(tasks)
   const [update, setUpdate] = useState(false)
   const history = useHistory();
   const [currentLabels, setCurrentLabels] = useState([])
@@ -119,6 +120,11 @@ const TaskCard = (props) => {
       <div className="card-footer text-muted" padding="100px">
         <p className="card-text m-1"><em>Labels: {currentLabels}</em></p>
         {update ? <div> <p className="card-text m-1"><em>Edit Labels:</em></p> <CreatableSelect isMulti defaultValue={tasks.labels !== '' ? JSON.parse(tasks.labels) : ''} onChange={(e) => handleLabels(e)} placeholder='Create a label by typing here or select a label below' options={formattedLabels}/></div> : ''}
+        {tasks.file_paths !== 'None' ? 
+          JSON.parse(tasks.file_paths.replace(/'/g,'"')).map((file) => {
+          return <div> <br /> Files: <br /> <a href={file} download>{file.substring(file.lastIndexOf('/') +1)}<br /></a> </div>
+        }) 
+        : ''}
         <br />
         Upload Files:
         <br/>
