@@ -81,7 +81,7 @@ class CreateGroup extends Component{
         if(name === '') {
             this.setState(()=>({
                 show:true,
-                inform:"Please enter a propriate name"
+                inform:"Please enter an appropriate name"
             }))
             return;
         }

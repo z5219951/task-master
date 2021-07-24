@@ -97,7 +97,7 @@ class Photo extends React.Component {
             {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
         </Upload>
         <p className="ant-upload-hint">
-        Photo must small than 2MB and no more than 2048*2048
+        Photo must be smaller than 2MB and no more than 2048*2048
         </p>
         </Fragment>
     );
