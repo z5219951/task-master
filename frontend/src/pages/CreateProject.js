@@ -3,6 +3,8 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import store from '../store';
 import TaskCard from '../components/TaskCard'
+import ViewProfileButton from '../components/ViewProfileButton'
+
 
 const CreateProject = () => {
   const history = useHistory();
@@ -167,10 +169,12 @@ const CreateProject = () => {
         </div>
         <div className="form-group row mb-5">
           <label htmlFor="description" className="col-sm-3 col-form-label">Add to Project:</label>
-          <div className="col-sm-5">
+          <div className="col">
             {friends ? friends.map((user, index) => {
                 return <div key={index}>
-                  <h5><input type="checkbox" className="form-check-input m-1" onClick={(e) => handleUsers(e)} key={index} value={index}/>{user.name} - {user.email} </h5> 
+                  <h5><input type="checkbox" className="form-check-input m-1" onClick={(e) => handleUsers(e)} key={index} value={index}/>{user.name} - {user.email} 
+                  &nbsp; <ViewProfileButton id={user.requestedUser}></ViewProfileButton>
+                  </h5> 
                   <br/></div>
               }) : ''} 
           </div>  
