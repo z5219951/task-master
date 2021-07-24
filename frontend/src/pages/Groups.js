@@ -57,7 +57,7 @@ class Groups extends Component{
         return (
             this.state.list.map((item,index)=>
             <div className="groupsDetail" key = {index}>
-                <p>{item.groupName}</p>
+                <h2>Group: {item.groupName}</h2>
                 <div className="group_ibox">
                     {this.getMem(item.members)}
                 </div>

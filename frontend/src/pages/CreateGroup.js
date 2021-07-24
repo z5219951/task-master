@@ -85,14 +85,6 @@ class CreateGroup extends Component{
             }))
             return;
         }
-        // check whether members are selected
-        if(selectedMember.length === 0) {
-            this.setState(()=>({
-                show:true,
-                inform:"Please select your member"
-            }))
-            return;
-        }
         // submit information
         try {
             const userId = Number(store.getState().id);
