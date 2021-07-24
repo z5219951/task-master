@@ -8,7 +8,6 @@ import Select from 'react-select';
 import Slider from '@material-ui/core/Slider';
 
 const UpdateTask = (props) => {
-  
   const history = useHistory();
   function backClick () {
     history.push('./taskboard')
@@ -44,14 +43,21 @@ const UpdateTask = (props) => {
       }
     })
 
+    axios.get(`http://localhost:5000/tasks/assigned/${store.getState().id}`).then((res) => {
+      const taskList = JSON.parse(res.data);
+      for (let i = 0; i < taskList.length; i++) {
+        if (taskList[i].id === taskID) {
+          setTask(taskList[i])
+        }
+      }
+    })
+
    //Obtain connected users
    axios.get('http://localhost:5000/friends/lists/'+store.getState().id).then((res) => {
     const temp = JSON.parse(res.data)
-    console.log(res)
     temp.map((user) => {
       setFriends(friends => [...friends,{'value': user.requestedUser, 'label': user.email}])
     })
-    console.log(JSON.parse(res.data))
   })
   }, [])
 
