@@ -42,6 +42,8 @@ const Profile = () => {
       </div>
       <br/>
       <div>
+        <img src={user.image_path} alt="profile" style={{width:'150px', height:'150px'}} className="rounded mx-auto d-block" /> 
+        <br />
         <table className="table table-striped table-secondary table-hover table-bordered border-dark" >    
           <tbody>
             <tr>

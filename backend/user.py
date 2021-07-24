@@ -133,7 +133,7 @@ class Users(Resource):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
-        url = 'localhost/uploads/users/' + str(user_id) + '/' + filename
+        url = 'http://localhost:5000/uploads/users/' + str(user_id) + '/' + filename
 
         query = f'''
                 UPDATE  users
