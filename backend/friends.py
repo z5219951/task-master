@@ -61,7 +61,8 @@ class Users(Resource):
         args = parser.parse_args()
         
         user_from = args.userId
-        user_to = args.requestedUser
+        user_to = args.requestedUser        
+        
         res = friendRequestAdd(user_from, user_to)
         
         if res == False:
@@ -126,42 +127,7 @@ class Users(Resource):
     @api.response(400, 'Bad request')
     @api.doc(description= "Returns all users that is connected to the given user")
     def get(self, userId):
-        res_list = []
-        
-        conn = sqlite3.connect('clickdown.db')
-        c = conn.cursor()
-        
-        # Find all entries that "user a" is friends with "user b", vice versa
-        query = f"""
-                CREATE TEMP TABLE friends
-                AS SELECT user_a
-                FROM friend_list
-                WHERE user_b = '{userId}'
-                UNION
-                SELECT user_b
-                FROM friend_list
-                WHERE user_a = '{userId}'
-                """
-        c.execute(query)
-    
-        query = f"""
-                SELECT id, first_name, last_name, email
-                FROM users
-                INNER JOIN friends ON users.id = friends.user_a
-                """
-        c.execute(query)
-        
-        data = c.fetchall()    
-        conn.close()
-        
-        res = []
-        print(data)
-        for d in data:
-            res.append({"requestedUser" : d[0],
-                        "name" : d[1] + " " + d[2],
-                        "email": d[3]})
-        
-        return json.dumps(res), 200
+        return json.dumps(friendListGet(userId)), 200
         
 ### HELPER FUNCTIONS ### 
 def getUserByID(id):
@@ -221,7 +187,13 @@ def friendRequestAdd(user_from, user_to):
     user = getUserByID(user_to)
     if user == {}:
         return False
-        
+    
+    # Check that users are not already connected
+    friends = friendListGet(user_to)
+    for f in friends:
+        if f["requestedUser"] == user_from:
+            return False
+    
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
     
@@ -284,3 +256,41 @@ def friendListAdd(userA, userB):
             """
     c.execute(query)
     conn.commit()
+
+# Return a list of users connected to the given userId
+# Format is a dictionary {requestedUser: , name:, email: }
+def friendListGet(userId):        
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    # Find all entries that "user a" is friends with "user b", vice versa
+    query = f"""
+            CREATE TEMP TABLE friends
+            AS SELECT user_a
+            FROM friend_list
+            WHERE user_b = '{userId}'
+            UNION
+            SELECT user_b
+            FROM friend_list
+            WHERE user_a = '{userId}'
+            """
+    c.execute(query)
+    
+    # For above user Ids, get the corresponding entries within the users table
+    query = f"""
+            SELECT id, first_name, last_name, email
+            FROM users
+            INNER JOIN friends ON users.id = friends.user_a
+            """
+    c.execute(query)
+    
+    data = c.fetchall()    
+    conn.close()
+    
+    res = []
+    for d in data:
+        res.append({"requestedUser" : d[0],
+                    "name" : d[1] + " " + d[2],
+                    "email": d[3]})
+                    
+    return res

@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify, Blueprint
 from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
 import sqlite3
 
-from db import *
+from friends import friendListGet
 
 bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 api = Namespace("tasks", "Operations for tasks")
@@ -252,17 +252,27 @@ class Tasks(Resource):
         
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
-
+        
+        # Get tasks which the given user is an owner/ assignee
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
                 FROM    tasks
-                WHERE   assigned_to = '{userId}'
-                OR      owner = '{userId}'
-                ORDER BY    deadline ASC
+                WHERE   owner = '{userId}'
+                OR      assigned_to = '{userId}'
                 """
-
+        
+        # Get tasks assigned to the friends of the given user
+        friendsDict = friendListGet(userId)
+        for f in friendsDict:
+            query = query + (f"OR      assigned_to = '{f['requestedUser']}'\n")
+        
+        # Sort tasks by earliest deadlines
+        query = query + (f"ORDER BY    deadline ASC\n")
+        
+        print(query)
         c.execute(query)
         data_list = c.fetchall()
+        
         conn.close()
         
         full_task_list = []
@@ -282,6 +292,7 @@ class Tasks(Resource):
             full_task_list.append(task_info)
         
         res_list = []
+        print(full_task_list)
         for task_info in full_task_list:
             # Seach based on id, name, label, desc, deadline
             if ((task_info.get("id") == needle) or \
