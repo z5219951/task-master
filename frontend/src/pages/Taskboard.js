@@ -57,11 +57,7 @@ const Taskboard = () => {
       <h1> Welcome to your Taskboard</h1>
       <SearchTask />
       <br/>
-      <div className="text-right mb-1">
-        <button type="button" className="btn btn-success btn-lg mb-5" onClick={() => { createProject()}}> Create Project - add tasks to a project </button> &nbsp;
-        <button type="button" className="btn btn-success btn-lg mb-5" > View my Projects</button>
-      </div>
-        <button type="button" className="btn btn-primary btn-lg w-100" onClick={() => { createTask()}}> Create Task - for smaller individual assignments </button>
+        <button type="button" className="btn btn-primary btn-lg w-100" onClick={() => { createTask()}}> Create Task </button>
         <br/><br/>
         <button type="button" className="btn btn-warning btn-lg mb-5" onClick={() => { toggleButton()}}>{toggleLabel}</button>
         {toggleBool?  

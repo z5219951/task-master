@@ -42,11 +42,10 @@ class Groups extends Component{
         }
     }
     getMem = (list)=>{
-        console.log(list);
         return (
             list.map((item,index)=>
                 <div className="group_member_box" key = {index}>
-                    <p className="group_user">{item.userName}</p>
+                    <h4 className="group_user">{item.userName}</h4>
                     <ViewProfileButton id={item.userId}></ViewProfileButton>
                 </div>
             )
@@ -56,14 +55,28 @@ class Groups extends Component{
         console.log(this.state.list);
         return (
             this.state.list.map((item,index)=>
-            <div className="groupsDetail" key = {index}>
-                <h2>Group: {item.groupName}</h2>
-                <div className="group_ibox">
+            <div className="card my-2 mx-5" key={index}> 
+                <div className="card-header" padding="100px">
+                    <h2>Group #{item.groupID}: {item.groupName}</h2>
+                </div>
+                <div className="card-body text-muted" padding="100px">
                     {this.getMem(item.members)}
+                </div>
+                <div className="card-footer text-muted">
+                    <button type="button" className="btn btn-success btn-lg m-1" onClick={() => this.handleCreate(item)}> Create a Group Project </button>
+                    <button type="button" className="btn btn-success btn-lg m-1" onClick={this.handleView} > View Group Projects</button>
                 </div>
             </div>)
         )
     }
+
+    handleCreate = (group)=> {
+        this.props.history.push({
+            pathname: '/createProject',
+            state: { group }
+        });
+    }
+
     handleBack = ()=>{
         this.props.history.push('./taskboard');
     }
@@ -79,7 +92,7 @@ class Groups extends Component{
                             <button type="button" className="btn btn-info btn-xs request_back" onClick={this.handleBack}>Back</button>
                             <button type="button" className="btn btn-success btn-xs request_back" onClick={this.createGroup}>Create Group</button>
                         </div>
-                        <p>Groups you are in</p>
+                        <h1>Groups you are in</h1>
                         <div className="group_lists">
                             {this.getItem()}
                         </div>

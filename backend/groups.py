@@ -60,7 +60,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  name
+                SELECT  id, name
                 FROM    groups
                 WHERE   user = '{id}'
                 """
@@ -69,15 +69,20 @@ class Users(Resource):
         group_list = []
 
         group_name = ''
+        group_id = ''
         try:
-            group_name = c.fetchone()
+            data = c.fetchone()
+            print(data)
+            group_id = data[0]
+            group_name = data[1]
         except:
             return json.dumps(group_list)
 
         print(f'name fetched is: {group_name}')
 
-        while (group_name is not None):
-            name = group_name[0]
+        while (group_id is not None and group_name is not None):
+            id = group_id
+            name = group_name
             members = []
 
             c2 = conn.cursor()
@@ -90,6 +95,7 @@ class Users(Resource):
                     """
             c2.execute(query)
 
+
             user = c2.fetchone()
             while (user is not None):
                 user_info = {
@@ -100,12 +106,20 @@ class Users(Resource):
                 user = c2.fetchone()
 
             group_info = {
+                "groupID": id,
                 "groupName": name,
                 "members": members
             }
             group_list.append(group_info)
 
-            group_name = c.fetchone()
+            data = c.fetchone()
+            if (data == None):
+                group_id = None
+                group_name = None   
+            else:
+                group_id = data[0]
+                group_name = data[1]
+            
 
         print(f'Completed group list is: {group_list}')
 
