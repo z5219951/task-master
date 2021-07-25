@@ -144,8 +144,6 @@ class Register extends Component{
           <label htmlFor="inputUserName" className="sr-only loginDes">User Name <span className='redStar'>*</span></label>
           <input type="text" id="inputUserName" className="form-control" placeholder="User name" onChange={this.handleInput.bind(this)} name="user" value = {this.state.user}required/>
           <p className="alertName">{this.state.userAlert}</p>
-          <label htmlFor="inputUserName" className="sr-only loginDes">Upload Photo</label>
-          <Photo sendUrl = {this.getUrl} postUrl="http://1234"></Photo>
           <label htmlFor="inputPhone" className="sr-only loginDes">Phone</label>
           <input type="number" id="inputPhone" className="form-control" placeholder="Phone number" onChange={this.handleInput} name="phone" value = {this.state.phone}/>
           <label htmlFor="inputComp" className="sr-only loginDes">Company</label>

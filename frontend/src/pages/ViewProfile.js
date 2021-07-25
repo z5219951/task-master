@@ -42,6 +42,8 @@ const ViewProfile = (props) => {
       </div>
       <br/>
       <br/>
+      {user.image_path !== 'None' ? <img src={user.image_path} alt="profile" style={{width:'150px', height:'150px'}} className="rounded mx-auto d-block" /> :''}
+      <br />
       <div>
         <table className="table table-striped table-secondary table-hover table-bordered border-dark" >    
           <tbody>

@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify, Blueprint
 from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
 import sqlite3
 
-from db import *
+from friends import friendListGet
 
 bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 api = Namespace("tasks", "Operations for tasks")
@@ -84,10 +84,10 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
                 FROM    tasks
                 WHERE   owner = '{owner}'
-                ORDER BY    deadline NULLS LAST;
+                ORDER BY    deadline;
                 """
 
         c.execute(query)
@@ -105,7 +105,8 @@ class Users(Resource):
                 'labels': f'{data[6]}',
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
-                'assigned_to': f'{data[9]}'
+                'assigned_to': f'{data[9]}',
+                'file_paths': f'{data[10]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -129,10 +130,10 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
                 FROM    tasks
                 WHERE   assigned_to = '{owner}'
-                ORDER BY    deadline NULLS LAST;
+                ORDER BY    deadline;
                 """
 
         c.execute(query)
@@ -150,7 +151,8 @@ class Users(Resource):
                 'labels': f'{data[6]}',
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
-                'assigned_to': f'{data[9]}'
+                'assigned_to': f'{data[9]}',
+                'file_paths': f'{data[10]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -235,7 +237,7 @@ task_search_payload = api.model('search', {
 @api.route('/search', methods=['POST'])
 class Tasks(Resource):
     @api.response(200, 'Sucessfully searched for tasks')
-    @api.response(400, 'Not implemented')
+    @api.response(400, 'Unexpected error')
     @api.expect(task_search_payload)
     @api.doc(description="Search for tasks related to given user based on \
     id, name, label, description and/or deadline")
@@ -250,17 +252,27 @@ class Tasks(Resource):
         
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
-
+        
+        # Get tasks which the given user is an owner/ assignee
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
                 FROM    tasks
-                WHERE   assigned_to = '{userId}'
-                OR      owner = '{userId}'
-                ORDER BY    deadline ASC
+                WHERE   owner = '{userId}'
+                OR      assigned_to = '{userId}'
                 """
-
+        
+        # Get tasks assigned to the friends of the given user
+        friendsDict = friendListGet(userId)
+        for f in friendsDict:
+            query = query + (f"OR      assigned_to = '{f['requestedUser']}'\n")
+        
+        # Sort tasks by earliest deadlines
+        query = query + (f"ORDER BY    deadline ASC\n")
+        
+        print(query)
         c.execute(query)
         data_list = c.fetchall()
+        
         conn.close()
         
         full_task_list = []
@@ -280,11 +292,13 @@ class Tasks(Resource):
             full_task_list.append(task_info)
         
         res_list = []
+        print(full_task_list)
         for task_info in full_task_list:
             # Seach based on id, name, label, desc, deadline
             if ((task_info.get("id") == needle) or \
                 (needle in task_info.get("deadline")) or \
-                (needle in task_info.get("title").lower()) or  \
+                (needle in task_info.get("title").lower()) or \
+                (needle in task_info.get("labels").lower()) or \
                 (needle in task_info.get("description").lower())):
                 res_list.append(task_info)
                 
@@ -292,29 +306,51 @@ class Tasks(Resource):
 
 
 # upload to a task
-@api.route('/upload<int:id>', methods=['POST'])
+@api.route('/upload/<int:task_id>', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully attached file to a task')
     @api.response(400, 'Bad Request')
     @api.doc(description="Receives a file and stores it in the backend")
-    def post(self, id):
-        print(f'upload received task_id is: {id}')
-        file = request.files['file']
-        print(f'upload received filetype is: {type(file)}')
-        filename = secure_filename(file.filename)
+    def post(self, task_id):
+        print(f'upload received task_id is: {task_id}')
+        files = request.files.getlist('file')
+        url_list = []
 
-        if filename != '':
-            # file_ext = os.path.splitext(filename)[1]
-            # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
-                # break
-            path = PurePath(Path(__file__).parent.resolve(), 'tasks', str(id))
-            os.makedirs(dir, exists_ok=True)
-            path = PurePath(dir, filename)
-            # path example: 'tasks/123/file.png'
-            print(f'path type is: {type(path)}')
-            print(f'path name is: {path}')
-            file.save(path)
-        else:
-            return {'value': False}
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
 
-        return {'value': True}
+        for file in files:
+            print(f'upload received filetype is: {type(file)}')
+            filename = secure_filename(file.filename)
+
+            if filename != '':
+                dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tasks', str(task_id))
+                # dir = PurePath(Path(__file__).parent.resolve(), 'tasks', str(task_id))
+                os.makedirs(dir, exist_ok=True)
+                path = os.path.join(dir, filename)
+                # path = PurePath(dir, filename)
+                # path example: 'tasks/123/file.png'
+                
+                print(f'path type is: {type(path)}')
+                print(f'path name is: {path}')
+                file.save(path)
+
+                url = 'http://localhost:5000/uploads/tasks/' + str(task_id) + '/' + filename 
+                print(url)
+                url_list.append(url)
+
+                print(f"appended to list: {url}")
+
+        query = f'''
+                UPDATE  tasks
+                SET     file_paths = "{url_list}"
+                WHERE   id = {task_id};
+                '''
+        print(query)
+        c.execute(query)
+        
+        conn.commit()
+        c.close()
+        conn.close()
+
+        return json.dumps(url_list)

@@ -34,7 +34,8 @@ class Users(Resource):
             'last_name': f'{data[5]}',
             'phone_number': f'{data[6]}',
             'company': f'{data[7]}',
-            'labels': f'{data[8]}'
+            'labels': f'{data[8]}',
+            'image_path': f'{data[9]}'
         }
         
         print(resp)
@@ -106,29 +107,103 @@ class Users(Resource):
         return {'value': True}
 
 # upload a profile picture
-@api.route('/upload/<int:id>', methods=['POST'])
+@api.route('/upload/<int:user_id>', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully uploaded a profile picture')
     @api.response(400, 'Bad Request')
     @api.doc(description="Receives a picture file and stores it in the backend")
-    def post(self, id):
-        print(f'upload received user_id is: {id}')
+    def post(self, user_id):
+        print(f'upload received user_id is: {user_id}')
         image = request.files['image']
         print(f'upload received filetype is: {type(image)}')
         filename = secure_filename(image.filename)
 
-        if filename != '':
-            # file_ext = os.path.splitext(filename)[1]
-            # if file_ext not in ['.jpg', '.png', '.jpeg', '.gif']:
-                # break
-            dir = PurePath(Path(__file__).parent.resolve(), 'users', str(id))
-            os.makedirs(dir, exists_ok=True)
-            path = PurePath(dir, filename)
-            # path example: '/users/123/picture.png'
-            print(f'path type is: {type(path)}')
-            print(f'path name is: {path}')
-            image.save(path)
-        else:
+        if filename == '':
             return {'value': False}
 
-        return {'value': True}
+        dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'users', str(user_id))
+        # dir = PurePath(Path(__file__).parent.resolve(), 'users', str(user_id))
+        os.makedirs(dir, exist_ok=True)
+        path = os.path.join(dir, filename)
+        # path = PurePath(dir, filename)
+
+        # path example: '/users/123/picture.png'
+        print(f'path type is: {type(path)}')
+        print(f'path name is: {path}')
+        image.save(path)
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        url = 'http://localhost:5000/uploads/users/' + str(user_id) + '/' + filename
+
+        query = f'''
+                UPDATE  users
+                SET     image_path = '{url}'
+                WHERE   id = {user_id};
+                '''
+        c.execute(query)
+        
+        print(f"stored in database: {url}")
+
+        conn.commit()
+        c.close()
+        conn.close()
+
+        return {'url': url}
+
+search_payload = api.model('search', {
+    "input": fields.String,
+})
+@api.route('/search', methods=['POST'])
+class Users(Resource):
+    @api.response(200, 'Sucessfully searched for requests')
+    @api.response(400, 'Not implemented')
+    @api.expect(search_payload)
+    @api.doc(description="Search for users based on name, email, company, phone")
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('input', required=True)
+        args = parser.parse_args()
+                
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        
+        needle = args.input.lower()
+        query = f"""
+                SELECT  *
+                FROM    users
+                WHERE   lower(email) = '{needle}'
+                or      lower(first_name) = '{needle}'
+                or      lower(last_name) = '{needle}'
+                or      phone_number = '{needle}'
+                or      lower(company) = '{needle}';
+                """
+        
+        c.execute(query)
+        data = c.fetchall()
+        
+        # Check if search needle matches FIRST LAST
+        split = needle.split()
+        if len(split) > 1:
+            first_name = split[0]
+            last_name = split[1]
+            
+            query = f"""
+            SELECT  *
+            FROM    users
+            WHERE   lower(first_name) = '{first_name}'
+            AND     lower(last_name) = '{last_name}'
+            """
+            
+            c.execute(query)
+            data.append(c.fetchone())
+        
+        res = []
+        for d in data:
+            if d == None:
+                break
+            res.append({"requestUser": d[0],
+                        "username": d[4] + " " + d[5]})
+        
+        return json.dumps(res), 200

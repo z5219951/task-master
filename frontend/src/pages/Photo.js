@@ -30,22 +30,22 @@ class Photo extends React.Component {
       super(props);
       this.state = {
         loading: false,
-        postUrl:props.postUrl,
-        imageUrl:''
+        imageUrl:props.imageUrl
       };
   }
-  // <Photo sendUrl = {this.getUrl}></Photo>
-  // in your parent, send a getUrl function to get image url
-  sendUrl = ()=>{
-      this.props.sendUrl(this.state.imageUrl);
+  sendResponse = (res)=>{
+    if(this.props.sendResponse) {
+      this.props.sendResponse(res);
+    }
   }
   submitPhoto = (options) =>{
     try { 
       axios.defaults.crossDomain=true;
       let formdata = new FormData();
       formdata.append("image",options.file);
-      axios.post(this.state.postUrl+'/'+store.getState().id, formdata, {headers:{'Content-Type':'multipart/form-data'}}).then((res)=>{
-          console.log(res);
+      axios.post("http://localhost:5000/user/upload/"+store.getState().id, formdata, {headers:{'Content-Type':'multipart/form-data'}}).then((res)=>{
+          options.onSuccess();
+          this.sendResponse(res);
       })
     } catch (error) {
       console.log(error);
@@ -69,7 +69,6 @@ class Photo extends React.Component {
             loading: false,
         }),
         );
-        this.sendUrl();
     }
   };
 
@@ -98,7 +97,7 @@ class Photo extends React.Component {
             {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
         </Upload>
         <p className="ant-upload-hint">
-        Photo must small than 2MB and no more than 1024*1024
+        Photo must be smaller than 2MB and no more than 2048*2048
         </p>
         </Fragment>
     );

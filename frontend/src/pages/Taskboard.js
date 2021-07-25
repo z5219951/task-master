@@ -22,7 +22,11 @@ const Taskboard = () => {
     history.push('/createTask')
   }
 
-  // Get tasks created by the logged in user
+  function createProject() {
+    history.push('/createProject')
+  }
+
+  // Get tasks created by and assigned to the logged in user
   axios.defaults.crossDomain=true;
   useEffect(() => {
     axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
@@ -31,6 +35,7 @@ const Taskboard = () => {
     })
 
     axios.get(`http://localhost:5000/tasks/assigned/${store.getState().id}`).then((res) => {
+      console.log(res.data)
       const taskList = JSON.parse(res.data);
       setAssignedTasks(taskList)
     })
@@ -52,10 +57,9 @@ const Taskboard = () => {
       <h1> Welcome to your Taskboard</h1>
       <SearchTask />
       <br/>
-      <div className="text-right mb-3">
-        <button type="button" className="btn btn-secondary btn-lg w-100" onClick={() => { createTask()}}> Create Task </button></div>
-      <br/>
-        <button type="button" className="btn btn-primary btn-lg mb-5" onClick={() => { toggleButton()}}>{toggleLabel}</button>
+        <button type="button" className="btn btn-primary btn-lg w-100" onClick={() => { createTask()}}> Create Task </button>
+        <br/><br/>
+        <button type="button" className="btn btn-warning btn-lg mb-5" onClick={() => { toggleButton()}}>{toggleLabel}</button>
         {toggleBool?  
         <div>
           <h2 className="card-title">Tasks I created:</h2>

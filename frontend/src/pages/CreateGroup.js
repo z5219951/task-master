@@ -81,15 +81,7 @@ class CreateGroup extends Component{
         if(name === '') {
             this.setState(()=>({
                 show:true,
-                inform:"Please enter a propriate name"
-            }))
-            return;
-        }
-        // check whether members are selected
-        if(selectedMember.length === 0) {
-            this.setState(()=>({
-                show:true,
-                inform:"Please select your member"
+                inform:"Please enter an appropriate name"
             }))
             return;
         }

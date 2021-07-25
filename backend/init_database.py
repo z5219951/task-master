@@ -31,7 +31,8 @@ if __name__ == '__main__':
                 phone_number    text        not null,
                 company         text        ,
                 recovery        integer     ,
-                labels          text
+                labels          text        ,
+                image_path      text
             );
             """
     c.execute(query)
@@ -45,10 +46,11 @@ if __name__ == '__main__':
                 description     text        not null,
                 creation_date   text        not null,
                 deadline        text        ,
-                labels          array       ,
+                labels          text        ,
                 current_state   text        not null,
                 time_estimate   integer     ,
                 assigned_to     integer     ,
+                file_paths      text        ,
                 foreign key     (owner)     references users (id)
                 foreign key     (assigned_to)  references users (id)
             );

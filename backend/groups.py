@@ -15,6 +15,7 @@ create_payload = api.model('create group payload', {
     "userList": fields.List(fields.Integer)
 })
 
+
 @api.route('/create', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Group successfully created')
@@ -27,10 +28,10 @@ class Users(Resource):
         parser.add_argument('groupName', required=True)
         parser.add_argument('userList', required=True)
         args = parser.parse_args()
-        
+
         name = args.groupName
         # user_list = args.userList
-        user_list = request.get_json()['user_list']
+        user_list = request.get_json()['userList']
         print(f"type of user_list is: {type(user_list)}")
         print(f"list is: {user_list}")
 
@@ -45,8 +46,9 @@ class Users(Resource):
             c.execute(query)
 
         conn.commit()
-            
+
         return {'value': True}
+
 
 @api.route('/<int:id>', methods=['GET'])
 class Users(Resource):
@@ -58,21 +60,29 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  name
+                SELECT  id, name
                 FROM    groups
                 WHERE   user = '{id}'
                 """
         c.execute(query)
 
-        try:
-            name = c.fetchone()[0]
-        except:
-            return json.dumps([])
-            
-        print(f'name fetched is: {name}')
         group_list = []
 
-        while (name is not None):
+        group_name = ''
+        group_id = ''
+        try:
+            data = c.fetchone()
+            print(data)
+            group_id = data[0]
+            group_name = data[1]
+        except:
+            return json.dumps(group_list)
+
+        print(f'name fetched is: {group_name}')
+
+        while (group_id is not None and group_name is not None):
+            id = group_id
+            name = group_name
             members = []
 
             c2 = conn.cursor()
@@ -85,6 +95,7 @@ class Users(Resource):
                     """
             c2.execute(query)
 
+
             user = c2.fetchone()
             while (user is not None):
                 user_info = {
@@ -93,15 +104,23 @@ class Users(Resource):
                 }
                 members.append(user_info)
                 user = c2.fetchone()
-            
+
             group_info = {
+                "groupID": id,
                 "groupName": name,
                 "members": members
             }
             group_list.append(group_info)
 
-            name = c.fetchone()[0]
-        
-        print(f'Completed group list is: {group_list}')
+            data = c.fetchone()
+            if (data == None):
+                group_id = None
+                group_name = None   
+            else:
+                group_id = data[0]
+                group_name = data[1]
             
+
+        print(f'Completed group list is: {group_list}')
+
         return json.dumps(group_list)

@@ -5,6 +5,7 @@ import 'antd/dist/antd.css';
 import './Photo.css'
 import React from 'react'
 import { Component } from 'react';
+import store from '../store';
 
 
 class UploadFile extends React.Component {
@@ -13,32 +14,38 @@ class UploadFile extends React.Component {
     this.state = {
         fileList: [],
         uploading: false,
+        taskId:props.taskId
     };
-}
+  }
+  sendResponse = (res)=>{
+    if(this.props.sendResponse) {
+      this.props.sendResponse(res);
+    }
+  }
 
   handleUpload = () => {
     const { fileList } = this.state;
     const formData = new FormData();
     fileList.forEach(file => {
-      formData.append('files[]', file);
+      formData.append('file', file);
     });
 
     this.setState({
       uploading: true,
     });
-
     // You can use any AJAX library you like
     reqwest({
-      url: this.props.postUrl,
+      url: "http://localhost:5000/tasks/upload/"+this.state.taskId,
       method: 'post',
       processData: false,
       data: formData,
-      success: () => {
+      success: (res) => {
         this.setState({
           fileList: [],
           uploading: false,
         });
         message.success('upload successfully.');
+        this.sendResponse(res);
       },
       error: () => {
         this.setState({
@@ -73,7 +80,7 @@ class UploadFile extends React.Component {
 
     return (
       <>
-        <Upload {...props}>
+        <Upload {...props} >
           <Button icon={<UploadOutlined />}>Select File</Button>
         </Upload>
         <Button

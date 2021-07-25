@@ -26,6 +26,9 @@ import ViewProfile from './pages/ViewProfile'
 import TestPage from './pages/TestPage';
 import CalendarCom from './pages/CalendarCom';
 import TaskSearchResult from './pages/TaskSearchResult'
+import Connections from './pages/Connections'
+import CreateProject from './pages/CreateProject'
+import ViewTask from './pages/ViewTask'
 
 function App() {
 
@@ -53,6 +56,9 @@ function App() {
         <Route path='/testpage' exact component={TestPage} />
         <Route path='/calendar' exact component={CalendarCom} />
         <Route path='/taskSearchResult' exact component={TaskSearchResult} />
+        <Route path='/connections' exact component={Connections} />
+        <Route path='/createproject' exact component={CreateProject} />
+        <Route path='/viewTask' exact component={ViewTask} />
         <Route path='/' component={Home} />
       </Switch>
     </>
