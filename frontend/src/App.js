@@ -29,6 +29,7 @@ import TaskSearchResult from './pages/TaskSearchResult'
 import Connections from './pages/Connections'
 import CreateProject from './pages/CreateProject'
 import ViewTask from './pages/ViewTask'
+import ViewProject from './pages/ViewProject'
 
 function App() {
 
@@ -58,6 +59,7 @@ function App() {
         <Route path='/taskSearchResult' exact component={TaskSearchResult} />
         <Route path='/connections' exact component={Connections} />
         <Route path='/createproject' exact component={CreateProject} />
+        <Route path='/viewProject' exact component={ViewProject} />
         <Route path='/viewTask' exact component={ViewTask} />
         <Route path='/' component={Home} />
       </Switch>
