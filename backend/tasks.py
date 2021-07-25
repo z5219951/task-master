@@ -340,6 +340,18 @@ class Users(Resource):
                 url_list.append(url)
 
                 print(f"appended to list: {url}")
+        
+        query = f"""
+                SELECT  file_paths
+                FROM    tasks
+                WHERE   id = {task_id};
+                """
+        c.execute(query)
+
+        try:
+            url_list = json.loads(c.fetchone()[0]) + url_list
+        except:
+            pass
 
         query = f'''
                 UPDATE  tasks
