@@ -207,3 +207,40 @@ class Users(Resource):
                         "username": d[4] + " " + d[5]})
         
         return json.dumps(res), 200
+
+
+@api.route('/<int:id>/projects', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Projects successfully received')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Get all projects for a user")
+    def get(self, id):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  p.id, p.name, p.description, p.tasks
+                FROM    projects p
+                JOIN    tasks t ON t.project = p.id
+                WHERE   t.assigned_to = {id};
+                """
+        c.execute(query)
+        data = c.fetchone()
+        project_list = []
+
+        while (data is not None):
+            project_info = {
+                'id': f'{data[0]}',
+                'name': f'{data[1]}',
+                'description': f'{data[2]}',
+                'tasks': f'{data[3]}'
+            }
+            project_list.append(project_info)
+            data = c.fetchone()
+
+        # print(project_list)
+
+        c.close()
+        conn.close()
+
+        return json.dumps(project_list)
