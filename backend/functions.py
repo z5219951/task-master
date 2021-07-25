@@ -1,4 +1,3 @@
-from backend.functions import addTask
 import json
 from pathlib import PurePath, Path
 import os
@@ -9,6 +8,15 @@ from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
 import sqlite3
 
 from db import *
+
+#Accept connection
+###Add task
+#Check Requested Connections
+#CheckTaskByDate
+#DeclineConnection
+#RequestConnection
+#search for user
+
 
 def addTask(owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to):
     conn = sqlite3.connect('clickdown.db')
@@ -112,22 +120,22 @@ def getAssignedTasks(owner):
 
         return json.dumps(task_list)
 
-def updateTask():
+def updateTask(owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, id):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
                 UPDATE  tasks
-                SET     owner = '{args.owner}',
-                        title = '{args.title}',
-                        description = '{args.description}',
-                        creation_date = '{args.creation_date}',
-                        deadline = '{args.deadline}',
-                        labels = '{args.labels}',
-                        current_state = '{args.current_state}',
-                        time_estimate = '{args.time_estimate}',
-                        assigned_to = '{args.assigned_to}'
-                WHERE   id = '{args.id}';
+                SET     owner = '{owner}',
+                        title = '{title}',
+                        description = '{description}',
+                        creation_date = '{creation_date}',
+                        deadline = '{deadline}',
+                        labels = '{labels}',
+                        current_state = '{current_state}',
+                        time_estimate = '{time_estimate}',
+                        assigned_to = '{assigned_to}'
+                WHERE   id = '{id}';
                 """
         try:
             c.execute(query)
@@ -139,3 +147,28 @@ def updateTask():
         conn.commit()
         c.close()
         conn.close()
+
+def authUser(email, password):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # retrieve id using email and password
+        query = f"""
+                SELECT  id
+                FROM    users
+                WHERE   email = '{email}' and password = '{password}';
+                """
+        c.execute(query)
+        id = c.fetchone()
+        # print(id)
+
+        c.close()
+        conn.close()
+
+        if (id is None):
+            return ''
+
+        data = {    
+            'id': id[0],
+        }
+        return json.dumps(data),200

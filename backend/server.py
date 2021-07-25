@@ -347,7 +347,7 @@ class Webhook(Resource):
         req = json.loads(request.data)
         print(req['responseId'])
         intent = req["queryResult"]["intent"]["displayName"]
-        #print(json.dumps(req, indent=4, sort_keys=True))
+        print(json.dumps(req, indent=4, sort_keys=True))
         response = parseIntent(intent, req)
         return response,200
 
