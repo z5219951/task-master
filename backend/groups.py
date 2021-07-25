@@ -110,3 +110,39 @@ class Users(Resource):
         print(f'Completed group list is: {group_list}')
 
         return json.dumps(group_list)
+
+
+@api.route('/<int:id>/tasks', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Tasks successfully received')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Get all tasks for all users of a group")
+    def get(self, id):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  tasks.id
+                FROM    groups
+                JOIN    users   ON groups.user = users.id
+                JOIN    tasks   ON tasks.assigned_to = users.id
+                WHERE   groups.id = {id};
+                """
+        c.execute(query)
+
+        task_obj = c.fetchone()
+        if (task_obj is None):
+            return []
+        
+        task_list = []
+
+        while (task_obj is not None):
+            task_id = task_obj[0]
+
+            task_list.append(task_id)
+
+            task_obj = c.fetchone()
+        
+        return json.dumps(task_list)
+
+

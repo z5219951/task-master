@@ -55,6 +55,7 @@ if __name__ == '__main__':
                 group           integer     not null,
                 name            text        not null,
                 description     text        ,
+                tasks           text        not null,
                 foreign key     (group)     references groups (id)
             );
             """
@@ -72,7 +73,7 @@ if __name__ == '__main__':
                 labels          text        ,
                 current_state   text        not null,
                 time_estimate   integer     ,
-                assigned_to     integer     ,
+                assigned_to     integer     not null,
                 file_paths      text        ,
                 project         integer     ,
                 foreign key     (owner)     references users (id)

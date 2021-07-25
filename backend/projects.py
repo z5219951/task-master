@@ -11,34 +11,86 @@ api = Namespace("projects", "Operations for projects")
 
 
 create_payload = api.model('create group payload', {
-    "groupId": fields.Integer,
+    "assigned_to": fields.Integer,
     "name": fields.String,
-    "description": fields.String
+    "description": fields.String,
+    "connected_tasks": fields.List(fields.Integer),
+    "created_by": fields.Integer
 })
 
 @api.route('/create', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Project successfully created')
     @api.response(400, 'Bad request')
-    @api.doc(description="Create a project with the specified users")
+    @api.doc(description="Create a project with the tasks")
     @api.expect(create_payload)
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('groupId', required=True)
+        parser.add_argument('assigned_to', required=True)
         parser.add_argument('name', required=True)
-        parser.add_argument('description', required=True)
+        parser.add_argument('description', required=False)
+        parser.add_argument('connected_tasks', required=True)
+        parser.add_argument('created_by', required=True)
         args = parser.parse_args()
 
-        group = args.groupId
+        group = args.assigned_to
         name = args.name
         description = args.description
+        creator = args.created_by
+        task_list = request.get_json()['connected_tasks']
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO projects (group, name, description)
-                VALUES ('{group}', '{name}', '{description}');
+                INSERT INTO projects (group, name, description, tasks)
+                VALUES ('{group}', '{name}', '{description}', '{json.dumps(task_list)});
+                """
+        c.execute(query)
+
+        conn.commit()
+
+        return {'value': True}
+
+
+update_payload = api.model('update group payload', {
+    "id": fields.Integer,
+    "assigned_to": fields.Integer,
+    "name": fields.String,
+    "description": fields.String,
+    "connected_tasks": fields.List(fields.Integer),
+    "created_by": fields.Integer
+})
+
+@api.route('/update', methods=['PUT'])
+class Users(Resource):
+    @api.response(200, 'Project successfully updated')
+    @api.response(400, 'Bad request')
+    @api.doc(description="update a project")
+    @api.expect(update_payload)
+    def put(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', required=True)
+        parser.add_argument('assigned_to', required=True)
+        parser.add_argument('name', required=True)
+        parser.add_argument('description', required=False)
+        parser.add_argument('connected_tasks', required=True)
+        parser.add_argument('created_by', required=True)
+        args = parser.parse_args()
+
+        task_list = request.get_json()['connected_tasks']
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                UPDATE  projects
+                SET     assigned_to = '{args.assigned_to}',
+                        name = '{args.name}',
+                        description = '{args.description}',
+                        connected_tasks = '{json.dumps(task_list)}',
+                        created_by = '{args.created_by}
+                WHERE   id = {args.id};
                 """
         c.execute(query)
 
