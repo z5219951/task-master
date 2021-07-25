@@ -1,18 +1,20 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import ProjectCard from '../components/ProjectCard'
 
-const ViewProject = (props) => {
+const ViewGroupProject = (props) => {
+  const [projectID, setProjectID] = useState('')
   const [projects, setProjects] = useState('')
   const history = useHistory()
   const group = props.location.state.group
   console.log(props.location.state.group)
   useEffect(() => {
     // get group projects 
-    setProjects([{"id": "1", "name":"DEF","description":"GHI","tasks":[{"id":"1","owner":"2","title":"abc","description":"def","creation_date":"2021-7-22","deadline":"2021-07-29","labels":"","current_state":"In Progress","time_estimate":"0","assigned_to":"1","file_paths":"['http://localhost:5000/uploads/tasks/1/tasks.drawio']"},{"id":"3","owner":"2","title":"123","description":"234","creation_date":"2021-7-24","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"}],"assigned_to":3,"createdBy":2},
-    {"id": "2", "name":"ABC","description":"DEF","tasks":[{"id":"1","owner":"2","title":"abc","description":"def","creation_date":"2021-7-22","deadline":"2021-07-29","labels":"","current_state":"In Progress","time_estimate":"0","assigned_to":"1","file_paths":"['http://localhost:5000/uploads/tasks/1/tasks.drawio']"},{"id":"3","owner":"2","title":"123","description":"234","creation_date":"2021-7-24","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"}],"assigned_to":3,"createdBy":2}])
+    axios.get(`http://localhost:5000/groups/${group.groupID}/projects`).then((res) => {
+      setProjects(JSON.parse(res.data))
+    })
   }, [])
-
   
   function backClick () {
     history.push('./groups')
@@ -37,7 +39,7 @@ const ViewProject = (props) => {
 
       <br />
       <div className="card">
-        {projects ? 
+        {projects.length > 0 ? 
           projects.map((project, index) => {
             return <div key={index}><ProjectCard project={project}></ProjectCard></div>
           })
@@ -48,4 +50,4 @@ const ViewProject = (props) => {
   )
 }
 
-export default ViewProject
+export default ViewGroupProject

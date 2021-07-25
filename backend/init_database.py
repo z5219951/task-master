@@ -1,7 +1,5 @@
 import sqlite3
 
-
-
 if __name__ == '__main__':
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
@@ -52,13 +50,14 @@ if __name__ == '__main__':
     query = """
             CREATE TABLE IF NOT EXISTS projects (
                 id              integer     primary key,
-                group           integer     not null,
+                groupid         integer     not null,
                 name            text        not null,
-                description     text        ,
-                tasks           text        not null,
-                foreign key     (group)     references groups (id)
+                description     text        not null,
+                tasks           text        ,
+                foreign key     (groupid)    references groups (id)
             );
             """
+    print(query)
     c.execute(query)
 
     # create table tasks

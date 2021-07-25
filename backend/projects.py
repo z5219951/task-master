@@ -9,7 +9,6 @@ from db import *
 bp = Blueprint('projects', __name__, url_prefix='/projects')
 api = Namespace("projects", "Operations for projects")
 
-
 create_payload = api.model('create group payload', {
     "assigned_to": fields.Integer,
     "name": fields.String,
@@ -28,24 +27,25 @@ class Users(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('assigned_to', required=True)
         parser.add_argument('name', required=True)
-        parser.add_argument('description', required=False)
-        parser.add_argument('connected_tasks', required=True)
+        parser.add_argument('description', required=True)
+        parser.add_argument('connected_tasks', required=False)
         parser.add_argument('created_by', required=True)
         args = parser.parse_args()
 
-        group = args.assigned_to
+        groupid = args.assigned_to
         name = args.name
         description = args.description
-        creator = args.created_by
+        created_by = args.created_by
         task_list = request.get_json()['connected_tasks']
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO projects (group, name, description, tasks)
-                VALUES ('{group}', '{name}', '{description}', '{json.dumps(task_list)});
+                INSERT INTO projects (groupid, name, description, tasks)
+                VALUES ('{groupid}', '{name}', '{description}', '{json.dumps(task_list)}');
                 """
+        print(query)
         c.execute(query)
 
         conn.commit()
@@ -111,7 +111,7 @@ class Users(Resource):
         query = f"""
                 SELECT  name, description
                 FROM    projects
-                WHERE   group = '{group_id}'
+                WHERE   groupid = '{group_id}'
                 ORDER BY    name;
                 """
 

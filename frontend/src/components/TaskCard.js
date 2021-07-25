@@ -26,7 +26,7 @@ const TaskCard = (props) => {
 
   useEffect(() => {
  
-    console.log(tasks)
+    console.log(tasks.file_paths)
      handleExistingLabels()
     
      // Find user assigned to task

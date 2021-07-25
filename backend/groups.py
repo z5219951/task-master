@@ -172,8 +172,9 @@ class Users(Resource):
         query = f"""
                 SELECT  id, name, description, tasks
                 FROM    projects
-                WHERE   group = {id};
+                WHERE   groupid = {id};
                 """
+        print(query)
         c.execute(query)
         data = c.fetchone()
         project_list = []

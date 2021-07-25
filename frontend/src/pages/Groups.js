@@ -72,7 +72,7 @@ class Groups extends Component{
 
     handleView = (group) => {
         this.props.history.push({
-            pathname: './viewProject',
+            pathname: './viewGroupProject',
             state: { group }
         })
     }

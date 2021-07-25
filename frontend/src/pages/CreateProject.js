@@ -13,7 +13,6 @@ const CreateProject = (props) => {
   const [nameAlert, setNameAlert] = useState('')
   const [descriptionAlert, setDescriptionAlert] = useState('')
   const [createdTasks, setCreatedTasks] = useState('');
-  const [assignedTo, setAssignedTo] = useState()
   const [taskList, setTaskList] = useState([])
   const [connectedTasks, setConnectedTasks] = useState([])
 
@@ -36,7 +35,10 @@ const CreateProject = (props) => {
       setDescriptionAlert('');
     }
 
-    const project = {name: name, description: description, connected_tasks: connectedTasks, assigned_to: group.groupID, createdBy: store.getState().id}
+    const project = {name: name, description: description, connected_tasks: connectedTasks, assigned_to: group.groupID, created_by: store.getState().id}
+    axios.post('http://localhost:5000/projects/create', project).then((res) => {
+      console.log(res)
+    })
     console.log(project)
     console.log(JSON.stringify(project))
   }
@@ -70,11 +72,15 @@ const CreateProject = (props) => {
     if (createdTasks) {
       createdTasks.map((task, index) => {
         if (taskList[index]) {
-          setConnectedTasks(connectedTasks => [...connectedTasks, task])
+          setConnectedTasks(connectedTasks => [...connectedTasks, Number(task.id)])
         }
       })
     }
   }, [taskList])
+
+  useEffect(() => {
+    console.log(connectedTasks)
+  }, [connectedTasks])
 
   function handleView (task) {
     history.push({
@@ -87,7 +93,6 @@ const CreateProject = (props) => {
     <>
      <div className="padding">
       <div className="row">
-      
         <h1 className="col">Create a Project with {group.groupName}</h1>
         <br />
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
