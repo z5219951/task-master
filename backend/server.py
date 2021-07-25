@@ -1,4 +1,5 @@
 # standard library imports
+from chatbot import *
 import json
 import random
 import sys
@@ -338,6 +339,17 @@ class Uploads(Resource):
     def get(self,path):
         print(f'path obtained is: {path}')
         return send_from_directory(PurePath(app.config['UPLOADS']), path, as_attachment=False)
+
+@api.route('/webhook', methods=['POST'])
+class Webhook(Resource):
+    def post(self):
+        #print(request.data)
+        req = json.loads(request.data)
+        print(req['responseId'])
+        intent = req["queryResult"]["intent"]["displayName"]
+        #print(json.dumps(req, indent=4, sort_keys=True))
+        response = parseIntent(intent, req)
+        return response,200
 
 if __name__ == '__main__':
     app.run(debug=True)
