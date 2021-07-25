@@ -7,4 +7,6 @@
 
 # project specific
 clickdown.db
+backend/tasks/
+backend/users/
 *log*
