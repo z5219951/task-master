@@ -38,6 +38,7 @@ const CreateProject = (props) => {
 
     const project = {name: name, description: description, connected_tasks: connectedTasks, assigned_to: group.groupID, createdBy: store.getState().id}
     console.log(project)
+    console.log(JSON.stringify(project))
   }
 
   // Get tasks created by the logged in user
@@ -69,7 +70,7 @@ const CreateProject = (props) => {
     if (createdTasks) {
       createdTasks.map((task, index) => {
         if (taskList[index]) {
-          setConnectedTasks(connectedTasks => [...connectedTasks, Number(task.id)])
+          setConnectedTasks(connectedTasks => [...connectedTasks, task])
         }
       })
     }
