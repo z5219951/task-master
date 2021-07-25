@@ -18,6 +18,8 @@ if __name__ == '__main__':
     c.execute(query)
     query = 'drop table if exists labels'
     c.execute(query)
+    query = 'drop table if exists revisions'
+    c.execute(query)
     
     # create table users
     query = """
@@ -91,6 +93,22 @@ if __name__ == '__main__':
             );
             """
     c.execute(query)
+    
+    # Create tasks revision table
+    query = """
+            CREATE TABLE IF NOT EXISTS revisions (
+                taskId          integer     not null,
+                revId           integer     not null,
+                userId          integer     not null,
+                timestamp       text        not null,
+                revision        text        not null,
+                foreign key     (taskId)    references tasks (id),
+                foreign key     (userId)    references users (id),
+                constraint      connection  primary key (taskId, revId)
+            );
+            """
+    
+    c.execute(query)
 
     # insert test data
     query = f"""
@@ -100,21 +118,21 @@ if __name__ == '__main__':
     c.execute(query)
     
     query = f"""
-                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
-                VALUES ('gavin', 'Testing123', '1@gmail.com', 'Gavin', 'Wang', '54321', '321');
-                """
+            INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+            VALUES ('gavin', 'Testing123', '1@gmail.com', 'Gavin', 'Wang', '54321', '321');
+            """
     c.execute(query)
     
     query = f"""
-                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
-                VALUES ('testA', 'Testing123', '2@gmail.com', 'Test', 'A', '54321', '321');
-                """
+            INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+            VALUES ('testA', 'Testing123', '2@gmail.com', 'Test', 'A', '54321', '321');
+            """
     c.execute(query)
     
     query = f"""
-                INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
-                VALUES ('testB', 'Testing123', '3@gmail.com', 'Test', 'B', '54321', '321');
-                """
+            INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
+            VALUES ('testB', 'Testing123', '3@gmail.com', 'Test', 'B', '54321', '321');
+            """
     c.execute(query)
     
     conn.commit()
