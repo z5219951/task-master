@@ -2,22 +2,19 @@ from functions import *
 
 
 def parseIntent(intent, req):
-    if(intent == "LogMeIn"):
-        username = req["queryResult"]["parameters"]["user"]
-        password = req["queryResult"]["parameters"]["password"]
-        result = authUser(username, password)
-        print(result)
-        if(result == ''):
-            response = {'fulfillment_text': "You don't seem to be real, please try again"}
-        else:
-            response = {'fulfillment_text': "You're now logged in as {}".format(username)}
-            #want to push a session/user pair to the database.
-            req["session"]
-
-
-
-    elif(intent == "AddTask"):
-        response = {'fulfillment_text': "I need to add a {}!"}
+    # if(intent == "LogMeIn"):
+    #     username = req["queryResult"]["parameters"]["user"]
+    #     password = req["queryResult"]["parameters"]["password"]
+    #     result = authUser(username, password)
+    #     print(result)
+    #     if(result == ''):
+    #         response = {'fulfillment_text': "You don't seem to be real, please try again"}
+    #     else:
+    #         response = {'fulfillment_text': "You're now logged in as {}".format(username)}
+    #         #want to push a session/user pair to the database.
+    #         req["session"]
+    if(intent == "AddTask"):
+        response = {'fulfillment_text': "I need to add a task!"}
         #Handle adding a task
     elif(intent == "CheckTaskByDate"):
         response = {'fulfillment_text': "I need to retrieve tasks on a specific day!"}
@@ -34,4 +31,5 @@ def parseIntent(intent, req):
     return response
 
 #New Idea
-#Need to log into the chatbot first. Once logged in, records a session ID and ties it to the username - storing in database.
+#Need to log into the chatbot first. 
+# Once logged in, records a session ID and ties it to the username - storing in database.

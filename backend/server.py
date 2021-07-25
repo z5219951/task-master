@@ -18,6 +18,7 @@ import sqlite3
 # from config import config
 from db import *
 import friends
+from sendMsg import *
 
 import groups
 import tasks
@@ -322,10 +323,6 @@ class Users(Resource):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
         
-        # HOW TO IMPLEMENT LOGOUT???
-        # store JWT in db maybe? ->
-        # //Force JWT to expire from frontend
-        
         c.close()
         conn.close()
 
@@ -342,6 +339,7 @@ class Uploads(Resource):
 
 @api.route('/webhook', methods=['POST'])
 class Webhook(Resource):
+    @api.doc(description="Receives responses via webhook for chatbot")
     def post(self):
         #print(request.data)
         req = json.loads(request.data)
@@ -350,6 +348,14 @@ class Webhook(Resource):
         print(json.dumps(req, indent=4, sort_keys=True))
         response = parseIntent(intent, req)
         return response,200
+
+@api.route('/chatbot', methods=['POST'])
+class Chatbot(Resource):
+    def post(self):
+        req = json.loads(request.data)
+        response = sendMessage(req["message"])
+        print(response)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
