@@ -170,7 +170,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, name, description, tasks
+                SELECT  id, name, description, tasks, groupid
                 FROM    projects
                 WHERE   groupid = {id};
                 """
@@ -184,8 +184,10 @@ class Users(Resource):
                 'id': f'{data[0]}',
                 'name': f'{data[1]}',
                 'description': f'{data[2]}',
-                'tasks': f'{data[3]}'
+                'tasks': f'{data[3]}',
+                'groupid': f'{data[4]}'
             }
+            print(project_info)
             project_list.append(project_info)
             data = c.fetchone()
 

@@ -9,6 +9,7 @@ import UploadFile from '../pages/UploadFile'
 
 const TaskCard = (props) => {
   const tasks = props.task
+  console.log(JSON.stringify(tasks))
   const [update, setUpdate] = useState(false)
   const history = useHistory();
   const [currentLabels, setCurrentLabels] = useState([])

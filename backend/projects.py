@@ -55,11 +55,10 @@ class Users(Resource):
 
 update_payload = api.model('update group payload', {
     "id": fields.Integer,
-    "assigned_to": fields.Integer,
+    "groupid": fields.Integer,
     "name": fields.String,
     "description": fields.String,
-    "connected_tasks": fields.List(fields.Integer),
-    "created_by": fields.Integer
+    "tasks": fields.List(fields.Integer),
 })
 
 @api.route('/update', methods=['PUT'])
@@ -71,25 +70,23 @@ class Users(Resource):
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', required=True)
-        parser.add_argument('assigned_to', required=True)
+        parser.add_argument('groupid', required=True)
         parser.add_argument('name', required=True)
         parser.add_argument('description', required=False)
-        parser.add_argument('connected_tasks', required=True)
-        parser.add_argument('created_by', required=True)
+        parser.add_argument('tasks', required=True)
         args = parser.parse_args()
 
-        task_list = request.get_json()['connected_tasks']
+        task_list = request.get_json()['tasks']
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
                 UPDATE  projects
-                SET     assigned_to = '{args.assigned_to}',
+                SET     groupid = '{args.groupid}',
                         name = '{args.name}',
                         description = '{args.description}',
-                        connected_tasks = '{json.dumps(task_list)}',
-                        created_by = '{args.created_by}
+                        tasks = {json.dumps(task_list)}
                 WHERE   id = {args.id};
                 """
         c.execute(query)
