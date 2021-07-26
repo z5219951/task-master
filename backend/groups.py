@@ -99,7 +99,7 @@ class Users(Resource):
 
             c2 = conn.cursor()
             query = f"""
-                    SELECT  users.id, users.first_name, users.last_name
+                    SELECT  users.id, users.first_name, users.last_name, users.email
                     FROM    users
                     JOIN    groups
                     ON      groups.user = users.id
@@ -112,7 +112,8 @@ class Users(Resource):
             while (user is not None):
                 user_info = {
                     "userId": user[0],
-                    "userName": user[1] + user[2]
+                    "userName": user[1] + user[2],
+                    "email": user[3]
                 }
                 members.append(user_info)
                 user = c2.fetchone()
