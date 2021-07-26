@@ -45,7 +45,7 @@ class Groups extends Component{
         return (
             list.map((item,index)=>
                 <div className="group_member_box" key = {index}>
-                    <h4 className="group_user">{item.userName}</h4>
+                    <h4 className="group_user">{item.userName} - {item.email}</h4>
                     <ViewProfileButton id={item.userId}></ViewProfileButton>
                 </div>
             )

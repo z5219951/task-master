@@ -1,8 +1,14 @@
 import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 
 const ProjectCard = (props) => {
   const project = props.project
   const history = useHistory();
+
+  useEffect(() => {
+    
+  })
+
   const tasks = [{"id":"1","owner":"2","title":"task 1","description":"abc","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"},
   {"id":"2","owner":"2","title":"task 2 ","description":"def","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"},
   {"id":"3","owner":"2","title":"task 3","description":"ghi","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"}]

@@ -29,7 +29,7 @@ const Taskboard = () => {
   // Get tasks created by and assigned to the logged in user
   axios.defaults.crossDomain=true;
   useEffect(() => {
-    axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
+    axios.get(`http://localhost:5000/tasks/created/${store.getState().id}`).then((res) => {
       const taskList = JSON.parse(res.data);
       setCreatedTasks(taskList)
     })
@@ -37,6 +37,7 @@ const Taskboard = () => {
     axios.get(`http://localhost:5000/tasks/assigned/${store.getState().id}`).then((res) => {
       const taskList = JSON.parse(res.data);
       setAssignedTasks(taskList)
+      console.log(res.data)
     })
   }, [])
 
