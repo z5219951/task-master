@@ -355,8 +355,12 @@ class Users(Resource):
                 """
         c.execute(query)
 
+        existing = c.fetchone()
+        print(f'type of existing: {type(existing)}')
+        print(f'list of existing: {existing}')
+
         try:
-            url_list = json.loads(c.fetchone()[0]) + url_list
+            url_list = json.loads(existing[0]) + url_list
         except:
             pass
 
