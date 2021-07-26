@@ -77,7 +77,7 @@ class CalendarCom extends Component{
   // get Tasks
   componentDidMount(){
     // get task detail
-    axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
+    axios.get(`http://localhost:5000/tasks/created/${store.getState().id}`).then((res) => {
       let taskList = JSON.parse(res.data);
       if(!taskList) {
         taskList = [];
