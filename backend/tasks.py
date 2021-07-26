@@ -394,6 +394,7 @@ class Users(Resource):
         existing = c.fetchone()
         print(f'type of existing: {type(existing)}')
         print(f'list of existing: {existing}')
+        print(type(existing[0]))
         print(json.loads(existing[0]))
 
         try:
