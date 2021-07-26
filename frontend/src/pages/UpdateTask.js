@@ -28,6 +28,7 @@ const UpdateTask = (props) => {
   const [assigned_to, setAssigned_to] = useState('')
   const [assigned, setAssigned] = useState('')
   const [noDeadline, setNoDeadline] = useState(false)
+  const [timeTaken, setTimeTaken] = useState('')
   const [completionValue, setCompletionValue] = useState('')
 
   // Get task
@@ -225,6 +226,13 @@ const UpdateTask = (props) => {
           <div className="col-sm-4">
             <input className="form-control input-lg" type="number" min="0" onChange={(e) => setTimeEst(e.target.value)} ></input>
             &nbsp;&nbsp;Current Time Estimate - {task.time_estimate} hours
+          </div>
+        </div>
+        <div className="form-group row mb-5">
+          <label htmlFor="description" className="col-sm-3 col-form-label">Update Time Taken to Complete (Number of Hours)</label>
+          <div className="col-sm-4">
+            <input className="form-control input-lg" type="number" min="0" onChange={(e) => setTimeTaken(e.target.value)} ></input>
+            &nbsp;&nbsp;Current Time Taken to Complete -  hours
           </div>
         </div>
         <br/>
