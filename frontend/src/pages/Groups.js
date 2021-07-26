@@ -64,10 +64,17 @@ class Groups extends Component{
                 </div>
                 <div className="card-footer text-muted">
                     <button type="button" className="btn btn-success btn-lg m-1" onClick={() => this.handleCreate(item)}> Create a Group Project </button>
-                    <button type="button" className="btn btn-success btn-lg m-1" onClick={this.handleView} > View Group Projects</button>
+                    <button type="button" className="btn btn-success btn-lg m-1" onClick={() => this.handleView(item)} > View Group Projects</button>
                 </div>
             </div>)
         )
+    }
+
+    handleView = (group) => {
+        this.props.history.push({
+            pathname: './viewGroupProject',
+            state: { group }
+        })
     }
 
     handleCreate = (group)=> {

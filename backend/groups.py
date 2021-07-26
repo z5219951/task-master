@@ -38,10 +38,22 @@ class Users(Resource):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
+        query = f"""
+                SELECT  COUNT(DISTINCT name)
+                FROM    groups;
+                """
+        c.execute(query)
+
+        count = -1
+        try:
+            count = c.fetchone()[0]
+        except:
+            count = 0
+
         for user in user_list:
             query = f"""
-                    INSERT INTO groups (name, user)
-                    VALUES ('{name}', '{user}');
+                    INSERT INTO groups (id, name, user)
+                    VALUES ({count}, '{name}', '{user}');
                     """
             c.execute(query)
 
@@ -50,19 +62,19 @@ class Users(Resource):
         return {'value': True}
 
 
-@api.route('/<int:id>', methods=['GET'])
+@api.route('/<int:user_id>', methods=['GET'])
 class Users(Resource):
     @api.response(200, 'Group successfully retrieved')
     @api.response(400, 'Bad request')
     @api.doc(description="Get all groups for a user")
-    def get(self, id):
+    def get(self, user_id):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
                 SELECT  id, name
                 FROM    groups
-                WHERE   user = '{id}'
+                WHERE   user = '{user_id}'
                 """
         c.execute(query)
 
@@ -87,11 +99,11 @@ class Users(Resource):
 
             c2 = conn.cursor()
             query = f"""
-                    SELECT  users.id, users.first_name, users.last_name
+                    SELECT  users.id, users.first_name, users.last_name, users.email
                     FROM    users
                     JOIN    groups
                     ON      groups.user = users.id
-                    WHERE   groups.name = '{name}'
+                    WHERE   groups.id = '{id}'
                     """
             c2.execute(query)
 
@@ -100,7 +112,8 @@ class Users(Resource):
             while (user is not None):
                 user_info = {
                     "userId": user[0],
-                    "userName": user[1] + user[2]
+                    "userName": user[1] + user[2],
+                    "email": user[3]
                 }
                 members.append(user_info)
                 user = c2.fetchone()
@@ -124,3 +137,76 @@ class Users(Resource):
         print(f'Completed group list is: {group_list}')
 
         return json.dumps(group_list)
+
+
+@api.route('/<int:id>/tasks', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Tasks successfully received')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Get all tasks for all users of a group")
+    def get(self, id):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  tasks.id
+                FROM    groups
+                JOIN    users   ON groups.user = users.id
+                JOIN    tasks   ON tasks.assigned_to = users.id
+                WHERE   groups.id = {id};
+                """
+        c.execute(query)
+
+        task_obj = c.fetchone()
+        if (task_obj is None):
+            return []
+        
+        task_list = []
+
+        while (task_obj is not None):
+            task_id = task_obj[0]
+
+            task_list.append(task_id)
+
+            task_obj = c.fetchone()
+        
+        return json.dumps(task_list)
+
+
+@api.route('/<int:id>/projects', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Projects successfully received')
+    @api.response(400, 'Bad request')
+    @api.doc(description="Get all projects for a group")
+    def get(self, id):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  id, name, description, tasks, groupid
+                FROM    projects
+                WHERE   groupid = {id};
+                """
+        print(query)
+        c.execute(query)
+        data = c.fetchone()
+        project_list = []
+
+        while (data is not None):
+            project_info = {
+                'id': f'{data[0]}',
+                'name': f'{data[1]}',
+                'description': f'{data[2]}',
+                'tasks': f'{data[3]}',
+                'groupid': f'{data[4]}'
+            }
+            print(project_info)
+            project_list.append(project_info)
+            data = c.fetchone()
+
+        # print(project_list)
+
+        c.close()
+        conn.close()
+
+        return json.dumps(project_list)

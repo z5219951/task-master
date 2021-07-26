@@ -13,7 +13,6 @@ const CreateProject = (props) => {
   const [nameAlert, setNameAlert] = useState('')
   const [descriptionAlert, setDescriptionAlert] = useState('')
   const [createdTasks, setCreatedTasks] = useState('');
-  const [assignedTo, setAssignedTo] = useState()
   const [taskList, setTaskList] = useState([])
   const [connectedTasks, setConnectedTasks] = useState([])
 
@@ -36,15 +35,20 @@ const CreateProject = (props) => {
       setDescriptionAlert('');
     }
 
-    const project = {name: name, description: description, connected_tasks: connectedTasks, assigned_to: group.groupID, createdBy: store.getState().id}
+    const project = {name: name, description: description, connected_tasks: connectedTasks, assigned_to: group.groupID, created_by: store.getState().id}
+    axios.post('http://localhost:5000/projects/create', project).then((res) => {
+      console.log(res)
+    })
     console.log(project)
+    console.log(JSON.stringify(project))
   }
 
   // Get tasks created by the logged in user
   axios.defaults.crossDomain=true;
   useEffect(() => {
-    axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
+    axios.get(`http://localhost:5000/groups/${group.groupID}/tasks`).then((res) => {
       const taskList = JSON.parse(res.data);
+      console.log(res.data)
       setCreatedTasks(taskList)
     })
 
@@ -75,6 +79,10 @@ const CreateProject = (props) => {
     }
   }, [taskList])
 
+  useEffect(() => {
+    console.log(connectedTasks)
+  }, [connectedTasks])
+
   function handleView (task) {
     history.push({
       pathname: './viewTask',
@@ -86,7 +94,6 @@ const CreateProject = (props) => {
     <>
      <div className="padding">
       <div className="row">
-      
         <h1 className="col">Create a Project with {group.groupName}</h1>
         <br />
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
@@ -110,7 +117,7 @@ const CreateProject = (props) => {
           <label htmlFor="description" className="col-sm-3 col-form-label">Tasks</label>
           <div className="col">
             {createdTasks ? createdTasks.map((task, index) => {
-              return <div key={task.id}>
+              return <div key={index}>
                 <h5><input type="checkbox" className="form-check-input m-1" onClick={(e) => handleTasks(e)} key={index} value={index}/>Task #{task.id} - {task.title} &nbsp;
                 <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
                 </h5> 

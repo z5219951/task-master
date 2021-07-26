@@ -17,12 +17,11 @@ import sqlite3
 # from config import config
 from db import *
 import friends
-
 import groups
 import tasks
 import user
 import labels
-
+import projects
 
 app = Flask(__name__)
 api = Api(app,
@@ -40,6 +39,8 @@ app.register_blueprint(user.bp)
 api.add_namespace(user.api)
 app.register_blueprint(labels.bp)
 api.add_namespace(labels.api)
+app.register_blueprint(projects.bp)
+api.add_namespace(projects.api)
 
 app.config["UPLOADS"] = PurePath(Path(__file__).parent.resolve())
 

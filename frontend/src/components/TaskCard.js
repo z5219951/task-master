@@ -9,7 +9,7 @@ import UploadFile from '../pages/UploadFile'
 
 const TaskCard = (props) => {
   const tasks = props.task
-  console.log(tasks)
+  console.log(JSON.stringify(tasks))
   const [update, setUpdate] = useState(false)
   const history = useHistory();
   const [currentLabels, setCurrentLabels] = useState([])
@@ -27,7 +27,6 @@ const TaskCard = (props) => {
 
   useEffect(() => {
  
-    console.log(tasks)
      handleExistingLabels()
     
      // Find user assigned to task
@@ -85,7 +84,7 @@ const TaskCard = (props) => {
   function handleExistingLabels() {
     setExistingLabels('')
     axios.get(`http://localhost:5000/labels/${store.getState().id}`).then((res) => {
-      if (res.data != 'null') {
+      if (res.data !== 'null') {
         const temp = JSON.parse(res.data).replace(/['"]+/g, '').split(', ')
         setExistingLabels(temp)
       }
@@ -121,11 +120,12 @@ const TaskCard = (props) => {
       <div className="card-footer text-muted" padding="100px">
         <p className="card-text m-1"><em>Labels: {currentLabels}</em></p>
         {update ? <div> <p className="card-text m-1"><em>Edit Labels:</em></p> <CreatableSelect isMulti defaultValue={tasks.labels !== '' ? JSON.parse(tasks.labels) : ''} onChange={(e) => handleLabels(e)} placeholder='Create a label by typing here or select a label below' options={formattedLabels}/></div> : ''}
-        {tasks.file_paths !== 'None' ? 
-          JSON.parse(tasks.file_paths.replace(/'/g,'"')).map((file, index) => {
-          return <div key={index}> <br /> Files: <br /> <a href={file} download>{file.substring(file.lastIndexOf('/') +1)}<br /></a> </div>
-        }) 
-        : ''}
+        {tasks.file_paths !== undefined && tasks.file_paths !== 'None' ? 
+          <div>Files: <br />
+          {JSON.parse(tasks.file_paths.replace(/'/g,'"')).map((file, index) => {
+          return <div key={index}> <br /> <a href={file} download>{file.substring(file.lastIndexOf('/') +1)}<br /></a> </div>
+        })}
+        </div>: ''}
         <br />
         {update ? <div>
         Upload Files:

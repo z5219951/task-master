@@ -77,7 +77,7 @@ const UpdateTask = (props) => {
       updateTask.time_estimate = timeEst;
     }
 
-    if (cState !== 0) {
+    if (cState) {
       updateTask.current_state = cState;
     }
 

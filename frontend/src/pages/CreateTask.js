@@ -1,6 +1,6 @@
 import './Padding.css'
 import './CreateTask.css'
-import React, { Component, Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios'
 import store from '../store'
