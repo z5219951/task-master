@@ -38,10 +38,22 @@ class Users(Resource):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
+        query = f"""
+                SELECT  COUNT(DISTINCT name)
+                FROM    groups;
+                """
+        c.execute(query)
+
+        count = -1
+        try:
+            count = c.fetchone()[0]
+        except:
+            count = 0
+
         for user in user_list:
             query = f"""
-                    INSERT INTO groups (name, user)
-                    VALUES ('{name}', '{user}');
+                    INSERT INTO groups (id, name, user)
+                    VALUES ({count}, '{name}', '{user}');
                     """
             c.execute(query)
 
@@ -50,19 +62,19 @@ class Users(Resource):
         return {'value': True}
 
 
-@api.route('/<int:id>', methods=['GET'])
+@api.route('/<int:user_id>', methods=['GET'])
 class Users(Resource):
     @api.response(200, 'Group successfully retrieved')
     @api.response(400, 'Bad request')
     @api.doc(description="Get all groups for a user")
-    def get(self, id):
+    def get(self, user_id):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
                 SELECT  id, name
                 FROM    groups
-                WHERE   user = '{id}'
+                WHERE   user = '{user_id}'
                 """
         c.execute(query)
 
@@ -87,11 +99,11 @@ class Users(Resource):
 
             c2 = conn.cursor()
             query = f"""
-                    SELECT  users.id, users.first_name, users.last_name
+                    SELECT  users.id, users.first_name, users.last_name, users.email
                     FROM    users
                     JOIN    groups
                     ON      groups.user = users.id
-                    WHERE   groups.name = '{name}'
+                    WHERE   groups.id = '{id}'
                     """
             c2.execute(query)
 
@@ -100,7 +112,8 @@ class Users(Resource):
             while (user is not None):
                 user_info = {
                     "userId": user[0],
-                    "userName": user[1] + user[2]
+                    "userName": user[1] + user[2],
+                    "email": user[3]
                 }
                 members.append(user_info)
                 user = c2.fetchone()

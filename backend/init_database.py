@@ -40,7 +40,7 @@ if __name__ == '__main__':
     # create table groups
     query = """
             CREATE TABLE IF NOT EXISTS groups (
-                id              integer     primary key,
+                id              integer     not null,
                 name            text        not null,
                 user            integer     not null,
                 foreign key     (user)      references users (id)
@@ -56,7 +56,7 @@ if __name__ == '__main__':
                 name            text        not null,
                 description     text        not null,
                 tasks           text        ,
-                foreign key     (groupid)    references groups (id)
+                foreign key     (groupid)   references groups (id)
             );
             """
     print(query)
