@@ -1,3 +1,4 @@
+import ast
 import json
 import os
 import datetime as dt
@@ -392,13 +393,9 @@ class Users(Resource):
         c.execute(query)
 
         existing = c.fetchone()
-        print(f'type of existing: {type(existing)}')
-        print(f'list of existing: {existing}')
-        print(type(existing[0]))
-        print(json.loads(existing[0]))
 
         try:
-            url_list = json.loads(existing[0]) + url_list
+            url_list = ast.literal_eval(existing[0]) + url_list
         except:
             pass
 
