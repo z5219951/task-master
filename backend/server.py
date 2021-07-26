@@ -337,15 +337,17 @@ class Uploads(Resource):
         print(f'path obtained is: {path}')
         return send_from_directory(PurePath(app.config['UPLOADS']), path, as_attachment=False)
 
+#One of these should be deprecated as both do the same thing now.
+
 @api.route('/webhook', methods=['POST'])
 class Webhook(Resource):
     @api.doc(description="Receives responses via webhook for chatbot")
     def post(self):
         #print(request.data)
         req = json.loads(request.data)
-        print(req['responseId'])
+        #print(req['responseId'])
         intent = req["queryResult"]["intent"]["displayName"]
-        print(json.dumps(req, indent=4, sort_keys=True))
+        #print(json.dumps(req, indent=4, sort_keys=True))
         response = parseIntent(intent, req)
         return response,200
 
@@ -353,8 +355,10 @@ class Webhook(Resource):
 class Chatbot(Resource):
     def post(self):
         req = json.loads(request.data)
+        #sends the req message to dialogflow
         response = sendMessage(req["message"])
-        print(response)
+        #dialogflow response
+        print(response.query_result.fulfillment_text)
 
 
 if __name__ == '__main__':

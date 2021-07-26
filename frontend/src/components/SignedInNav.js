@@ -18,6 +18,7 @@ const SignedInNav = () => {
         <Nav className="ml-auto">
           <Nav.Link href="profile">Profile</Nav.Link>
           <Nav.Link href="calendar">Calendar</Nav.Link>
+          <Nav.Link href="chatbot"> Chat </Nav.Link>
         </Nav>
         <Collaboration history = {history}/>
       </div>

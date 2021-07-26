@@ -30,21 +30,28 @@ const Chatbot = () => {
     history.push('./updateprofile')
   }
 
+  function handleSubmit() {
+    const msg = {}
+    console.log(msg)
+    axios.defaults.crossDomain=true;
+    axios.post('http://localhost:5000/chatbot', msg).then(()=>{
+      console.log("Task Created");
+      history.push('./chatHistory');
+    })
+
+    }
+
   return (
     <>
-
-    <div>
-        <iframe
-            allow="microphone;"
-            width="350"
-            height="430"
-            src="https://console.dialogflow.com/api-client/demo/embedded/2748e451-5218-4df6-baa0-96f1d1ee14fa">
-        </iframe>
-    </div>
-   
-
-   
-  </>
+        <form onSubmit={handleSubmit}>
+          <input type="text" name="userInput"/>
+        </form>
+        
+        <button onclick={handleSubmit}>
+          Submit
+        </button>
+    </>
+      
   )
 }
 
