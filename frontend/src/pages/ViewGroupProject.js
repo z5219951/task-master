@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import ProjectCard from '../components/ProjectCard'
+import ViewProfileButton from '../components/ViewProfileButton';
 
 const ViewGroupProject = (props) => {
   const [projectID, setProjectID] = useState('')
@@ -32,8 +33,11 @@ const ViewGroupProject = (props) => {
       <div className="mx-2">
         <h5>Group Members:</h5>
         {group.members.map((member, index) => {
-          return <div key={index} className="card-text"><li>{member.userName}</li></div>
+          return <div key={index} className="card-text"><li>{member.userName} - {member.email}
+            &nbsp; <ViewProfileButton id={member.userId}></ViewProfileButton>
+          </li></div>
         })}
+        <br />
         </div>
       </div>
 

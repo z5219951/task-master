@@ -99,7 +99,7 @@ class Users(Resource):
         c.execute(query)
         data = c.fetchone()
         task_info = {}
-        while (data is not None):
+        if (data is not None):
             task_info = {
                 'id': f'{data[0]}',
                 'owner': f'{data[1]}',
@@ -114,6 +114,9 @@ class Users(Resource):
                 'file_paths': f'{data[10]}',
                 'time_taken': f'{data[11]}'
             }
+
+        c.close()
+        conn.close()
 
         return json.dumps(task_info)
 

@@ -1,18 +1,29 @@
 import { useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
+import axios from 'axios'
 
 const ProjectCard = (props) => {
   const project = props.project
   const history = useHistory();
+  const [tasks, setTasks] = useState()
 
   useEffect(() => {
-    
-  })
+    console.log (project.tasks)
+    setTasks([])   
+    if (project.tasks) {
+      JSON.parse(project.tasks).map((id) => {
+        axios.get(`http://localhost:5000/tasks/${id}`).then((res) => {
+          console.log(res.data)
+          setTasks(tasks => [...tasks, JSON.parse(res.data)])
+        })
+      })   
+    }
+  },[])
 
-  const tasks = [{"id":"1","owner":"2","title":"task 1","description":"abc","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"},
+ /* const tasks = [{"id":"1","owner":"2","title":"task 1","description":"abc","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"},
   {"id":"2","owner":"2","title":"task 2 ","description":"def","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"},
   {"id":"3","owner":"2","title":"task 3","description":"ghi","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"}]
-  
+  */
 
   function handleView (task) {
     history.push({
@@ -40,11 +51,11 @@ const ProjectCard = (props) => {
       <div className="card-body text-muted" padding="100px">
         <p className="card-text">Description: <br/>{project.description}</p>
         <p className="card-text">Connected Tasks: </p>
-        {tasks.map((task, index) => {
+        {tasks && tasks.length !== 0 ? tasks.map((task, index) => {
           return <div key={index} className="card-text">Task #{task.id}: {task.title} - {task.current_state} &nbsp;
             <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
           </div>
-          })}
+          }) : 'No Tasks'}
       </div>
     </div>
   </>

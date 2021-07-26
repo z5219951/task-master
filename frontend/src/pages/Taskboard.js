@@ -37,7 +37,6 @@ const Taskboard = () => {
     axios.get(`http://localhost:5000/tasks/assigned/${store.getState().id}`).then((res) => {
       const taskList = JSON.parse(res.data);
       setAssignedTasks(taskList)
-      console.log(res.data)
     })
   }, [])
 

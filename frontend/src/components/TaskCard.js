@@ -9,7 +9,6 @@ import UploadFile from '../pages/UploadFile'
 
 const TaskCard = (props) => {
   const tasks = props.task
-  console.log(tasks.file_paths)
   const [update, setUpdate] = useState(false)
   const history = useHistory();
   const [currentLabels, setCurrentLabels] = useState([])
@@ -136,6 +135,8 @@ const TaskCard = (props) => {
         Upload Files:
         <br/>
         <UploadFile taskId={tasks.id} ></UploadFile>
+        <br />
+        Please refresh after upload to view changes
         </div>
         : ''}
       </div>
