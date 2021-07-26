@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "taskmasterchatbot-wfsb",
+  "private_key_id": "da70b4f9ce9d0dcf5d1005e309461caf362b7f56",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDBIQtmSJPBnbIT\nd62I8rXdBk4xSvMKyNKfcXAfoSVbeMWa4t3mEY2BRj6bA1lSuMVxrWMnA6Ph2u5V\nDl8hK9jwDPLbqRSjRqTgOn2rf8y7LpOyaF3hyKMVNhmXXi3lzSnDSB23obSXwEBK\n6a5bqv+xd5mW1/2rkmElbqeyZwwxDhy8xuJHNCU1XFTxG3pIIW9aPnsmE29bA2ES\nfoBewHFe1rG3lLwK/EQv5yuU9UGd1cajHgodbRVcVmmVoHM0cF/+M5MrqonKqrC1\nrnGWu+LJxgUtyri2H0bKgB+r75PcDQIMre+5RRHTP7QOrGSXKFILhLK3XupV5D8K\nu7Uslil9AgMBAAECggEAJWhXIuqv4/K9iVPHAx2v6C3Oe3G+/bnEQingw9+csskD\nzWpf/K4tsHqAqdnONV2gsNIawHXOCnMzcroj5vLtRCHd8HohizalvODXcp6Ac0kk\nRow8kv0fyX3/Gvic/0Pr8O1JBEaIClSsn1X/9bV7bU5zK2qOseracjuqs72N+Poi\noIJin5yJSep9Q2CDFHXamNsFbAEOQk/Sknfimhtv7DGQeFYBnE3uwoIWF/lst7HN\nVhGNTq2kpnTR7c5Mj5hSWn5LdbtN7sz0SZWqvRqIq0QgFOQPazbn2eJFmKuNxWVB\nMjFBwqiCejM3A9R05fTVx9Mvbdz+Ir+2ydrUcnk+KQKBgQDkE5b/iARdFwMis/xL\nskDpWdDWx7GWZeczvYeZwGS8GQ0dxMRRKwSLFbd6nJpa9hrvB8Hw5GsIHCipJm1K\n+tvWCn1dRhEbpGYimYZVepDMwNKn2Zz1u/YG7qReaxk2A8mpxdrlZjy/DgCkokAc\n5KdF7YcOFGTXImlyL2giG41ETwKBgQDYxiBf50FZZH5mmFJQ+IPlLPb5SpviAUoP\nMk7trVyYR6czMG9VpyVwu/LvpeG5QcFGXd9wTJdXbEZEWrSfNmBEXACgs2iNXas5\nPIFnHaKPXRyZXZ0yweN9jc9DB3WOWPK+23IzBeiOu5zaSFWtp0Gbc3BojuHLQBt1\nvnR7H0dmcwKBgDQcfb242DZk0aSWNykce1RV3y+TxPG2KtNZlKf+m4WWu7Z3hNt+\n1rToq1lqeqIZ5SGERj3CEupxdKDhVMty8dO/5dDv92y3bVaueVEChh8iV39ea0yC\nO75tvESOd94tk2AlAtSzPWHx0xfKspdnbwi9MsR2yGuXQzyBtGtGnEplAoGAF/h4\ntgItgMQTEic/2wJQG3SIbvKoICrCVMHcZn3oIlKyE4AEn7UW98tgxs1SE5lI1Q4m\nWhWuGpW3g3GATabGqGiADUUph5BXEcI2EP/+7NmAAxmN+4HjNQwMYj4d6rq9RQuh\nKjE6ESZ/5sde6g/3ukfeo0FBiKczIicIXGEOFS8CgYEAo/XvZ/h7RKQTZ+gwdJJc\nBct2DiihJq9hpA25ePZUqTXqxBJYtRTIPo527j0+pvvshqUb6n9jSEcJNhsgDAu+\nr9zBCxq7PEvgiZOJ2GBUrNihmwAHDKxJE3t2qOSrboggEC54kiY8NfdbSBz9H7RI\ndHzmJTxsxdv1fj/9+1SsmAI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "application@taskmasterchatbot-wfsb.iam.gserviceaccount.com",
+  "client_id": "106802255303003124719",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/application%40taskmasterchatbot-wfsb.iam.gserviceaccount.com"
+}
