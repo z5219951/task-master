@@ -46,8 +46,9 @@ const CreateProject = (props) => {
   // Get tasks created by the logged in user
   axios.defaults.crossDomain=true;
   useEffect(() => {
-    axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
+    axios.get(`http://localhost:5000/groups/${group.groupID}/tasks`).then((res) => {
       const taskList = JSON.parse(res.data);
+      console.log(res.data)
       setCreatedTasks(taskList)
     })
 
@@ -116,7 +117,7 @@ const CreateProject = (props) => {
           <label htmlFor="description" className="col-sm-3 col-form-label">Tasks</label>
           <div className="col">
             {createdTasks ? createdTasks.map((task, index) => {
-              return <div key={task.id}>
+              return <div key={index}>
                 <h5><input type="checkbox" className="form-check-input m-1" onClick={(e) => handleTasks(e)} key={index} value={index}/>Task #{task.id} - {task.title} &nbsp;
                 <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
                 </h5> 

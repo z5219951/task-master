@@ -221,9 +221,10 @@ class Users(Resource):
         query = f"""
                 SELECT  p.id, p.name, p.description, p.tasks
                 FROM    projects p
-                JOIN    tasks t ON t.project = p.id
-                WHERE   t.assigned_to = {id};
+                JOIN    groups g ON p.groupid = g.id 
+                WHERE   g.user = {id};
                 """
+                
         c.execute(query)
         data = c.fetchone()
         project_list = []
