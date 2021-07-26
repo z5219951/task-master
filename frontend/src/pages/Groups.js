@@ -30,7 +30,7 @@ class Groups extends Component{
             const testResult = JSON.parse(res.data);
             let warn = ''
             if(testResult.length === 0) {
-                warn = 'No Groups'
+                warn = 'To create a project, first create a group'
             }
             this.setState(()=>({
                 list:testResult,

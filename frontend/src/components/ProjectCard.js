@@ -6,6 +6,7 @@ const ProjectCard = (props) => {
   const project = props.project
   const history = useHistory();
   const [tasks, setTasks] = useState()
+  const [progressVal, setProgressVal] = useState(0)
 
   useEffect(() => {
     console.log (project.tasks)
@@ -20,10 +21,17 @@ const ProjectCard = (props) => {
     }
   },[])
 
- /* const tasks = [{"id":"1","owner":"2","title":"task 1","description":"abc","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"},
-  {"id":"2","owner":"2","title":"task 2 ","description":"def","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"},
-  {"id":"3","owner":"2","title":"task 3","description":"ghi","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"}]
-  */
+  useEffect(() => {
+    let count = 0
+    if (tasks && tasks.length > 0) {
+      tasks.map((task) => {
+        if (task.current_state === 'Completed') {
+          count ++;
+        }
+      })
+      setProgressVal(count/tasks.length)
+    }
+  }, [tasks])
 
   function handleView (task) {
     history.push({
@@ -49,13 +57,16 @@ const ProjectCard = (props) => {
         </div>
       </div>
       <div className="card-body text-muted" padding="100px">
+        <progress value={progressVal}></progress> 
+        <h5>{Number(progressVal*100).toFixed(0)} % Complete</h5>
         <p className="card-text">Description: <br/>{project.description}</p>
-        <p className="card-text">Connected Tasks: </p>
+        <p className="card-text">Connected Tasks: 
         {tasks && tasks.length !== 0 ? tasks.map((task, index) => {
           return <div key={index} className="card-text">Task #{task.id}: {task.title} - {task.current_state} &nbsp;
             <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
           </div>
           }) : 'No Tasks'}
+          </p>
       </div>
     </div>
   </>
