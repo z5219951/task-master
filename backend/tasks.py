@@ -272,6 +272,7 @@ class Users(Resource):
 
         return {'value': True}
 
+
 task_search_payload = api.model('task search', {
     "searchTerm": fields.String,
     "currentUser": fields.Integer
