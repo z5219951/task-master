@@ -77,8 +77,44 @@ class Users(Resource):
         return {'id': id},200
 
 
+# get task info given its id
+@api.route('/<int:id>', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully retrieved task info')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Gets all tasks for a user given their id")
+    def get(self, id):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
+                FROM    tasks
+                WHERE   id = '{id}';
+                """
+
+        c.execute(query)
+        data = c.fetchone()
+
+        task_info = {
+            'id': f'{data[0]}',
+            'owner': f'{data[1]}',
+            'title': f'{data[2]}',
+            'description': f'{data[3]}',
+            'creation_date': f'{data[4]}',
+            'deadline': f'{data[5]}',
+            'labels': f'{data[6]}',
+            'current_state': f'{data[7]}',
+            'time_estimate': f'{data[8]}',
+            'assigned_to': f'{data[9]}',
+            'file_paths': f'{data[10]}'
+        }
+
+        return json.dumps(task_info)
+
+
 # get all tasks for a user
-@api.route('/<int:owner>', methods=['GET'])
+@api.route('/created/<int:owner>', methods=['GET'])
 class Users(Resource):
     @api.response(200, 'Successfully retrieved task info')
     @api.response(404, 'Not Found')
