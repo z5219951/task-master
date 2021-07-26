@@ -78,6 +78,10 @@ const UpdateTask = (props) => {
       updateTask.time_estimate = timeEst;
     }
 
+    if (timeTaken !== '') {
+      updateTask.time_taken = timeTaken;
+    }
+
     if (cState) {
       updateTask.current_state = cState;
     }
@@ -93,7 +97,7 @@ const UpdateTask = (props) => {
     if (noDeadline === true) {
       updateTask.deadline = 'None'
     }
-    
+    console.log(updateTask)
     setTask(updateTask)
     handleShow()
     setStartDAlert('')
@@ -232,7 +236,7 @@ const UpdateTask = (props) => {
           <label htmlFor="description" className="col-sm-3 col-form-label">Update Time Taken to Complete (Number of Hours)</label>
           <div className="col-sm-4">
             <input className="form-control input-lg" type="number" min="0" onChange={(e) => setTimeTaken(e.target.value)} ></input>
-            &nbsp;&nbsp;Current Time Taken to Complete -  hours
+            &nbsp;&nbsp;Current Time Taken to Complete - {task.time_taken} hours
           </div>
         </div>
         <br/>

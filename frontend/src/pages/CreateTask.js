@@ -54,7 +54,7 @@ const CreateTask = () => {
     const options = []
 
     // Create task object and push it to server
-    const task = {title: name, description: description, creation_date: currentDate, deadline: dueD, time_estimate: timeEst, current_state: cState, owner: owner, labels: labels, assigned_to: assigned_to}
+    const task = {title: name, description: description, creation_date: currentDate, deadline: dueD, time_estimate: timeEst, current_state: cState, owner: owner, labels: labels, assigned_to: assigned_to, time_taken: timeTaken}
     console.log(task)
     axios.defaults.crossDomain=true;
     axios.post('http://localhost:5000/tasks/create', task).then(()=>{

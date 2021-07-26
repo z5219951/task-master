@@ -98,21 +98,22 @@ class Users(Resource):
 
         c.execute(query)
         data = c.fetchone()
-
-        task_info = {
-            'id': f'{data[0]}',
-            'owner': f'{data[1]}',
-            'title': f'{data[2]}',
-            'description': f'{data[3]}',
-            'creation_date': f'{data[4]}',
-            'deadline': f'{data[5]}',
-            'labels': f'{data[6]}',
-            'current_state': f'{data[7]}',
-            'time_estimate': f'{data[8]}',
-            'assigned_to': f'{data[9]}',
-            'file_paths': f'{data[10]}',
-            'time_taken': f'{data[11]}'
-        }
+        task_info = {}
+        while (data is not None):
+            task_info = {
+                'id': f'{data[0]}',
+                'owner': f'{data[1]}',
+                'title': f'{data[2]}',
+                'description': f'{data[3]}',
+                'creation_date': f'{data[4]}',
+                'deadline': f'{data[5]}',
+                'labels': f'{data[6]}',
+                'current_state': f'{data[7]}',
+                'time_estimate': f'{data[8]}',
+                'assigned_to': f'{data[9]}',
+                'file_paths': f'{data[10]}',
+                'time_taken': f'{data[11]}'
+            }
 
         return json.dumps(task_info)
 
@@ -262,12 +263,13 @@ class Users(Resource):
                         current_state = '{args.current_state}',
                         time_estimate = '{args.time_estimate}',
                         assigned_to = '{args.assigned_to}',
-                        time_taken = '{args.time_taken}
+                        time_taken = '{args.time_taken}'
                 WHERE   id = '{args.id}';
                 """
         try:
             c.execute(query)
         except:
+            print(query)
             c.close()
             conn.close()
             return {'value': False}
