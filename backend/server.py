@@ -341,7 +341,7 @@ class Uploads(Resource):
 
 @api.route('/webhook', methods=['POST'])
 class Webhook(Resource):
-    @api.doc(description="Receives responses via webhook for chatbot")
+    @api.doc(description="Receives responses via webhook - also supplies dialogflow with fulfilment messages")
     def post(self):
         #print(request.data)
         req = json.loads(request.data)
@@ -353,11 +353,13 @@ class Webhook(Resource):
 
 @api.route('/chatbot', methods=['POST'])
 class Chatbot(Resource):
+    @api.doc(description="Handles front end passing messages to chatbot to be processed in backend")
     def post(self):
         req = json.loads(request.data)
         #sends the req message to dialogflow
         response = sendMessage(req["message"])
         #dialogflow response
+        print(request.data)
         print(response.query_result.fulfillment_text)
 
 

@@ -9,7 +9,7 @@ import React, { Component, Fragment} from 'react'
 const Chatbot = () => {
   const history = useHistory();
   const [user, setUser] = useState({})
-
+  const [msg, setMsg] = useState()
   // Find current user
   const currentUser = store.getState().id;
   useEffect(() => {
@@ -22,32 +22,24 @@ const Chatbot = () => {
 
   },[])
 
-  function backClick () {
-    history.push('./taskboard')
-  }
-
-  function updateProfile () {
-    history.push('./updateprofile')
-  }
-
   function handleSubmit() {
-    const msg = {}
     console.log(msg)
     axios.defaults.crossDomain=true;
-    axios.post('http://localhost:5000/chatbot', msg).then(()=>{
+    const msgNew = {"message": msg}
+    axios.post('http://localhost:5000/chatbot', msgNew).then(()=>{
       console.log("Task Created");
-      history.push('./chatHistory');
+      // history.push('./chatHistory');
     })
-
+    
     }
 
   return (
     <>
         <form onSubmit={handleSubmit}>
-          <input type="text" name="userInput"/>
+          <input type="text" onChange={(e)=> {setMsg(e.target.value)}} name="userInput"/>
         </form>
         
-        <button onclick={handleSubmit}>
+        <button onClick={handleSubmit}>
           Submit
         </button>
     </>
