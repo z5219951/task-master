@@ -79,7 +79,7 @@ const UpdateProject = (props) => {
 
   function handleSubmit () {
     
-    const updateProject = {'id': store.getState().id, 'groupid': project.groupid, 'name': project.name, 'description': project.description, 'tasks': connectedTasks}
+    const updateProject = {'id': project.id, 'groupid': project.groupid, 'name': project.name, 'description': project.description, 'tasks': connectedTasks}
     console.log(updateProject)
     if (name !== '') {
       updateProject.name = name

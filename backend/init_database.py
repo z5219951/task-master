@@ -18,6 +18,8 @@ if __name__ == '__main__':
     c.execute(query)
     query = 'drop table if exists revisions'
     c.execute(query)
+    query = 'drop table if exists projects'
+    c.execute(query)
     
     # create table users
     query = """

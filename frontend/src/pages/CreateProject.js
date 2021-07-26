@@ -38,6 +38,7 @@ const CreateProject = (props) => {
     const project = {name: name, description: description, connected_tasks: connectedTasks, assigned_to: group.groupID, created_by: store.getState().id}
     axios.post('http://localhost:5000/projects/create', project).then((res) => {
       console.log(res)
+      history.push('./groups')
     })
     console.log(project)
     console.log(JSON.stringify(project))
