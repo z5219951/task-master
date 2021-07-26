@@ -24,7 +24,8 @@ task_payload = api.model('task', {
     "labels": fields.String,
     "current_state": fields.String,
     "time_estimate": fields.Integer,
-    "assigned_to": fields.String
+    "assigned_to": fields.String,
+    "time_taken": fields.String
 })
 
 @api.route('/create', methods=['POST'])
@@ -44,6 +45,7 @@ class Users(Resource):
         parser.add_argument('current_state', required=False, default='Not Started')
         parser.add_argument('time_estimate', required=False)
         parser.add_argument('assigned_to', required=False)
+        parser.add_argument('time_taken', required=False)
         args = parser.parse_args()
         #print(args)
 
@@ -51,8 +53,8 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to)
-                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}');
+                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, time_taken)
+                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}', '{args.time_taken}');
                 """
         c.execute(query)
         print(query)
@@ -89,7 +91,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
                 WHERE   id = '{id}';
                 """
@@ -108,7 +110,8 @@ class Users(Resource):
             'current_state': f'{data[7]}',
             'time_estimate': f'{data[8]}',
             'assigned_to': f'{data[9]}',
-            'file_paths': f'{data[10]}'
+            'file_paths': f'{data[10]}',
+            'time_taken': f'{data[11]}'
         }
 
         return json.dumps(task_info)
@@ -125,7 +128,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
                 WHERE   owner = '{owner}'
                 ORDER BY    deadline;
@@ -147,7 +150,8 @@ class Users(Resource):
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
                 'assigned_to': f'{data[9]}',
-                'file_paths': f'{data[10]}'
+                'file_paths': f'{data[10]}',
+                'time_taken': f'{data[11]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -171,7 +175,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
                 WHERE   assigned_to = '{owner}'
                 ORDER BY    deadline;
@@ -193,7 +197,8 @@ class Users(Resource):
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
                 'assigned_to': f'{data[9]}',
-                'file_paths': f'{data[10]}'
+                'file_paths': f'{data[10]}',
+                'time_taken': f'{data[11]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -217,7 +222,8 @@ update_payload = api.model('update info', {
     "labels": fields.String,
     "current_state": fields.String,
     "time_estimate": fields.Integer,
-    "assigned_to": fields.String
+    "assigned_to": fields.String,
+    "time_taken": fields.Integer
 })
 
 @api.route('/update', methods=['PUT'])
@@ -238,6 +244,7 @@ class Users(Resource):
         parser.add_argument('current_state')
         parser.add_argument('time_estimate')
         parser.add_argument('assigned_to')
+        parser.add_argument('time_taken')
         args = parser.parse_args()
         # print(args)
 
@@ -254,7 +261,8 @@ class Users(Resource):
                         labels = '{args.labels}',
                         current_state = '{args.current_state}',
                         time_estimate = '{args.time_estimate}',
-                        assigned_to = '{args.assigned_to}'
+                        assigned_to = '{args.assigned_to}',
+                        time_taken = '{args.time_taken}
                 WHERE   id = '{args.id}';
                 """
         try:
