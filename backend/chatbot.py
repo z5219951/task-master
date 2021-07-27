@@ -1,22 +1,24 @@
 from functions import *
+from datetime import *
 
 
-def parseIntent(intent, req):
-    # if(intent == "LogMeIn"):
-    #     username = req["queryResult"]["parameters"]["user"]
-    #     password = req["queryResult"]["parameters"]["password"]
-    #     result = authUser(username, password)
-    #     print(result)
-    #     if(result == ''):
-    #         response = {'fulfillment_text': "You don't seem to be real, please try again"}
-    #     else:
-    #         response = {'fulfillment_text': "You're now logged in as {}".format(username)}
-    #         #want to push a session/user pair to the database.
-    #         req["session"]
+
+def parseIntent(intent, dfResponse, email, initMsg):
+    #currently does not reflect in front end???
     if(intent == "AddTask"):
-        response = {'fulfillment_text': "I need to add a task!"}
-        #Handle adding a task
+        today = date.today()
+        params = dfResponse.query_result.parameters
+        #Access params via:
+        title = params.fields['task'].string_value
+        deadline = params.fields['date'].string_value.split('T')[0]
+        print(title)
+        print(deadline)
+        
+        addTask(email, title, title, today, deadline, labels="", current_state="Not Started", time_estimate=1, assigned_to=email)
+        response = {'fulfillment_text': "I have added a task!"}
+
     elif(intent == "CheckTaskByDate"):
+        
         response = {'fulfillment_text': "I need to retrieve tasks on a specific day!"}
         #Handle getting tasks for date period
     elif(intent == "CheckRequestedConnections"):
@@ -29,7 +31,3 @@ def parseIntent(intent, req):
         response = {'fulfillment_text': "I need to see if this person wants to connect with you and decline it."}
         #Handle rejecting a user's connection request
     return response
-
-#New Idea
-#Need to log into the chatbot first. 
-# Once logged in, records a session ID and ties it to the username - storing in database.

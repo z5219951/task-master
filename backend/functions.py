@@ -147,28 +147,3 @@ def updateTask(owner, title, description, creation_date, deadline, labels, curre
         conn.commit()
         c.close()
         conn.close()
-
-def authUser(email, password):
-        conn = sqlite3.connect('clickdown.db')
-        c = conn.cursor()
-
-        # retrieve id using email and password
-        query = f"""
-                SELECT  id
-                FROM    users
-                WHERE   email = '{email}' and password = '{password}';
-                """
-        c.execute(query)
-        id = c.fetchone()
-        # print(id)
-
-        c.close()
-        conn.close()
-
-        if (id is None):
-            return ''
-
-        data = {    
-            'id': id[0],
-        }
-        return json.dumps(data),200

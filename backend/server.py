@@ -25,7 +25,6 @@ import tasks
 import user
 import labels
 
-
 app = Flask(__name__)
 api = Api(app,
           default="ClickDown",  # Default namespace
@@ -337,30 +336,27 @@ class Uploads(Resource):
         print(f'path obtained is: {path}')
         return send_from_directory(PurePath(app.config['UPLOADS']), path, as_attachment=False)
 
-#One of these should be deprecated as both do the same thing now.
-
 @api.route('/webhook', methods=['POST'])
+#largely deprecated, now exists to support current pipeline.
 class Webhook(Resource):
     @api.doc(description="Receives responses via webhook - also supplies dialogflow with fulfilment messages")
     def post(self):
-        #print(request.data)
-        req = json.loads(request.data)
-        #print(req['responseId'])
-        intent = req["queryResult"]["intent"]["displayName"]
-        #print(json.dumps(req, indent=4, sort_keys=True))
-        response = parseIntent(intent, req)
+        response = {'fulfillment_text': "This is junk text!"}
         return response,200
 
 @api.route('/chatbot', methods=['POST'])
 class Chatbot(Resource):
-    @api.doc(description="Handles front end passing messages to chatbot to be processed in backend")
+    @api.doc(description="Handles front end passing messages to /chatbot to be sent to dialogflow")
     def post(self):
         req = json.loads(request.data)
         #sends the req message to dialogflow
-        response = sendMessage(req["message"])
+        dfResponse = sendMessage(req["message"])
         #dialogflow response
-        print(request.data)
-        print(response.query_result.fulfillment_text)
+        email = req["user"]["email"]
+        initMsg = req["message"]
+        #print(response)
+        intent = dfResponse.query_result.intent.display_name
+        reply = parseIntent(intent, dfResponse, email, initMsg)
 
 
 if __name__ == '__main__':

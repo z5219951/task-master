@@ -25,7 +25,7 @@ const Chatbot = () => {
   function handleSubmit() {
     console.log(msg)
     axios.defaults.crossDomain=true;
-    const msgNew = {"message": msg}
+    const msgNew = {"message": msg, "user":user}
     axios.post('http://localhost:5000/chatbot', msgNew).then(()=>{
       console.log("Task Created");
       // history.push('./chatHistory');
