@@ -18,6 +18,8 @@ if __name__ == '__main__':
     c.execute(query)
     query = 'drop table if exists revisions'
     c.execute(query)
+    query = 'drop table if exists projects'
+    c.execute(query)
     
     # create table users
     query = """
@@ -77,6 +79,7 @@ if __name__ == '__main__':
                 assigned_to     integer     not null,
                 file_paths      text        ,
                 project         integer     ,
+                time_taken      integer     ,
                 foreign key     (owner)     references users (id)
                 foreign key     (assigned_to)  references users (id)
                 foreign key     (project)   references projects (id)

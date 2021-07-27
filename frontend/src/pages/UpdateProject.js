@@ -2,6 +2,7 @@ import { useHistory } from "react-router-dom"
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import store from '../store';
+import { Button, Modal } from 'react-bootstrap';
 
 const UpdateProject = (props) => {
   const project = props.location.state.project
@@ -9,10 +10,16 @@ const UpdateProject = (props) => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [tasks, setTasks] = useState('')
+  const [taskId, setTaskId] = useState('')
   const [taskList, setTaskList] = useState([])
   const [connectedTasks, setConnectedTasks] = useState(project.tasks)
+  const [selectedTasksId, setSelectedTasksId] = useState('')
   const [selectedTasks, setSelectedTasks] = useState('')
   const [first, setFirst] = useState(0)
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   let newTaskList = [...taskList]
   function backClick () {
     history.goBack()
@@ -21,27 +28,39 @@ const UpdateProject = (props) => {
    // Get tasks created by the logged in user
    axios.defaults.crossDomain=true;
    useEffect(() => {
-     /*
-     axios.get(`http://localhost:5000/groups/${project.groupid}/tasks`).then((res) => {
-       const taskList = JSON.parse(res.data);
-       setTasks(taskList)
-       console.log(taskList)
-     })
-*/
-     setTasks([{"id":"1","owner":"2","title":"task 1","description":"abc","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"},
-     {"id":"2","owner":"2","title":"task 2 ","description":"def","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"},
-     {"id":"3","owner":"2","title":"task 3","description":"ghi","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"}]
-     )
+     
+    axios.get(`http://localhost:5000/groups/${project.groupid}/tasks`).then((res) => {
+      setTaskId(JSON.parse(res.data))
+    })
 
-     setSelectedTasks([{"id":"1","owner":"2","title":"task 1","description":"abc","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"},
-     {"id":"2","owner":"2","title":"task 2 ","description":"def","creation_date":"2021-7-25","deadline":"None","labels":"","current_state":"Not Started","time_estimate":"0","assigned_to":"2","file_paths":"None"}]
-     )
+    if (project.tasks) {
+      setSelectedTasksId(JSON.parse(project.tasks))
+    }
+  
      setTaskList(newTaskList)
    }, [])
 
-   useEffect(() => {
+  useEffect(() => {
+    console.log(taskId)
+    if (taskId) {
+      taskId.map((id) => {
+        axios.get(`http://localhost:5000/tasks/${id}`).then((res) => {
+          setTasks(tasks => [...tasks, JSON.parse(res.data)])
+        })
+      })   
+    }
+  }, [taskId])
 
-   }, [tasks])
+  useEffect(() => {
+    console.log(selectedTasksId)
+    if (selectedTasksId) {
+      selectedTasksId.map((id) => {
+        axios.get(`http://localhost:5000/tasks/${id}`).then((res) => {
+          setSelectedTasks(tasks => [...tasks, JSON.parse(res.data)])
+        })
+      })  
+    }
+  }, [selectedTasksId])
 
    function handleView (task) {
     history.push({
@@ -79,12 +98,10 @@ const UpdateProject = (props) => {
 
   function handleSubmit () {
     
-    const updateProject = {'id': store.getState().id, 'groupid': project.groupid, 'name': project.name, 'description': project.description, 'tasks': connectedTasks}
-    console.log(updateProject)
+    const updateProject = {'id': project.id, 'groupid': project.groupid, 'name': project.name, 'description': project.description, 'tasks': connectedTasks}
     if (name !== '') {
       updateProject.name = name
       project.name = name
-      console.log(project.name)
     } 
 
     if (description !== '') {
@@ -94,9 +111,9 @@ const UpdateProject = (props) => {
 
     updateProject.tasks = JSON.stringify(connectedTasks)
     project.tasks = connectedTasks
-    console.log(updateProject)
     axios.put(`http://localhost:5000/projects/update`, updateProject).then((res) => {
       console.log(res)
+      handleShow()
     })
   }
 
@@ -105,6 +122,8 @@ const UpdateProject = (props) => {
     var checked = 'false'
     if (tasks.length > 0) {
       checked = tasks.some(task => task.id === id)
+    } else {
+      return
     }
 
     if (checked && newTaskList[index] !== false) {
@@ -112,7 +131,6 @@ const UpdateProject = (props) => {
     }
 
     if (first === 0 ) {
-      console.log(newTaskList)
       setTaskList(newTaskList)
       setFirst(1)
     }
@@ -158,6 +176,16 @@ const UpdateProject = (props) => {
       </div>
         <button type="button" className="btn btn-primary" onClick={(e) => handleSubmit()}>Submit</button>
       </form>
+      <Modal animation={false} show={show} onHide={handleClose}>
+        <Modal.Header>
+          <Modal.Title>Project #{project.id} has been Updated!</Modal.Title>
+        </Modal.Header>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={(e) => handleClose()} >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
     </>
   )

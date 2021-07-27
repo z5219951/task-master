@@ -16,8 +16,10 @@ const SignedInNav = () => {
     <Navbar.Collapse id="basic-navbar-nav">
       <div className='sign_bar_opt'>
         <Nav className="ml-auto">
+          <Nav.Link href="taskboard">Taskboard</Nav.Link>
           <Nav.Link href="profile">Profile</Nav.Link>
           <Nav.Link href="calendar">Calendar</Nav.Link>
+          <Nav.Link href="groups">Projects</Nav.Link>
         </Nav>
         <Collaboration history = {history}/>
       </div>

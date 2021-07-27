@@ -6,7 +6,6 @@ import ViewTask from './ViewTask'
 
 const CreateProject = (props) => {
   const group = props.location.state.group
-  console.log(group)
   const history = useHistory();
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -15,6 +14,8 @@ const CreateProject = (props) => {
   const [createdTasks, setCreatedTasks] = useState('');
   const [taskList, setTaskList] = useState([])
   const [connectedTasks, setConnectedTasks] = useState([])
+  const [taskids, setTaskids] = useState()
+  const [tasks, setTasks] = useState([])
 
   function backClick () {
     history.push('./groups')
@@ -38,25 +39,35 @@ const CreateProject = (props) => {
     const project = {name: name, description: description, connected_tasks: connectedTasks, assigned_to: group.groupID, created_by: store.getState().id}
     axios.post('http://localhost:5000/projects/create', project).then((res) => {
       console.log(res)
+      history.push('./groups')
     })
     console.log(project)
     console.log(JSON.stringify(project))
   }
 
-  // Get tasks created by the logged in user
+  // Get tasks associated with users in the group
   axios.defaults.crossDomain=true;
   useEffect(() => {
+    
     axios.get(`http://localhost:5000/groups/${group.groupID}/tasks`).then((res) => {
       const taskList = JSON.parse(res.data);
       console.log(res.data)
-      setCreatedTasks(taskList)
+      setTaskids(taskList)
     })
 
   }, [])
 
   useEffect(() => {
-    console.log(connectedTasks)
-  }, [connectedTasks])
+    setTasks([])
+    if (taskids) {
+      taskids.map((id) => {
+        axios.get(`http://localhost:5000/tasks/${id}`).then((res) => {
+          console.log(res.data)
+          setTasks(tasks => [...tasks, JSON.parse(res.data)])
+    })
+      })
+    }
+  }, [taskids])
 
   function handleTasks(e) {
     let newTaskList = [...taskList]
@@ -65,13 +76,14 @@ const CreateProject = (props) => {
     } else {
       newTaskList[e.target.value] = true
     }
+    console.log(newTaskList)
     setTaskList(newTaskList)
     setConnectedTasks([])
   }
 
   useEffect(() => {
-    if (createdTasks) {
-      createdTasks.map((task, index) => {
+    if (tasks) {
+      tasks.map((task, index) => {
         if (taskList[index]) {
           setConnectedTasks(connectedTasks => [...connectedTasks, Number(task.id)])
         }
@@ -116,7 +128,7 @@ const CreateProject = (props) => {
         <div className="form-group row mb-5">
           <label htmlFor="description" className="col-sm-3 col-form-label">Tasks</label>
           <div className="col">
-            {createdTasks ? createdTasks.map((task, index) => {
+            {tasks ? tasks.map((task, index) => {
               return <div key={index}>
                 <h5><input type="checkbox" className="form-check-input m-1" onClick={(e) => handleTasks(e)} key={index} value={index}/>Task #{task.id} - {task.title} &nbsp;
                 <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
