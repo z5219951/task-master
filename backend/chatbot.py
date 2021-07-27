@@ -13,12 +13,13 @@ def parseIntent(intent, dfResponse, email, initMsg):
         deadline = params.fields['date'].string_value.split('T')[0]
         print(title)
         print(deadline)
+        owner = getOwner(email)
         
-        addTask(email, title, title, today, deadline, labels="", current_state="Not Started", time_estimate=1, assigned_to=email)
+        addTask(owner, title, title, today, deadline, labels="", current_state="Not Started", time_estimate=1, assigned_to=owner)
         response = {'fulfillment_text': "I have added a task!"}
 
     elif(intent == "CheckTaskByDate"):
-        
+
         response = {'fulfillment_text': "I need to retrieve tasks on a specific day!"}
         #Handle getting tasks for date period
     elif(intent == "CheckRequestedConnections"):

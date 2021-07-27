@@ -17,6 +17,23 @@ from db import *
 #RequestConnection
 #search for user
 
+def getOwner(email):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT id
+                FROM users
+                WHERE email = '{email}'
+                """
+        c.execute(query)
+        print(query)
+        id = c.fetchone()[0]
+        conn.commit()
+        c.close()
+        conn.close()
+        return id
+
 
 def addTask(owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to):
     conn = sqlite3.connect('clickdown.db')
