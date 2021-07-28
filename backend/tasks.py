@@ -271,7 +271,8 @@ class Users(Resource):
                 """
         try:
             c.execute(query)
-        except:
+        except Exception as e:
+            print(e)
             print(query)
             c.close()
             conn.close()

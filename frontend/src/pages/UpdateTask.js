@@ -168,13 +168,18 @@ const UpdateTask = (props) => {
     }
   }
 
+  function rollBack() {
+    history.push('./rollBack')
+  }
+
   return(
     <>
       <div className="m-5">
       <div className="row">
-        <h1 className="col">Updating Task #{task.id}: {task.title}</h1>
+        <h1 className="col">Updating Task: {task.title}</h1>
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
+      <button className="col-md-3 btn btn-success btn-lg" onClick={() => rollBack()}>Rollback to a previous update</button>
       <h3>Please enter the fields you wish to update</h3>
       <br/>
       <div className="form-group row mb-5">
