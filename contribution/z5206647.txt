@@ -30,3 +30,7 @@ Started and completed backend for the friends feature CWC47, CWC50.
 Week 7:
 Participated in the weekly meeting, and wrote a minutes report for the meeting.
 Added api for searching of connected users and tasks.
+
+Week 8:
+Participated in weekly meetings, and wrote minutes report. Completed the backend
+implementation for tasks edit history / rollbacks. (CWC-69)
