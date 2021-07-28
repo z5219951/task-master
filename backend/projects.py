@@ -43,18 +43,26 @@ class Users(Resource):
 
         query = f"""
                 INSERT INTO projects (groupid, name, description, tasks)
-                VALUES ('{groupid}', '{name}', '{description}', '{json.dumps(task_list)}')
-                RETURNING   id;
+                VALUES ('{groupid}', '{name}', '{description}', '{json.dumps(task_list)}');
                 """
         c.execute(query)
         conn.commit()
 
-        project_id = c.fetchone()[0]
+        query = f"""
+                SELECT  id
+                FROM    projects
+                WHERE   groupid = '{groupid}'
+                AND     name = '{name}'
+                AND     description = '{description}'
+                AND     task_list = '{json.dumps(task_list)}';
+                """
+        c.execute(query)
+        id = c.fetchone()[0]
 
         for task in task_list:
             query = f"""
                     UPDATE  tasks
-                    SET     project = {project_id}
+                    SET     project = {id}
                     WHERE   id = {task}
                     """
             c.execute(query)
