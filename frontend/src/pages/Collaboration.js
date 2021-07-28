@@ -25,7 +25,6 @@ class Collaboration extends Component{
                 <Dropdown.Item onClick={this.handleSearch} href="">Search User</Dropdown.Item>
                 <Dropdown.Item onClick={this.handleClick} href="">Requests</Dropdown.Item>
                 <Dropdown.Item onClick={this.handleView} href="">My Connections</Dropdown.Item>
-                <Dropdown.Item onClick={this.handleGroup} href="">Groups</Dropdown.Item>
             </DropdownButton>
         )
     }

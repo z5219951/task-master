@@ -30,6 +30,10 @@ import Connections from './pages/Connections'
 import CreateProject from './pages/CreateProject'
 import ViewTask from './pages/ViewTask'
 import Chatbot from './pages/Chatbot';
+import ViewGroupProject from './pages/ViewGroupProject'
+import UpdateProject from './pages/UpdateProject'
+import ViewMyProjects from './pages/ViewMyProjects'
+import ChatTest from './pages/ChatTest';
 
 function App() {
 
@@ -59,8 +63,12 @@ function App() {
         <Route path='/taskSearchResult' exact component={TaskSearchResult} />
         <Route path='/connections' exact component={Connections} />
         <Route path='/createproject' exact component={CreateProject} />
+        <Route path='/viewGroupProject' exact component={ViewGroupProject} />
         <Route path='/viewTask' exact component={ViewTask} />
         <Route path='/chatbot' exact component={Chatbot} />
+        <Route path='/updateProject' exact component={UpdateProject} />
+        <Route path='/viewMyProjects' exact component={ViewMyProjects} />
+        <Route path='/chatTest' exact component={ChatTest} />
         <Route path='/' component={Home} />
       </Switch>
     </>

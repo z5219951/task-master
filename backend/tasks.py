@@ -1,13 +1,15 @@
+import ast
 import json
-from pathlib import PurePath, Path
 import os
+import datetime as dt
+from pathlib import PurePath, Path
 from werkzeug.utils import secure_filename
 
 from flask import Flask, request, jsonify, Blueprint
 from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
 import sqlite3
 
-from friends import friendListGet
+from friends import friendListGet, getUserByID
 
 bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 api = Namespace("tasks", "Operations for tasks")
@@ -22,7 +24,8 @@ task_payload = api.model('task', {
     "labels": fields.String,
     "current_state": fields.String,
     "time_estimate": fields.Integer,
-    "assigned_to": fields.String
+    "assigned_to": fields.String,
+    "time_taken": fields.String
 })
 
 @api.route('/create', methods=['POST'])
@@ -42,6 +45,7 @@ class Users(Resource):
         parser.add_argument('current_state', required=False, default='Not Started')
         parser.add_argument('time_estimate', required=False)
         parser.add_argument('assigned_to', required=False)
+        parser.add_argument('time_taken', required=False)
         args = parser.parse_args()
         #print(args)
 
@@ -49,8 +53,8 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to)
-                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}');
+                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, time_taken)
+                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}', '{args.time_taken}');
                 """
         c.execute(query)
         print(query)
@@ -69,12 +73,56 @@ class Users(Resource):
         conn.commit()
         c.close()
         conn.close()
+        
+        # Create an entry in the task edit history
+        revisionsInitialise(id)
 
         return {'id': id},200
 
 
+# get task info given its id
+@api.route('/<int:id>', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully retrieved task info')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Gets all tasks for a user given their id")
+    def get(self, id):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
+                FROM    tasks
+                WHERE   id = '{id}';
+                """
+
+        c.execute(query)
+        data = c.fetchone()
+        task_info = {}
+        if (data is not None):
+            task_info = {
+                'id': f'{data[0]}',
+                'owner': f'{data[1]}',
+                'title': f'{data[2]}',
+                'description': f'{data[3]}',
+                'creation_date': f'{data[4]}',
+                'deadline': f'{data[5]}',
+                'labels': f'{data[6]}',
+                'current_state': f'{data[7]}',
+                'time_estimate': f'{data[8]}',
+                'assigned_to': f'{data[9]}',
+                'file_paths': f'{data[10]}',
+                'time_taken': f'{data[11]}'
+            }
+
+        c.close()
+        conn.close()
+
+        return json.dumps(task_info)
+
+
 # get all tasks for a user
-@api.route('/<int:owner>', methods=['GET'])
+@api.route('/created/<int:owner>', methods=['GET'])
 class Users(Resource):
     @api.response(200, 'Successfully retrieved task info')
     @api.response(404, 'Not Found')
@@ -84,7 +132,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
                 WHERE   owner = '{owner}'
                 ORDER BY    deadline;
@@ -106,7 +154,8 @@ class Users(Resource):
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
                 'assigned_to': f'{data[9]}',
-                'file_paths': f'{data[10]}'
+                'file_paths': f'{data[10]}',
+                'time_taken': f'{data[11]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -130,7 +179,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
                 WHERE   assigned_to = '{owner}'
                 ORDER BY    deadline;
@@ -152,7 +201,8 @@ class Users(Resource):
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
                 'assigned_to': f'{data[9]}',
-                'file_paths': f'{data[10]}'
+                'file_paths': f'{data[10]}',
+                'time_taken': f'{data[11]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -176,7 +226,8 @@ update_payload = api.model('update info', {
     "labels": fields.String,
     "current_state": fields.String,
     "time_estimate": fields.Integer,
-    "assigned_to": fields.String
+    "assigned_to": fields.String,
+    "time_taken": fields.Integer
 })
 
 @api.route('/update', methods=['PUT'])
@@ -197,6 +248,7 @@ class Users(Resource):
         parser.add_argument('current_state')
         parser.add_argument('time_estimate')
         parser.add_argument('assigned_to')
+        parser.add_argument('time_taken')
         args = parser.parse_args()
         # print(args)
 
@@ -213,12 +265,14 @@ class Users(Resource):
                         labels = '{args.labels}',
                         current_state = '{args.current_state}',
                         time_estimate = '{args.time_estimate}',
-                        assigned_to = '{args.assigned_to}'
+                        assigned_to = '{args.assigned_to}',
+                        time_taken = '{args.time_taken}'
                 WHERE   id = '{args.id}';
                 """
         try:
             c.execute(query)
         except:
+            print(query)
             c.close()
             conn.close()
             return {'value': False}
@@ -226,10 +280,13 @@ class Users(Resource):
         conn.commit()
         c.close()
         conn.close()
+        
+        # TODO Here, assumption that the owner executed the task update
+        revisionsAppend(args.id, args.owner)
 
         return {'value': True}
 
-task_search_payload = api.model('search', {
+task_search_payload = api.model('task search', {
     "searchTerm": fields.String,
     "currentUser": fields.Integer
 })
@@ -267,7 +324,7 @@ class Tasks(Resource):
             query = query + (f"OR      assigned_to = '{f['requestedUser']}'\n")
         
         # Sort tasks by earliest deadlines
-        query = query + (f"ORDER BY    deadline ASC\n")
+        query = query + (f"ORDER BY    deadline ASC;\n")
         
         print(query)
         c.execute(query)
@@ -340,6 +397,20 @@ class Users(Resource):
                 url_list.append(url)
 
                 print(f"appended to list: {url}")
+        
+        query = f"""
+                SELECT  file_paths
+                FROM    tasks
+                WHERE   id = {task_id};
+                """
+        c.execute(query)
+
+        existing = c.fetchone()
+
+        try:
+            url_list = ast.literal_eval(existing[0]) + url_list
+        except:
+            pass
 
         query = f'''
                 UPDATE  tasks
@@ -394,3 +465,228 @@ class Tasks(Resource):
 
         print(tasks)
         return(tasks)
+@api.route('/revisons/<int:taskId>', methods=['GET'])
+class Tasks(Resource):
+    @api.response(200, 'Sucessfully returned list of revisions')
+    @api.response(400, 'Unexpected error')
+    @api.doc(description="Given a taskId, will return a json list of the \
+                          revision history. This history includes: involved user, \
+                          timestamp and revision made.")
+    def get(self, taskId):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        query = f"""
+            SELECT  revId, userId, timestamp, revision
+            FROM    revisions
+            WHERE   taskId = '{taskId}'
+            ORDER BY timestamp
+            """
+
+        c.execute(query)
+        revisons = c.fetchall()
+        conn.close()
+        
+        res = []
+        for r in revisons:
+            userDict = getUserByID(r[1])
+            revDict = {
+                "revisonId": r[0],
+                "userName": userDict["first_name"] + " " + userDict["last_name"],
+                "timestamp": r[2],
+                "revison": json.loads(r[3])
+                }
+            res.append(revDict)
+        
+        return json.dumps(res), 200
+        
+        
+rollback_payload = api.model('rollback', {
+    "taskId":       fields.Integer,
+    "revisionId":   fields.Integer
+})
+@api.route('/rollback', methods=['POST'])
+class Tasks(Resource):
+    @api.response(200, 'Sucessfully modified task back to the requested old state')
+    @api.response(400, 'Database error')
+    @api.expect(rollback_payload)
+    @api.doc(description="Given a taskId and revisonID, will update task to have \
+                          the old state. Non-reversible process. Will return \
+                          True if sucessfully executed, False otherwise")
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('taskId', required=True)
+        parser.add_argument('revisionId', required=True)
+
+        args = parser.parse_args()
+        
+        taskId = int(args.taskId)
+        revId = int(args.revisionId)
+        
+        taskState, currRevId = assembleTask(taskId, revId)
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        
+        for field, newVal in taskState.items():
+            query = f"""
+                    UPDATE  tasks
+                    SET     {field} = '{newVal}'
+                    WHERE   id = {taskId};
+                    """
+            try:
+                c.execute(query)
+                conn.commit()
+            except:
+                print("Error at rollback update")
+                return {"value": False}, 400
+        
+        # Delete revision entries with revId greater than the argument supplied
+        query = f"""
+                DELETE
+                FROM    revisions
+                WHERE   taskId = '{taskId}'
+                AND     revId > '{revId}';
+                """
+        try:
+            c.execute(query)
+            conn.commit()
+        except:
+            print("Error at rollback delete")
+            return {"value": False}, 400
+
+        
+        return {"value": True}, 200
+
+### Helper Functions ###
+# Return a dictionary representation of a task in the database
+def getTaskbyId(taskId):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+
+    query = f"""
+            SELECT  owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
+            FROM    tasks
+            WHERE   id = '{taskId}'
+            """
+    c.execute(query)
+    data = c.fetchone()
+    
+    if data is None:
+        conn.close()
+        return {}
+    
+    task = {
+        'owner': f'{data[0]}',
+        'title': f'{data[1]}',
+        'description': f'{data[2]}',
+        'creation_date': f'{data[3]}',
+        'deadline': f'{data[4]}',
+        'labels': f'{data[5]}',
+        'current_state': f'{data[6]}',
+        'time_estimate': f'{data[7]}',
+        'assigned_to': f'{data[8]}',
+        'file_paths': f'{data[9]}'
+    }
+    
+    return task
+
+# Add entry into the "revisions" table for a new task. Field are initialised
+# as the values intially passed in to create the task
+def revisionsInitialise(taskId):
+    revision = getTaskbyId(taskId)
+    owner = revision["owner"]
+    
+    # Remove non-revisiable fields
+    del revision["owner"]
+    del revision["creation_date"]
+    del revision["labels"]
+    del revision["file_paths"]
+
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    query = f"""
+            INSERT INTO revisions (taskId, revId, userId, timestamp, revision)
+            VALUES ('{taskId}', '{0}', '{owner}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{json.dumps(revision)}');
+            """
+    try:
+        c.execute(query)
+        conn.commit()
+        conn.close()
+    
+    except:
+        conn.close()
+        return False
+        
+    return True
+
+# On updating an exisiting task, the "revisions" table will keep track of 
+# changes made to the task and assign an unique revId
+def revisionsAppend(taskId, userId):
+    currTaskState = getTaskbyId(taskId)
+    oldTaskState, maxRevId  = assembleTask(taskId, -1)
+    
+    revision = {}
+    # Create a dictionary of the changes between the task in the "tasks" table and 
+    # the task within the "revisions" table
+    for field, oldVal in oldTaskState.items():
+        if (currTaskState[field] != oldVal):
+            revision[field] = currTaskState[field]
+    
+    # Check if revisions is empty
+    if bool(revision) is False:
+        return True
+    
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    query = f"""
+            INSERT INTO revisions (taskId, revId, userId, timestamp, revision)
+            VALUES ('{taskId}', '{maxRevId + 1}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{json.dumps(revision)}');
+            """
+    try:     
+        print(query)
+        c.execute(query)
+        conn.commit()
+        conn.close()
+    except:
+        conn.close()
+        return False
+    
+    return True
+
+# Get the state of a task's fields that may change at revId. If revId = -1, it
+# will return the latest task object according to the "revisions" database.
+def assembleTask(taskId, revId):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    query = f"""
+            SELECT  revId, revision
+            FROM    revisions
+            WHERE   taskId = '{taskId}'
+            ORDER BY revId DESC;
+            """
+    
+    c.execute(query)    
+    revisionList = c.fetchall()
+    conn.close()
+    
+    # Assemble the task, prioritising fields that have more recently updated
+    # excluding edits made after the supplied revID
+    resTask = {}
+    for revision in revisionList:
+        # Ignore changes occuring after revID. revId = -1 means get all changes
+        if (revId != -1):
+            if revId < revision[0]:
+                continue
+            
+        revDict = json.loads(revision[1])
+
+        for field, val in revDict.items():
+            if field in resTask:
+                continue
+            else:
+                resTask[field] = val
+    
+    return resTask, revisionList[0][0]

@@ -19,12 +19,11 @@ import sqlite3
 from db import *
 import friends
 from sendMsg import *
-
 import groups
 import tasks
 import user
 import labels
-
+import projects
 app = Flask(__name__)
 api = Api(app,
           default="ClickDown",  # Default namespace
@@ -41,6 +40,8 @@ app.register_blueprint(user.bp)
 api.add_namespace(user.api)
 app.register_blueprint(labels.bp)
 api.add_namespace(labels.api)
+app.register_blueprint(projects.bp)
+api.add_namespace(projects.api)
 
 app.config["UPLOADS"] = PurePath(Path(__file__).parent.resolve())
 
