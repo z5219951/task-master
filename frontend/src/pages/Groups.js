@@ -30,7 +30,7 @@ class Groups extends Component{
             const testResult = JSON.parse(res.data);
             let warn = ''
             if(testResult.length === 0) {
-                warn = 'No Groups'
+                warn = 'To create a project, first create a group'
             }
             this.setState(()=>({
                 list:testResult,
@@ -45,7 +45,7 @@ class Groups extends Component{
         return (
             list.map((item,index)=>
                 <div className="group_member_box" key = {index}>
-                    <h4 className="group_user">{item.userName}</h4>
+                    <h4 className="group_user">{item.userName} - {item.email}</h4>
                     <ViewProfileButton id={item.userId}></ViewProfileButton>
                 </div>
             )
@@ -64,10 +64,17 @@ class Groups extends Component{
                 </div>
                 <div className="card-footer text-muted">
                     <button type="button" className="btn btn-success btn-lg m-1" onClick={() => this.handleCreate(item)}> Create a Group Project </button>
-                    <button type="button" className="btn btn-success btn-lg m-1" onClick={this.handleView} > View Group Projects</button>
+                    <button type="button" className="btn btn-success btn-lg m-1" onClick={() => this.handleView(item)} > View Group Projects</button>
                 </div>
             </div>)
         )
+    }
+
+    handleView = (group) => {
+        this.props.history.push({
+            pathname: './viewGroupProject',
+            state: { group }
+        })
     }
 
     handleCreate = (group)=> {

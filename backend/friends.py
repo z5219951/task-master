@@ -272,7 +272,7 @@ def friendListGet(userId):
             UNION
             SELECT user_b
             FROM friend_list
-            WHERE user_a = '{userId}'
+            WHERE user_a = '{userId}';
             """
     c.execute(query)
     
@@ -280,7 +280,7 @@ def friendListGet(userId):
     query = f"""
             SELECT id, first_name, last_name, email
             FROM users
-            INNER JOIN friends ON users.id = friends.user_a
+            INNER JOIN friends ON users.id = friends.user_a;
             """
     c.execute(query)
     
