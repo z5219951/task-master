@@ -37,7 +37,7 @@ class ChatTest extends Component{
         axios.defaults.crossDomain=true;
         let date = new Date().getMonth()+'-'+new Date().getDate();
         try {
-            axios.get('http://localhost:5000/user/'+currentUser).then((res)=>{
+            axios.get('http://localhost:5000/user/'+currentUser,{timeout:60000}).then((res)=>{
                 const data = JSON.parse(res.data);
                 console.log(data);
                 this.setState(()=>({
