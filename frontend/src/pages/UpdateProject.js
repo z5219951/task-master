@@ -29,7 +29,7 @@ const UpdateProject = (props) => {
    axios.defaults.crossDomain=true;
    useEffect(() => {
      
-    axios.get(`http://localhost:5000/groups/${project.groupid}/tasks`).then((res) => {
+    axios.get(`http://localhost:5000/groups/${project.groupid}/tasks/?project=${project.id}`).then((res) => {
       setTaskId(JSON.parse(res.data))
     })
 

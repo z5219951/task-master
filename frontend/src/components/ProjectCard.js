@@ -52,7 +52,7 @@ const ProjectCard = (props) => {
     <div className="card my-2 mx-5"> 
       <div className="card-header">
         <div className="row display-5">
-          <div className="col">Project #{project.id} - {project.name}</div>
+          <div className="col">{project.name}</div>
           <div className="col-md-2"><button className="btn btn-secondary btn-lg" onClick={() => handleUpdate()}>Update Project</button><br/></div>
         </div>
       </div>
