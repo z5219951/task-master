@@ -342,7 +342,7 @@ class Webhook(Resource):
     @api.doc(description="Receives responses via webhook - also supplies dialogflow with fulfilment messages")
     def post(self):
         response = {'fulfillment_text': "This is junk text!"}
-        return response,200
+        return response,201
 
 @api.route('/chatbot', methods=['POST'])
 class Chatbot(Resource):
@@ -357,6 +357,22 @@ class Chatbot(Resource):
         #print(response)
         intent = dfResponse.query_result.intent.display_name
         reply = parseIntent(intent, dfResponse, email, initMsg)
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # retrieve id using email and password
+        # query = f"""
+        #         SELECT  id
+        #         FROM    users
+        #         WHERE   email = '{args.email}' and password = '{args.password}';
+        #         """
+        # c.execute(query)
+
+        #print(dfResponse)
+
+        #Task type
+
+
 
 
 if __name__ == '__main__':

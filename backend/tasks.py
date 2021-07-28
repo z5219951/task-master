@@ -354,3 +354,39 @@ class Users(Resource):
         conn.close()
 
         return json.dumps(url_list)
+
+taskByDatePayload = api.model('taskByDate', {
+    "date": fields.String
+})
+@api.route('/getTaskByDate/<int:owner>', methods=['GET'])
+class Tasks(Resource):
+    @api.response(200, 'Successfully retrieved task info')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Gets all tasks assigned to a user on a specific day")
+    @api.expect(taskByDatePayload)
+    
+    
+    def get(self,owner):
+        # parser = reqparse.RequestParser()
+        # parser.add_argument('date', required=True)
+        # args = parser.parse_args()
+        date = request.args.get('date')
+
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        query = f"""
+                SELECT  title
+                FROM    tasks
+                WHERE   owner = '{owner}'
+                AND     deadline = '{date}'
+                AND     current_state IS NOT "Completed" 
+                """    
+        c.execute(query)
+        tasks = c.fetchall()
+        conn.commit()
+        c.close()
+        conn.close()
+
+        print(tasks)
+        return(tasks)

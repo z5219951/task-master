@@ -28,6 +28,7 @@ if __name__ == '__main__':
                 usr_msg_time    time        unique not null,
                 email           text        unique not null,
                 chat_response   text        not null,
+                user_msg        text        not null
             );
             """
     c.execute(query)
