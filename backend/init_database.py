@@ -24,8 +24,7 @@ if __name__ == '__main__':
     # create table messages
     query = """
             CREATE TABLE IF NOT EXISTS messages (
-                id              integer     primary key,
-                usr_msg_time    time        unique not null,
+                usr_msg_time    datetime    ,
                 email           text        unique not null,
                 chat_response   text        not null,
                 user_msg        text        not null

@@ -358,6 +358,10 @@ class Users(Resource):
 taskByDatePayload = api.model('taskByDate', {
     "date": fields.String
 })
+
+#get task for a single date.
+
+## I THINK THIS IS REDUNDANT
 @api.route('/getTaskByDate/<int:owner>', methods=['GET'])
 class Tasks(Resource):
     @api.response(200, 'Successfully retrieved task info')

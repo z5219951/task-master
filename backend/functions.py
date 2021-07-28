@@ -10,13 +10,16 @@ import sqlite3
 from db import *
 from friends import *
 
-#Accept connection
-###Add task
-#Check Requested Connections
-#CheckTaskByDate
-#DeclineConnection
-#RequestConnection
+# Accept connection
+# ##Add task
+# Check Requested Connections
+# CheckTaskByDate
+# DeclineConnection
+# RequestConnection
+
+
 #search for user
+#Change task status
 
 def getOwner(email):
         conn = sqlite3.connect('clickdown.db')
@@ -192,3 +195,21 @@ def getRequestedConnectionsList(email):
             requests_list.append(user)
         
         return requests_list
+
+def getTasksOnADate(owner,Date):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        query = f"""
+                SELECT  title
+                FROM    tasks
+                WHERE   owner = '{owner}'
+                AND     deadline = '{Date}'
+                AND     current_state IS NOT "Completed" 
+                """    
+        c.execute(query)
+        tasks = c.fetchall()
+        conn.commit()
+        c.close()
+        conn.close()
+        return tasks
+

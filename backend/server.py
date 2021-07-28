@@ -360,17 +360,27 @@ class Chatbot(Resource):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
-        # retrieve id using email and password
-        # query = f"""
-        #         SELECT  id
-        #         FROM    users
-        #         WHERE   email = '{args.email}' and password = '{args.password}';
-        #         """
-        # c.execute(query)
+        # query = """
+        #     CREATE TABLE IF NOT EXISTS messages (
+        #         usr_msg_time    datetime    ,
+        #         email           text        unique not null,
+        #         chat_response   text        not null,
+        #         user_msg        text        not null
+        #     );
+        #     """
 
-        #print(dfResponse)
+        query = f"""
+                INSERT INTO messages (usr_msg_time, email, chat_response, user_msg)
+                VALUES ('datetime('now')', '{email}', '{reply[0]}', '{initMsg}');
+                """
+        c.execute(query)
 
-        #Task type
+        conn.commit()
+        c.close()
+        conn.close()
+        return reply
+
+
 
 
 
