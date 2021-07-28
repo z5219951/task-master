@@ -3,7 +3,6 @@ from functions import *
 from datetime import *
 
 def parseIntent(intent, dfResponse, email, initMsg):
-    #currently does not reflect in front end???
     if(intent == "AddTask"):
         today = date.today()
         params = dfResponse.query_result.parameters
@@ -23,7 +22,18 @@ def parseIntent(intent, dfResponse, email, initMsg):
         response = {'fulfillment_text': "I need to retrieve tasks on a specific day!"}
         #Handle getting tasks for date period
     elif(intent == "CheckRequestedConnections"):
-        response = {'fulfillment_text': "I need to check who wants to connect with you."}
+        connRequests = getRequestedConnectionsList(email)
+        reqConnections = ""
+        for i in connRequests:
+            reqConnections = reqConnections + i + " & "
+        reqConnections = reqConnections[0:len(reqConnections)-2]
+        if len(connRequests) > 1:
+            response = {'fulfillment_text': "{}want to connect with you".format(reqConnections)}
+        elif len(connRequests) == 1:
+            response = {'fulfillment_text': "{}wants to connect with you".format(reqConnections)}
+        else:
+            response = {'fulfillment_text': "No one wants to connect with you"}
+        print(response)
         #Handle getting potential connection list
     elif(intent == "AcceptConnection"):
         params = dfResponse.query_result.parameters

@@ -8,6 +8,7 @@ from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
 import sqlite3
 
 from db import *
+from friends import *
 
 #Accept connection
 ###Add task
@@ -164,3 +165,30 @@ def updateTask(owner, title, description, creation_date, deadline, labels, curre
         conn.commit()
         c.close()
         conn.close()
+
+def getRequestedConnectionsList(email):
+        requests_list = []
+    
+        userInfo = getUserByEmail(email)
+        
+        if userInfo == {}:
+            return requests_list
+                
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        
+        query = f"""
+            SELECT  user_from
+            FROM    friend_requests
+            WHERE   user_to = '{userInfo["id"]}'
+            """
+        
+        c.execute(query)
+        friendRequests = c.fetchall()
+        
+        for id in friendRequests:
+            userInfo = getUserByID(id[0])
+            user = userInfo["first_name"] + " " + userInfo["last_name"]
+            requests_list.append(user)
+        
+        return requests_list
