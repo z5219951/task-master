@@ -411,6 +411,7 @@ class Tasks(Resource):
         
 rollback_payload = api.model('rollback', {
     "taskId":       fields.Integer,
+    "userId":       fields.Integer,
     "revisionId":   fields.Integer
 })
 @api.route('/rollback', methods=['POST'])
@@ -418,20 +419,22 @@ class Tasks(Resource):
     @api.response(200, 'Sucessfully modified task back to the requested old state')
     @api.response(400, 'Database error')
     @api.expect(rollback_payload)
-    @api.doc(description="Given a taskId and revisonID, will update task to have \
-                          the old state. Non-reversible process. Will return \
-                          True if sucessfully executed, False otherwise")
+    @api.doc(description="Given a taskId, userId, and revisonID, will update \
+                          task to prior state. Returns True if sucessful, \
+                          False otherwise")
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('taskId', required=True)
+        parser.add_argument('userId', required=True)
         parser.add_argument('revisionId', required=True)
 
         args = parser.parse_args()
         
         taskId = int(args.taskId)
+        userId = int(args.userId)
         revId = int(args.revisionId)
         
-        taskState, currRevId = assembleTask(taskId, revId)
+        taskState, currRevId = collapseRevisions(taskId, revIdStart = 0, revIdEnd = revId)
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -449,12 +452,16 @@ class Tasks(Resource):
                 print("Error at rollback update")
                 return {"value": False}, 400
         
+        # Make a copy of pre-rollback state with rollback flag set
+        revision, currRevId = collapseRevisions(taskId, revIdStart = revId, revIdEnd = -1)
+        revision["rollback"] = True
+        
         # Delete revision entries with revId greater than the argument supplied
         query = f"""
                 DELETE
                 FROM    revisions
                 WHERE   taskId = '{taskId}'
-                AND     revId > '{revId}';
+                AND     revId > '{revId}'
                 """
         try:
             c.execute(query)
@@ -462,7 +469,20 @@ class Tasks(Resource):
         except:
             print("Error at rollback delete")
             return {"value": False}, 400
-
+        
+        # Increment revId to insert rollback state before it
+        query = f"""
+                UPDATE tasks
+                SET    revId = '{revId + 1}'
+                WHERE   taskId = '{taskId}';
+                """
+        try:
+            c.execute(query)
+            conn.commit()
+            revisionsInsert(taskId, revId, userId, revision)
+        except:
+            print("Error at rollback, increment revId")
+            return {"value": False}, 400
         
         return {"value": True}, 200
 
@@ -533,15 +553,18 @@ def revisionsInitialise(taskId):
 # changes made to the task and assign an unique revId
 def revisionsAppend(taskId, userId):
     currTaskState = getTaskbyId(taskId)
-    oldTaskState, maxRevId  = assembleTask(taskId, -1)
+    oldTaskState, maxRevId = collapseRevisions(taskId, revIdStart = 0, revIdEnd = -1)
     
     revision = {}
-    # Create a dictionary of the changes between the task in the "tasks" table and 
-    # the task within the "revisions" table
+    # Create a dictionary of the differences between the task in the "tasks" table 
+    # and the task within the "revisions" table
     for field, oldVal in oldTaskState.items():
         if (currTaskState[field] != oldVal):
             revision[field] = currTaskState[field]
     
+    return revisionsInsert(taskId, revId, userId, revision)
+
+def revisionsInsert(taskId, revId, userId, revision):
     # Check if revisions is empty
     if bool(revision) is False:
         return True
@@ -551,7 +574,7 @@ def revisionsAppend(taskId, userId):
     
     query = f"""
             INSERT INTO revisions (taskId, revId, userId, timestamp, revision)
-            VALUES ('{taskId}', '{maxRevId + 1}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{json.dumps(revision)}');
+            VALUES ('{taskId}', '{revId}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{json.dumps(revision)}');
             """
     try:     
         print(query)
@@ -564,9 +587,10 @@ def revisionsAppend(taskId, userId):
     
     return True
 
-# Get the state of a task's fields that may change at revId. If revId = -1, it
-# will return the latest task object according to the "revisions" database.
-def assembleTask(taskId, revId):
+# Combine revisions to get the state of a task between a range of indices, inclusive.
+# If revIdEnd = -1, it will iterate up to the newest revision. 
+# Returns: Revision Dict, Number of entries combined
+def collapseRevisions(taskId, revIdStart, revIdEnd):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
     
@@ -581,21 +605,29 @@ def assembleTask(taskId, revId):
     revisionList = c.fetchall()
     conn.close()
     
-    # Assemble the task, prioritising fields that have more recently updated
-    # excluding edits made after the supplied revID
     resTask = {}
+    noEntries = 0
     for revision in revisionList:
-        # Ignore changes occuring after revID. revId = -1 means get all changes
-        if (revId != -1):
-            if revId < revision[0]:
-                continue
+        # Skip revisions made after revIdEnd
+        if (revIdEnd != - 1) and (revIdEnd < revision[0]):
+            continue
+        
+        # Return if current revision object is earlier than revIdStart
+        if (revIdStart > revision[0]):
+            break
+        
+        noEntries += 1
+        
+        # Skip revisions marked with "rollback"
+        if "rollback" in revision.keys():
+            continue
             
         revDict = json.loads(revision[1])
-
         for field, val in revDict.items():
+            # Keep only the newest revisions.
             if field in resTask:
                 continue
             else:
                 resTask[field] = val
     
-    return resTask, revisionList[0][0]
+    return resTask, noEntries
