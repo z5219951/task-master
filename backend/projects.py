@@ -9,7 +9,7 @@ from db import *
 bp = Blueprint('projects', __name__, url_prefix='/projects')
 api = Namespace("projects", "Operations for projects")
 
-create_payload = api.model('create group payload', {
+create_payload = api.model('create project payload', {
     "assigned_to": fields.Integer,
     "name": fields.String,
     "description": fields.String,
@@ -45,10 +45,28 @@ class Users(Resource):
                 INSERT INTO projects (groupid, name, description, tasks)
                 VALUES ('{groupid}', '{name}', '{description}', '{json.dumps(task_list)}');
                 """
-        print(query)
         c.execute(query)
-
         conn.commit()
+
+        query = f"""
+                SELECT  id
+                FROM    projects
+                WHERE   groupid = '{groupid}'
+                AND     name = '{name}'
+                AND     description = '{description}'
+                AND     tasks = '{json.dumps(task_list)}';
+                """
+        c.execute(query)
+        id = c.fetchone()[0]
+
+        for task in task_list:
+            query = f"""
+                    UPDATE  tasks
+                    SET     project = {id}
+                    WHERE   id = {task}
+                    """
+            c.execute(query)
+            conn.commit()
 
         return {'value': True}
 
@@ -90,8 +108,16 @@ class Users(Resource):
                 WHERE   id = {args.id};
                 """
         c.execute(query)
-
         conn.commit()
+
+        for task in task_list:
+            query = f"""
+                    UPDATE  tasks
+                    SET     project = {args.id}
+                    WHERE   id = {task}
+                    """
+            c.execute(query)
+            conn.commit()
 
         return {'value': True}
 

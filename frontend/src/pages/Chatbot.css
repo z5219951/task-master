@@ -1,0 +1,32 @@
+.table tr {
+    text-align: center;
+    font-size: 18px;
+  }
+  
+  .table tr th {
+    width: 200px;
+  }
+  
+  .table tr td {
+    width: 500px;
+  }
+  
+  .table {
+    border-radius: 5px;
+    width: 50%;
+    margin: 0px auto;
+    float: none;
+  }
+
+  .text-box {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 0 10px;
+    width: 700px;
+  }
+
+  .chat-enter {
+
+   margin-left: 10px;
+  }
