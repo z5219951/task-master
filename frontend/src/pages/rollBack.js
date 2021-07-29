@@ -24,13 +24,12 @@ const Rollback = (props) => {
     <>
     <div className="padding">
       <div className="row">
-        <h1 className="col">Note: Rollback will r</h1>
         <h1 className="col">Version history for Task: {task.title}</h1>
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
       {revisions ? revisions.map((revision, index) => {
         return <div key={revision.revisionId}> 
-          <RevisionCard revision={revision} index={index}></RevisionCard>
+          <RevisionCard revision={revision} taskID={task.id} index={index}></RevisionCard>
         </div>
       }): ''}
     </div>

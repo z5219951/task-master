@@ -178,11 +178,12 @@ const UpdateTask = (props) => {
   return(
     <>
       <div className="m-5">
+      <button className="btn btn-success btn-lg" onClick={() => rollBack()}>Rollback to a previous version</button>
+      <br /><br />
       <div className="row">
         <h1 className="col">Updating Task: {task.title}</h1>
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
-      <button className="col-md-5 btn btn-success btn-lg" onClick={() => rollBack()}>Rollback to a previous version</button>
       <h3>Please enter the fields you wish to update</h3>
       <br/>
       <div className="form-group row mb-5">
