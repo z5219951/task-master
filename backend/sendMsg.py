@@ -1,11 +1,16 @@
 import os
 import dialogflow
 from google.api_core.exceptions import InvalidArgument
+import platform
+#platform.system() ==> Windows / Linux switch case
 
 #Adapted from https://medium.com/swlh/working-with-dialogflow-using-python-client-cb2196d579a4
 
 def sendMessage(msg):
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getcwd()+'/backend/applicationAuthServiceAcct.json'
+    if(platform.system()=='Linux'):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getcwd()+'/backend/applicationAuthServiceAcct.json'
+    elif(platform.system()=='Windows'):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'applicationAuthServiceAcct.json'
 
     DIALOGFLOW_PROJECT_ID = 'taskmasterchatbot-wfsb'
     DIALOGFLOW_LANGUAGE_CODE = 'en'
