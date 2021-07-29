@@ -29,7 +29,7 @@ const Rollback = (props) => {
       </div>
       {revisions ? revisions.map((revision, index) => {
         return <div key={revision.revisionId}> 
-          <RevisionCard revision={revision} index={index}></RevisionCard>
+          <RevisionCard revision={revision} taskID={task.id} index={index}></RevisionCard>
         </div>
       }): ''}
     </div>
