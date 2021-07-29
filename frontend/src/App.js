@@ -34,6 +34,7 @@ import ViewGroupProject from './pages/ViewGroupProject'
 import UpdateProject from './pages/UpdateProject'
 import ViewMyProjects from './pages/ViewMyProjects'
 import ChatTest from './pages/ChatTest';
+import Rollback from './pages/Rollback';
 
 function App() {
 
@@ -69,6 +70,7 @@ function App() {
         <Route path='/updateProject' exact component={UpdateProject} />
         <Route path='/viewMyProjects' exact component={ViewMyProjects} />
         <Route path='/chatTest' exact component={ChatTest} />
+        <Route path='/rollback' exact component={Rollback} />
         <Route path='/' component={Home} />
       </Switch>
     </>

@@ -35,7 +35,7 @@ const UpdateTask = (props) => {
   const [task, setTask] = useState('')
   const taskID = props.location.state.id;
   useEffect(() => {
-    axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
+    axios.get(`http://localhost:5000/tasks/created/${store.getState().id}`).then((res) => {
       const taskList = JSON.parse(res.data);
       for (let i = 0; i < taskList.length; i++) {
         if (taskList[i].id === taskID) {
@@ -168,13 +168,21 @@ const UpdateTask = (props) => {
     }
   }
 
+  function rollBack() {
+    history.push({
+      pathname: './rollback',
+      state: {task}
+    })
+  }
+
   return(
     <>
       <div className="m-5">
       <div className="row">
-        <h1 className="col">Updating Task #{task.id}: {task.title}</h1>
+        <h1 className="col">Updating Task: {task.title}</h1>
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
+      <button className="col-md-5 btn btn-success btn-lg" onClick={() => rollBack()}>Rollback to a previous version</button>
       <h3>Please enter the fields you wish to update</h3>
       <br/>
       <div className="form-group row mb-5">
