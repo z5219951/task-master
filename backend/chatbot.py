@@ -11,12 +11,12 @@ def parseIntent(intent, dfResponse, email, initMsg):
     if(intent == "AddTask"):
         today = date.today()
         params = dfResponse.query_result.parameters
-        print(params)
+        #print(params)
         #Access params via:
         title = params.fields['task'].string_value
         deadline = params.fields['date'].string_value.split('T')[0]
-        print(title)
-        print(deadline)
+        #print(title)
+        #print(deadline)
         owner = getOwner(email)
         addTask(owner, title, title, today, deadline, labels="", current_state="Not Started", time_estimate=1, assigned_to=owner)
         response = {'fulfillment_text': "I have added a task {} for {}!".format(title, deadline)}
@@ -25,7 +25,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
 
 
     elif(intent == "CheckTaskByDate"):
-        print(dfResponse)
+        #print(dfResponse)
         params = dfResponse.query_result.parameters
         endDate = params.fields['date-time'].struct_value.fields['endDate'].string_value.split('T')[0]
         startDate = params.fields['date-time'].struct_value.fields['startDate'].string_value.split('T')[0]
@@ -39,7 +39,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
             taskQueryRes = dailyTaskList[0:len(dailyTaskList)-2]
             if(len(tasks)>1):
                 response = {'fulfillment_text': "Your tasks for {} are {}".format(singleDate, taskQueryRes)}
-                print(response)
+                #print(response)
                 return response
             elif(len(tasks)==1):
                 response = {'fulfillment_text': "Your task for {} is {}".format(singleDate, taskQueryRes)}
@@ -61,7 +61,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
                         res += str(i[0]) + " "
                     res += "\n"
             response = {'fulfillment_text': "Your tasks are as follows: {}".format(res)}
-            print(response)
+            #print(response)
 
 
 
@@ -79,7 +79,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
             response = {'fulfillment_text': "{}wants to connect with you".format(reqConnections)}
         else:
             response = {'fulfillment_text': "No one wants to connect with you"}
-        print(response)
+        #print(response)
         #Handle getting potential connection list
 
 
