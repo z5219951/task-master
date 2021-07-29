@@ -20,6 +20,7 @@ const SignedInNav = () => {
           <Nav.Link href="profile">Profile</Nav.Link>
           <Nav.Link href="calendar">Calendar</Nav.Link>
           <Nav.Link href="groups">Projects</Nav.Link>
+          <Nav.Link href="chatbot">Chatbot</Nav.Link>
         </Nav>
         <Collaboration history = {history}/>
       </div>
