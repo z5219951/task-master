@@ -81,7 +81,9 @@ class ChatTest extends Component{
     render (){
         return(
             <Fragment>
+                <div className="container">
                 <Chat contact={this.state.chatBot} me={this.state.user} onSend={this.getRes} chatList={this.state.msgList} style={{width: 600,height: 500,}}/>
+                </div>
             </Fragment>
         )
     }
