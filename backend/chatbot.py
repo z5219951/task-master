@@ -8,6 +8,7 @@ from datetime import *
 
 def parseIntent(intent, dfResponse, email, initMsg):
     owner = getOwner(email)
+    response = {'fulfillment_text': "Sorry, I don't understand. Please send me correct message."}
     if(intent == "AddTask"):
         today = date.today()
         params = dfResponse.query_result.parameters

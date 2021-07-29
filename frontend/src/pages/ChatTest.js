@@ -64,18 +64,26 @@ class ChatTest extends Component{
             msgList:[...pre.msgList,res]
         }));
         // send reply message, 
-        let botReply = JSON.parse(JSON.stringify(res));;
-        axios.defaults.crossDomain=true;
-        axios.post('http://localhost:5000/chatbot',msgNew).then((res)=>{
-            console.log(res);
-            botReply._id=botReply._id.slice(0,-1);
-            botReply.user = this.state.chatBot;
-            botReply.date = dayjs().unix();
-            botReply.message.content = res.data.fulfillment_text;
+        let botReply = JSON.parse(JSON.stringify(res));
+        botReply._id=botReply._id.slice(0,-1);
+        botReply.user = this.state.chatBot;
+        botReply.date = dayjs().unix();
+        try {
+            axios.defaults.crossDomain=true;
+            axios.post('http://localhost:5000/chatbot',msgNew).then((res)=>{
+                console.log(res);
+                botReply.message.content = res.data.fulfillment_text;
+                this.setState((pre)=>({
+                    msgList:[...pre.msgList,botReply]
+                }));
+            })
+        } catch (error) {
+            console.log(error);
+            botReply.message.content = "Meet some errors. Please try it again";
             this.setState((pre)=>({
                 msgList:[...pre.msgList,botReply]
             }));
-        })
+        }
         
     }
     render (){
