@@ -24,6 +24,7 @@ const Rollback = (props) => {
     <>
     <div className="padding">
       <div className="row">
+        <h1 className="col">Note: Rollback will r</h1>
         <h1 className="col">Version history for Task: {task.title}</h1>
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
