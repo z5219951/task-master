@@ -54,7 +54,7 @@ class Users(Resource):
                 WHERE   groupid = '{groupid}'
                 AND     name = '{name}'
                 AND     description = '{description}'
-                AND     task_list = '{json.dumps(task_list)}';
+                AND     tasks = '{json.dumps(task_list)}';
                 """
         c.execute(query)
         id = c.fetchone()[0]
