@@ -5,8 +5,7 @@ from google.api_core.exceptions import InvalidArgument
 #Adapted from https://medium.com/swlh/working-with-dialogflow-using-python-client-cb2196d579a4
 
 def sendMessage(msg):
-
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'applicationAuthServiceAcct.json'
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getcwd()+'/backend/applicationAuthServiceAcct.json'
 
     DIALOGFLOW_PROJECT_ID = 'taskmasterchatbot-wfsb'
     DIALOGFLOW_LANGUAGE_CODE = 'en'
