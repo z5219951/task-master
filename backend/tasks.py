@@ -466,7 +466,7 @@ class Tasks(Resource):
 
         print(tasks)
         return(tasks)
-@api.route('/revisons/<int:taskId>', methods=['GET'])
+@api.route('/revisions/<int:taskId>', methods=['GET'])
 class Tasks(Resource):
     @api.response(200, 'Sucessfully returned list of revisions')
     @api.response(400, 'Unexpected error')
@@ -484,17 +484,18 @@ class Tasks(Resource):
             """
 
         c.execute(query)
-        revisons = c.fetchall()
+        revisions = c.fetchall()
         conn.close()
         
         res = []
-        for r in revisons:
+        for r in revisions:
             userDict = getUserByID(r[1])
             revDict = {
-                "revisonId": r[0],
+                "revisionId": r[0],
                 "userName": userDict["first_name"] + " " + userDict["last_name"],
+                "userEmail": userDict["email"],
                 "timestamp": r[2],
-                "revison": json.loads(r[3])
+                "revision": json.loads(r[3])
                 }
             res.append(revDict)
         
@@ -510,7 +511,7 @@ class Tasks(Resource):
     @api.response(200, 'Sucessfully modified task back to the requested old state')
     @api.response(400, 'Database error')
     @api.expect(rollback_payload)
-    @api.doc(description="Given a taskId and revisonID, will update task to have \
+    @api.doc(description="Given a taskId and revisionID, will update task to have \
                           the old state. Non-reversible process. Will return \
                           True if sucessfully executed, False otherwise")
     def post(self):

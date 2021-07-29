@@ -19,6 +19,7 @@ const TaskCard = (props) => {
   const [filepath, setFilePath] = useState(tasks.file_paths)
 
   function handleClick() {
+    console.log('clicked')
     history.push({
       pathname: '/updateTask',
       state: { id: tasks.id }
