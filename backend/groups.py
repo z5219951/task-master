@@ -168,8 +168,8 @@ class Users(Resource):
                     FROM    groups
                     JOIN    users   ON groups.user = users.id
                     JOIN    tasks   ON tasks.assigned_to = users.id
-                    WHERE   groups.id = {id}
-                    AND     (tasks.project = null OR tasks.project = {project});
+                    WHERE   (groups.id = {id})
+                    AND     (tasks.project is null OR tasks.project = {project});
                     """
         print(query)
         c.execute(query)
