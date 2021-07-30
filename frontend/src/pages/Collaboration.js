@@ -1,7 +1,6 @@
-import React, {useContext, Component, Fragment} from 'react'
+import React, { Component} from 'react'
 import { DropdownButton,Dropdown} from 'react-bootstrap';
 import './Collaboration.css'
-import { useHistory } from 'react-router-dom';
 class Collaboration extends Component{
     constructor(props) {
         super(props);

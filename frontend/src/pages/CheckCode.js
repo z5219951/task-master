@@ -6,7 +6,6 @@ import './Login.css'
 class CheckCode extends Component{
   constructor(props) {
     super(props);
-    
   }
   handleBack = ()=>{
     this.props.history.push('./login');

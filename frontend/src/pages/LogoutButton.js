@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios'
 import store from '../store';
-import { Navbar, Nav } from 'react-bootstrap';
+import {  Nav } from 'react-bootstrap';
 
 // when use this button, you may need doing like this
 // <LogoutButton history = {this.props.history}/>

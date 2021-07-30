@@ -11,6 +11,9 @@ import dayjs from 'dayjs'
 class ChatTest extends Component{
     constructor(props) {
         super(props);
+        if (store.getState() === undefined || store.getState().id === "") {
+            this.props.history.push('/home')
+        }
         let date = new Date().getMonth()+'-'+new Date().getDate();
         const bot = {
             id: -1,

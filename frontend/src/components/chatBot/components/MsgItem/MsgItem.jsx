@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import style from './style.module.css'
 import globalStyle from '../../style/common.module.css'
@@ -14,7 +14,7 @@ export default function MsgItem({ data, me }) {
       className={toClasses([style.content, globalStyle.flex])}
       style={{ flexDirection: isMe && 'row-reverse' }}>
       <div className={style.avatar}>
-        <img src={data.user.avatar} />
+        <img src={data.user.avatar} alt="user photo"/>
       </div>
       <div
         className={style.text_area}

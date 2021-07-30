@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react'
+import React, {  useState } from 'react'
 import style from './style.module.css'
 import md5 from 'md5'
 import dayjs from 'dayjs'
@@ -62,15 +62,6 @@ export default function ChatInput({
     if (e.keyCode === 16) {
       setIsShift(false)
     }
-  }
-
-  const emojiSelectHandle = (emoji) => {
-    setText(text + emoji)
-    setIsAllowSend(true)
-  }
-
-  const fileHandle = (files) => {
-    onImage(files)
   }
 
   return (

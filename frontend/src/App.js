@@ -23,7 +23,6 @@ import UpdateTask from './pages/UpdateTask'
 import Groups from './pages/Groups';
 import CreateGroup from './pages/CreateGroup';
 import ViewProfile from './pages/ViewProfile'
-import TestPage from './pages/TestPage';
 import CalendarCom from './pages/CalendarCom';
 import TaskSearchResult from './pages/TaskSearchResult'
 import Connections from './pages/Connections'
@@ -59,7 +58,6 @@ function App() {
         <Route path='/groups' exact component={Groups} />
         <Route path='/creategroup' exact component={CreateGroup} />
         <Route path='/viewprofile' exact component={ViewProfile} />
-        <Route path='/testpage' exact component={TestPage} />
         <Route path='/calendar' exact component={CalendarCom} />
         <Route path='/taskSearchResult' exact component={TaskSearchResult} />
         <Route path='/connections' exact component={Connections} />
