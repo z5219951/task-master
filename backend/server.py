@@ -24,6 +24,7 @@ import tasks
 import user
 import labels
 import projects
+
 app = Flask(__name__)
 api = Api(app,
           default="ClickDown",  # Default namespace
@@ -373,9 +374,52 @@ class Chatbot(Resource):
         print(reply)
         return reply
 
+@api.route('/reminder', methods=['PUT'])
+class Users(Resource):
+    @api.response(200, 'Successfully sent emails')
+    @api.response(400, 'Bad Request')
+    @api.doc(description="Checks the database to see if task reminders need to be sent")
+    def put(self):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
 
+        query = f"""
+                SELECT  t.id, t.deadline, t.title, u.email
+                FROM    tasks t
+                JOIN    users u ON u.id = t.owner
+                WHERE   reminded = 0;
+                """
+        c.execute(query)
 
+        data = c.fetchone()
+        task_list = {}
 
+        while data is not None:
+            task_list[data[0]] = [data[1], data[2], data[3]]
+            data = c.fetchone()
+
+        if task_list == {}:
+            return
+
+        for id in task_list:
+            title = task_list[id][1]
+            email = task_list[id][2]
+            deadline = datetime.strptime(task_list[id][0], '%Y-%m-%d').date()
+            today = date.today().strftime('%Y-%m-%d')
+            delta = today - deadline
+
+            if delta < 3:
+                with app.app_context():
+                    msg = Message(subject="You have a task deadline soon!",
+                                sender='clickdown3900@gmail.com',
+                                recipients=[f"{email}"], 
+                                body=f"Task {title} is due soon. If it is already completed, please mark it 'Complete' on ClickDown.")
+                    mail.send(msg)
+                query = f"""
+                        UPDATE  tasks
+                        SET     reminded = 1
+                        WHERE   id = {id};
+                        """
 
 
 if __name__ == '__main__':
