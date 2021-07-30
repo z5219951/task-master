@@ -150,11 +150,10 @@ class Users(Resource):
     @api.expect(task_payload)
     def get(self, id):
         project = request.args.get('project')
-            
+        print(project)
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
-        project = ''
         if project is None:
             query = f"""
                     SELECT  tasks.id
@@ -170,8 +169,9 @@ class Users(Resource):
                     JOIN    users   ON groups.user = users.id
                     JOIN    tasks   ON tasks.assigned_to = users.id
                     WHERE   groups.id = {id}
-                    AND     (tasks.project = null OR tasks.project = {project};
+                    AND     (tasks.project = null OR tasks.project = {project});
                     """
+        print(query)
         c.execute(query)
 
         data = c.fetchone()
