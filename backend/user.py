@@ -219,11 +219,12 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  p.id, p.name, p.description, p.tasks
+                SELECT  p.id, p.name, p.description, p.tasks, p.groupid
                 FROM    projects p
-                JOIN    tasks t ON t.project = p.id
-                WHERE   t.assigned_to = {id};
+                JOIN    groups g ON p.groupid = g.id 
+                WHERE   g.user = {id};
                 """
+                
         c.execute(query)
         data = c.fetchone()
         project_list = []
@@ -233,7 +234,8 @@ class Users(Resource):
                 'id': f'{data[0]}',
                 'name': f'{data[1]}',
                 'description': f'{data[2]}',
-                'tasks': f'{data[3]}'
+                'tasks': f'{data[3]}',
+                'groupid': f'{data[4]}'
             }
             project_list.append(project_info)
             data = c.fetchone()

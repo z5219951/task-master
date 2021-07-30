@@ -9,7 +9,7 @@ from db import *
 bp = Blueprint('projects', __name__, url_prefix='/projects')
 api = Namespace("projects", "Operations for projects")
 
-create_payload = api.model('create group payload', {
+create_payload = api.model('create project payload', {
     "assigned_to": fields.Integer,
     "name": fields.String,
     "description": fields.String,
@@ -45,21 +45,38 @@ class Users(Resource):
                 INSERT INTO projects (groupid, name, description, tasks)
                 VALUES ('{groupid}', '{name}', '{description}', '{json.dumps(task_list)}');
                 """
-        print(query)
         c.execute(query)
-
         conn.commit()
+
+        query = f"""
+                SELECT  id
+                FROM    projects
+                WHERE   groupid = '{groupid}'
+                AND     name = '{name}'
+                AND     description = '{description}'
+                AND     tasks = '{json.dumps(task_list)}';
+                """
+        c.execute(query)
+        id = c.fetchone()[0]
+
+        for task in task_list:
+            query = f"""
+                    UPDATE  tasks
+                    SET     project = {id}
+                    WHERE   id = {task}
+                    """
+            c.execute(query)
+            conn.commit()
 
         return {'value': True}
 
 
 update_payload = api.model('update group payload', {
     "id": fields.Integer,
-    "assigned_to": fields.Integer,
+    "groupid": fields.Integer,
     "name": fields.String,
     "description": fields.String,
-    "connected_tasks": fields.List(fields.Integer),
-    "created_by": fields.Integer
+    "tasks": fields.List(fields.Integer),
 })
 
 @api.route('/update', methods=['PUT'])
@@ -71,30 +88,36 @@ class Users(Resource):
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', required=True)
-        parser.add_argument('assigned_to', required=True)
+        parser.add_argument('groupid', required=True)
         parser.add_argument('name', required=True)
         parser.add_argument('description', required=False)
-        parser.add_argument('connected_tasks', required=True)
-        parser.add_argument('created_by', required=True)
+        parser.add_argument('tasks', required=True)
         args = parser.parse_args()
 
-        task_list = request.get_json()['connected_tasks']
+        task_list = request.get_json()['tasks']
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
                 UPDATE  projects
-                SET     assigned_to = '{args.assigned_to}',
+                SET     groupid = '{args.groupid}',
                         name = '{args.name}',
                         description = '{args.description}',
-                        connected_tasks = '{json.dumps(task_list)}',
-                        created_by = '{args.created_by}
+                        tasks = {json.dumps(task_list)}
                 WHERE   id = {args.id};
                 """
         c.execute(query)
-
         conn.commit()
+
+        for task in task_list:
+            query = f"""
+                    UPDATE  tasks
+                    SET     project = {args.id}
+                    WHERE   id = {task}
+                    """
+            c.execute(query)
+            conn.commit()
 
         return {'value': True}
 

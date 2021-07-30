@@ -16,8 +16,10 @@ const TaskCard = (props) => {
   const [formattedLabels, setFormattedLabels] = useState('')
   const [updateLabel, setUpdateLabel] = useState(false)
   const [assigned, setAssigned] = useState('')
+  const [filepath, setFilePath] = useState(tasks.file_paths)
 
   function handleClick() {
+    console.log('clicked')
     history.push({
       pathname: '/updateTask',
       state: { id: tasks.id }
@@ -26,7 +28,6 @@ const TaskCard = (props) => {
 
   useEffect(() => {
  
-    console.log(tasks.file_paths)
      handleExistingLabels()
     
      // Find user assigned to task
@@ -102,6 +103,10 @@ const TaskCard = (props) => {
     }
   }, [existingLabels])
 
+  useEffect(() => {
+    setFilePath(tasks.file_paths)
+  }, [tasks])
+
   return (<>
     <div className="card my-2 mx-5"> 
       <div className="card-header">
@@ -120,17 +125,19 @@ const TaskCard = (props) => {
       <div className="card-footer text-muted" padding="100px">
         <p className="card-text m-1"><em>Labels: {currentLabels}</em></p>
         {update ? <div> <p className="card-text m-1"><em>Edit Labels:</em></p> <CreatableSelect isMulti defaultValue={tasks.labels !== '' ? JSON.parse(tasks.labels) : ''} onChange={(e) => handleLabels(e)} placeholder='Create a label by typing here or select a label below' options={formattedLabels}/></div> : ''}
-        {tasks.file_paths !== undefined && tasks.file_paths !== 'None' ? 
-          <div>Files: <br />
-          {JSON.parse(tasks.file_paths.replace(/'/g,'"')).map((file, index) => {
-          return <div key={index}> <br /> <a href={file} download>{file.substring(file.lastIndexOf('/') +1)}<br /></a> </div>
+        {filepath !== undefined && filepath !== 'None' ? 
+          <div><br />Files: <br />
+          {JSON.parse(filepath.replace(/'/g,'"')).map((file, index) => {
+          return <div key={index}> <a href={file} download>{file.substring(file.lastIndexOf('/') +1)}<br /></a> </div>
         })}
         </div>: ''}
         <br />
         {update ? <div>
         Upload Files:
         <br/>
-        <UploadFile taskId={tasks.id}></UploadFile>
+        <UploadFile taskId={tasks.id} ></UploadFile>
+        <br />
+        Please refresh after upload to view changes
         </div>
         : ''}
       </div>

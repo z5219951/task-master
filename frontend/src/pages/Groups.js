@@ -30,7 +30,7 @@ class Groups extends Component{
             const testResult = JSON.parse(res.data);
             let warn = ''
             if(testResult.length === 0) {
-                warn = 'No Groups'
+                warn = 'To create a project, first create a group'
             }
             this.setState(()=>({
                 list:testResult,
@@ -45,7 +45,7 @@ class Groups extends Component{
         return (
             list.map((item,index)=>
                 <div className="group_member_box" key = {index}>
-                    <h4 className="group_user">{item.userName}</h4>
+                    <h4 className="group_user">{item.userName} - {item.email}</h4>
                     <ViewProfileButton id={item.userId}></ViewProfileButton>
                 </div>
             )
@@ -57,7 +57,7 @@ class Groups extends Component{
             this.state.list.map((item,index)=>
             <div className="card my-2 mx-5" key={index}> 
                 <div className="card-header" padding="100px">
-                    <h2>Group #{item.groupID}: {item.groupName}</h2>
+                    <h2>{item.groupName}</h2>
                 </div>
                 <div className="card-body text-muted" padding="100px">
                     {this.getMem(item.members)}

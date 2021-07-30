@@ -23,6 +23,7 @@ const CreateTask = () => {
   const [formattedLabels, setFormattedLabels] = useState('')
   const [friends, setFriends] = useState([{label: 'Myself', value:store.getState().id}])
   const [assigned_to, setAssigned_to] = useState(store.getState().id)
+  const [timeTaken, setTimeTaken] = useState(0)
 
   var today = new Date();
   const currentDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
@@ -53,7 +54,7 @@ const CreateTask = () => {
     const options = []
 
     // Create task object and push it to server
-    const task = {title: name, description: description, creation_date: currentDate, deadline: dueD, time_estimate: timeEst, current_state: cState, owner: owner, labels: labels, assigned_to: assigned_to}
+    const task = {title: name, description: description, creation_date: currentDate, deadline: dueD, time_estimate: timeEst, current_state: cState, owner: owner, labels: labels, assigned_to: assigned_to, time_taken: timeTaken}
     console.log(task)
     axios.defaults.crossDomain=true;
     axios.post('http://localhost:5000/tasks/create', task).then(()=>{
@@ -151,6 +152,12 @@ const CreateTask = () => {
           <div className="col-md-3">
             <label htmlFor="time">Time Estimate (Number of Hours)</label>
             <input className="form-control input-lg" value={timeEst} type="number" min="0" onChange={(e) => setTimeEst(e.target.value)}></input>
+          </div>
+        </div>
+        <div className="form-group">
+          <div className="col-md-5">
+            <label htmlFor="time">Time Taken to Complete (Number of Hours)</label>
+            <input className="form-control input-lg" value={timeTaken} type="number" min="0" onChange={(e) => setTimeTaken(e.target.value)}></input>
           </div>
         </div>
         <div className="form-group">

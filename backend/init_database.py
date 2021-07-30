@@ -16,9 +16,24 @@ if __name__ == '__main__':
     c.execute(query)
     query = 'drop table if exists labels'
     c.execute(query)
+    query = 'drop table if exists messages'
+    c.execute(query)
     query = 'drop table if exists revisions'
     c.execute(query)
+    query = 'drop table if exists projects'
+    c.execute(query)
     
+
+    # create table messages
+    query = """
+            CREATE TABLE IF NOT EXISTS messages (
+                usr_msg_time    datetime    ,
+                email           text        unique not null,
+                chat_response   text        not null,
+                user_msg        text        not null
+            );
+            """
+    c.execute(query)
     # create table users
     query = """
             CREATE TABLE IF NOT EXISTS users (
@@ -40,7 +55,7 @@ if __name__ == '__main__':
     # create table groups
     query = """
             CREATE TABLE IF NOT EXISTS groups (
-                id              integer     primary key,
+                id              integer     not null,
                 name            text        not null,
                 user            integer     not null,
                 foreign key     (user)      references users (id)
@@ -56,7 +71,7 @@ if __name__ == '__main__':
                 name            text        not null,
                 description     text        not null,
                 tasks           text        ,
-                foreign key     (groupid)    references groups (id)
+                foreign key     (groupid)   references groups (id)
             );
             """
     print(query)
@@ -77,6 +92,7 @@ if __name__ == '__main__':
                 assigned_to     integer     not null,
                 file_paths      text        ,
                 project         integer     ,
+                time_taken      integer     ,
                 foreign key     (owner)     references users (id)
                 foreign key     (assigned_to)  references users (id)
                 foreign key     (project)   references projects (id)

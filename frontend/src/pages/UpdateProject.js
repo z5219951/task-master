@@ -2,6 +2,7 @@ import { useHistory } from "react-router-dom"
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import store from '../store';
+import { Button, Modal } from 'react-bootstrap';
 
 const UpdateProject = (props) => {
   const project = props.location.state.project
@@ -9,9 +10,17 @@ const UpdateProject = (props) => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [tasks, setTasks] = useState('')
+  const [taskId, setTaskId] = useState('')
   const [taskList, setTaskList] = useState([])
   const [connectedTasks, setConnectedTasks] = useState(project.tasks)
+  const [selectedTasksId, setSelectedTasksId] = useState('')
+  const [selectedTasks, setSelectedTasks] = useState('')
+  const [first, setFirst] = useState(0)
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
+  let newTaskList = [...taskList]
   function backClick () {
     history.goBack()
   }
@@ -19,16 +28,41 @@ const UpdateProject = (props) => {
    // Get tasks created by the logged in user
    axios.defaults.crossDomain=true;
    useEffect(() => {
-     axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
-       const taskList = JSON.parse(res.data);
-       setTasks(taskList)
-     })
- 
+     
+    axios.get(`http://localhost:5000/groups/${project.groupid}/tasks?project=${project.id}`).then((res) => {
+      if (res.data.length > 0) {
+        setTaskId(JSON.parse(res.data))
+      }
+    })
+
+    if (project.tasks) {
+      setSelectedTasksId(JSON.parse(project.tasks))
+    }
+  
+     setTaskList(newTaskList)
    }, [])
 
-   useEffect(() => {
+  useEffect(() => {
+    console.log(taskId)
+    if (taskId) {
+      taskId.map((id) => {
+        axios.get(`http://localhost:5000/tasks/${id}`).then((res) => {
+          setTasks(tasks => [...tasks, JSON.parse(res.data)])
+        })
+      })   
+    }
+  }, [taskId])
 
-   }, [tasks])
+  useEffect(() => {
+    console.log(selectedTasksId)
+    if (selectedTasksId) {
+      selectedTasksId.map((id) => {
+        axios.get(`http://localhost:5000/tasks/${id}`).then((res) => {
+          setSelectedTasks(tasks => [...tasks, JSON.parse(res.data)])
+        })
+      })  
+    }
+  }, [selectedTasksId])
 
    function handleView (task) {
     history.push({
@@ -38,22 +72,23 @@ const UpdateProject = (props) => {
   }
 
   function handleTasks(e) {
-    let newTaskList = [...taskList]
+    
     if (e.target.checked === false) {
       newTaskList[e.target.value] = false
     } else {
       newTaskList[e.target.value] = true
     }
-    console.log(newTaskList)
     setTaskList(newTaskList)
+
     setConnectedTasks([])
   }
 
   useEffect(() => {
+    setConnectedTasks([])
     if (tasks) {
       tasks.map((task, index) => {
         if (taskList[index]) {
-          setConnectedTasks(connectedTasks => [...connectedTasks, task])
+          setConnectedTasks(connectedTasks => [...connectedTasks, Number(task.id)])
         }
       })
     }
@@ -65,13 +100,41 @@ const UpdateProject = (props) => {
 
   function handleSubmit () {
     
+    const updateProject = {'id': project.id, 'groupid': project.groupid, 'name': project.name, 'description': project.description, 'tasks': connectedTasks}
+    if (name !== '') {
+      updateProject.name = name
+      project.name = name
+    } 
+
+    if (description !== '') {
+      updateProject.description = description
+      project.description = description
+    }
+
+    updateProject.tasks = JSON.stringify(connectedTasks)
+    project.tasks = connectedTasks
+    axios.put(`http://localhost:5000/projects/update`, updateProject).then((res) => {
+      console.log(res)
+      handleShow()
+    })
   }
 
   // Checks if task is already in the project
-  function checkSelected (tasks, id) {
-    var checked = false
+  function checkSelected (tasks, id, index) {
+    var checked = 'false'
     if (tasks.length > 0) {
       checked = tasks.some(task => task.id === id)
+    } else {
+      return
+    }
+
+    if (checked && newTaskList[index] !== false) {
+      newTaskList[index] = true
+    }
+
+    if (first === 0 ) {
+      setTaskList(newTaskList)
+      setFirst(1)
     }
     return checked
   }
@@ -104,20 +167,38 @@ const UpdateProject = (props) => {
         <div className="form-group row mb-5">
           <label htmlFor="description" className="col-sm-3 col-form-label">Tasks</label>
           <div className="col">
-            {tasks ? tasks.map((task, index) => {
-              return <div key={task.id}>
-                <h5><input type="checkbox" className="form-check-input m-1" onClick={(e) => handleTasks(e)} defaultChecked={checkSelected(project.tasks, task.id)} key={index} value={index}/>Task #{task.id} - {task.title} &nbsp;
-                <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
-                </h5> 
-                <br/></div>
-            }) : 'No Tasks Available'}   
+          {tasks ? tasks.map((task, index) => {
+            return <div key={task.id}>
+              <h5><input type="checkbox" className="form-check-input m-1" onClick={(e) => handleTasks(e)} defaultChecked={checkSelected(selectedTasks, task.id, index)} key={index} value={index}/>Task #{task.id} - {task.title} &nbsp;
+              <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
+              </h5> 
+              <br/></div>
+          }) : 'No Tasks Available'} 
         </div> 
       </div>
         <button type="button" className="btn btn-primary" onClick={(e) => handleSubmit()}>Submit</button>
       </form>
+      <Modal animation={false} show={show} onHide={handleClose}>
+        <Modal.Header>
+          <Modal.Title>Project #{project.id} has been Updated!</Modal.Title>
+        </Modal.Header>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={(e) => handleClose()} >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
     </>
   )
 }
 
 export default UpdateProject
+/*
+{tasks ? tasks.map((task, index) => {
+  return <div key={task.id}>
+    <h5><input type="checkbox" className="form-check-input m-1" onClick={(e) => handleTasks(e)} defaultChecked={checkSelected(project.tasks, task.id)} key={index} value={index}/>Task #{task.id} - {task.title} &nbsp;
+    <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
+    </h5> 
+    <br/></div>
+}) : 'No Tasks Available'}   */

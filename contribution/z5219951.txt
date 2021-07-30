@@ -19,3 +19,6 @@ Participating our group meeting. As usual, me and Wayne check our backend port i
 
 Week7
 Participating our group meeting. As usual, me and Wayne check our backend port is working for our frontend page. Testing upload photo and files are working. Checking whether creating group is working.
+
+Week7
+Participating our group meeting. As usual, me and Wayne check our backend port is working for our frontend page. I'm working on writing the home page. 

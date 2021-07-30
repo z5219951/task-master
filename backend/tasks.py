@@ -1,3 +1,4 @@
+import ast
 import json
 import os
 import datetime as dt
@@ -23,7 +24,8 @@ task_payload = api.model('task', {
     "labels": fields.String,
     "current_state": fields.String,
     "time_estimate": fields.Integer,
-    "assigned_to": fields.String
+    "assigned_to": fields.String,
+    "time_taken": fields.String
 })
 
 @api.route('/create', methods=['POST'])
@@ -43,6 +45,7 @@ class Users(Resource):
         parser.add_argument('current_state', required=False, default='Not Started')
         parser.add_argument('time_estimate', required=False)
         parser.add_argument('assigned_to', required=False)
+        parser.add_argument('time_taken', required=False)
         args = parser.parse_args()
         #print(args)
 
@@ -50,8 +53,8 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to)
-                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}');
+                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, time_taken)
+                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}', '{args.time_taken}');
                 """
         c.execute(query)
         print(query)
@@ -77,8 +80,49 @@ class Users(Resource):
         return {'id': id},200
 
 
+# get task info given its id
+@api.route('/<int:id>', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully retrieved task info')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Gets all tasks for a user given their id")
+    def get(self, id):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        query = f"""
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
+                FROM    tasks
+                WHERE   id = '{id}';
+                """
+
+        c.execute(query)
+        data = c.fetchone()
+        task_info = {}
+        if (data is not None):
+            task_info = {
+                'id': f'{data[0]}',
+                'owner': f'{data[1]}',
+                'title': f'{data[2]}',
+                'description': f'{data[3]}',
+                'creation_date': f'{data[4]}',
+                'deadline': f'{data[5]}',
+                'labels': f'{data[6]}',
+                'current_state': f'{data[7]}',
+                'time_estimate': f'{data[8]}',
+                'assigned_to': f'{data[9]}',
+                'file_paths': f'{data[10]}',
+                'time_taken': f'{data[11]}'
+            }
+
+        c.close()
+        conn.close()
+
+        return json.dumps(task_info)
+
+
 # get all tasks for a user
-@api.route('/<int:owner>', methods=['GET'])
+@api.route('/created/<int:owner>', methods=['GET'])
 class Users(Resource):
     @api.response(200, 'Successfully retrieved task info')
     @api.response(404, 'Not Found')
@@ -88,7 +132,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
                 WHERE   owner = '{owner}'
                 ORDER BY    deadline;
@@ -110,7 +154,8 @@ class Users(Resource):
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
                 'assigned_to': f'{data[9]}',
-                'file_paths': f'{data[10]}'
+                'file_paths': f'{data[10]}',
+                'time_taken': f'{data[11]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -134,7 +179,7 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
                 WHERE   assigned_to = '{owner}'
                 ORDER BY    deadline;
@@ -156,7 +201,8 @@ class Users(Resource):
                 'current_state': f'{data[7]}',
                 'time_estimate': f'{data[8]}',
                 'assigned_to': f'{data[9]}',
-                'file_paths': f'{data[10]}'
+                'file_paths': f'{data[10]}',
+                'time_taken': f'{data[11]}'
             }
             task_list.append(task_info)
             data = c.fetchone()
@@ -180,7 +226,8 @@ update_payload = api.model('update info', {
     "labels": fields.String,
     "current_state": fields.String,
     "time_estimate": fields.Integer,
-    "assigned_to": fields.String
+    "assigned_to": fields.String,
+    "time_taken": fields.Integer
 })
 
 @api.route('/update', methods=['PUT'])
@@ -201,6 +248,7 @@ class Users(Resource):
         parser.add_argument('current_state')
         parser.add_argument('time_estimate')
         parser.add_argument('assigned_to')
+        parser.add_argument('time_taken')
         args = parser.parse_args()
         # print(args)
 
@@ -217,12 +265,15 @@ class Users(Resource):
                         labels = '{args.labels}',
                         current_state = '{args.current_state}',
                         time_estimate = '{args.time_estimate}',
-                        assigned_to = '{args.assigned_to}'
+                        assigned_to = '{args.assigned_to}',
+                        time_taken = '{args.time_taken}'
                 WHERE   id = '{args.id}';
                 """
         try:
             c.execute(query)
-        except:
+        except Exception as e:
+            print(e)
+            print(query)
             c.close()
             conn.close()
             return {'value': False}
@@ -355,8 +406,10 @@ class Users(Resource):
                 """
         c.execute(query)
 
+        existing = c.fetchone()
+
         try:
-            url_list = json.loads(c.fetchone()[0]) + url_list
+            url_list = ast.literal_eval(existing[0]) + url_list
         except:
             pass
 
@@ -374,7 +427,47 @@ class Users(Resource):
 
         return json.dumps(url_list)
 
-@api.route('/revisons/<int:taskId>', methods=['GET'])
+taskByDatePayload = api.model('taskByDate', {
+    "date": fields.String
+})
+
+#get task for a single date.
+
+## I THINK THIS IS REDUNDANT
+@api.route('/getTaskByDate/<int:owner>', methods=['GET'])
+class Tasks(Resource):
+    @api.response(200, 'Successfully retrieved task info')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Gets all tasks assigned to a user on a specific day")
+    @api.expect(taskByDatePayload)
+    
+    
+    def get(self,owner):
+        # parser = reqparse.RequestParser()
+        # parser.add_argument('date', required=True)
+        # args = parser.parse_args()
+        date = request.args.get('date')
+
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        query = f"""
+                SELECT  title
+                FROM    tasks
+                WHERE   owner = '{owner}'
+                AND     deadline = '{date}'
+                AND     current_state IS NOT "Completed" 
+                """    
+        c.execute(query)
+        tasks = c.fetchall()
+        conn.commit()
+        c.close()
+        conn.close()
+
+        print(tasks)
+        return(tasks)
+        
+@api.route('/revisions/<int:taskId>', methods=['GET'])
 class Tasks(Resource):
     @api.response(200, 'Sucessfully returned list of revisions')
     @api.response(400, 'Unexpected error')
@@ -392,17 +485,18 @@ class Tasks(Resource):
             """
 
         c.execute(query)
-        revisons = c.fetchall()
+        revisions = c.fetchall()
         conn.close()
         
         res = []
-        for r in revisons:
+        for r in revisions:
             userDict = getUserByID(r[1])
             revDict = {
-                "revisonId": r[0],
+                "revisionId": r[0],
                 "userName": userDict["first_name"] + " " + userDict["last_name"],
+                "userEmail": userDict["email"],
                 "timestamp": r[2],
-                "revison": json.loads(r[3])
+                "revision": json.loads(r[3])
                 }
             res.append(revDict)
         
@@ -434,56 +528,83 @@ class Tasks(Resource):
         userId = int(args.userId)
         revId = int(args.revisionId)
         
-        taskState, currRevId = collapseRevisions(taskId, revIdStart = 0, revIdEnd = revId)
-
+        taskState, preRevCount = collapseRevisions(taskId, revIdStart = 0, revIdEnd = revId)
+        
+        # Make a copy of pre-rollback state with rollback flag set
+        revision, postRevCount = collapseRevisions(taskId, revIdStart = revId, revIdEnd = -1)
+        revision["rollback"] = True
+        
+        # Check validity of ranges
+        if (revId < 0):
+            return {"value": False}, 200
+        
+        if (preRevCount + postRevCount - 1) < revId:
+            return {"value": False}, 200
+        
+        if (preRevCount + postRevCount - 1) == revId:
+            return {"value": True}, 200
+            
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
         
         for field, newVal in taskState.items():
-            query = f"""
-                    UPDATE  tasks
-                    SET     {field} = '{newVal}'
-                    WHERE   id = {taskId};
-                    """
             try:
+                query = f"""
+                        UPDATE  tasks
+                        SET     {field} = '{newVal}'
+                        WHERE   id = {taskId};
+                        """
                 c.execute(query)
                 conn.commit()
-            except:
+                
+            except Exception as e:
                 print("Error at rollback update")
+                print(e)
                 return {"value": False}, 400
         
-        # Make a copy of pre-rollback state with rollback flag set
-        revision, currRevId = collapseRevisions(taskId, revIdStart = revId, revIdEnd = -1)
-        revision["rollback"] = True
-        
         # Delete revision entries with revId greater than the argument supplied
-        query = f"""
-                DELETE
-                FROM    revisions
-                WHERE   taskId = '{taskId}'
-                AND     revId > '{revId}'
-                """
         try:
+            query = f"""
+                    DELETE
+                    FROM    revisions
+                    WHERE   taskId = '{taskId}'
+                    AND     revId > '{revId}'
+                    """
             c.execute(query)
             conn.commit()
-        except:
+        
+        except Exception as e:
             print("Error at rollback delete")
+            print(e)
             return {"value": False}, 400
         
-        # Increment revId to insert rollback state before it
-        query = f"""
-                UPDATE tasks
-                SET    revId = '{revId + 1}'
-                WHERE   taskId = '{taskId}';
-                """
+        # Increment revId of current revison and insert prior state
         try:
+            query = f"""
+                    SELECT  taskId, userId, revision
+                    FROM    revisions
+                    WHERE   revID = '{revId}'
+                    """
+            c.execute(query)
+            data = c.fetchone()
+            
+            query = f"""
+                    DELETE  
+                    FROM    revisions
+                    WHERE   revID = '{revId}'
+                    """
             c.execute(query)
             conn.commit()
-            revisionsInsert(taskId, revId, userId, revision)
-        except:
+            print("in roll")
+            revisionsInsert(taskId, revId, userId, json.dumps(revision))
+            revisionsInsert(data[0], revId +1, data[1], data[2])
+
+        except Exception as e:
             print("Error at rollback, increment revId")
+            print(e)
             return {"value": False}, 400
         
+
         return {"value": True}, 200
 
 ### Helper Functions ###
@@ -561,12 +682,16 @@ def revisionsAppend(taskId, userId):
     for field, oldVal in oldTaskState.items():
         if (currTaskState[field] != oldVal):
             revision[field] = currTaskState[field]
-    
-    return revisionsInsert(taskId, revId, userId, revision)
+    print("in append")
+    print(currTaskState)
+    print(oldTaskState)
+    return revisionsInsert(taskId, maxRevId, userId, json.dumps(revision))
 
 def revisionsInsert(taskId, revId, userId, revision):
     # Check if revisions is empty
-    if bool(revision) is False:
+    print(revision)
+    if revision is "{}":
+        print("true")
         return True
     
     conn = sqlite3.connect('clickdown.db')
@@ -574,7 +699,7 @@ def revisionsInsert(taskId, revId, userId, revision):
     
     query = f"""
             INSERT INTO revisions (taskId, revId, userId, timestamp, revision)
-            VALUES ('{taskId}', '{revId}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{json.dumps(revision)}');
+            VALUES ('{taskId}', '{revId}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{revision}');
             """
     try:     
         print(query)
@@ -609,20 +734,23 @@ def collapseRevisions(taskId, revIdStart, revIdEnd):
     noEntries = 0
     for revision in revisionList:
         # Skip revisions made after revIdEnd
-        if (revIdEnd != - 1) and (revIdEnd < revision[0]):
+        if (revIdEnd != -1) and (revIdEnd < revision[0]):
+            print("first")
             continue
         
         # Return if current revision object is earlier than revIdStart
         if (revIdStart > revision[0]):
+            print("sect")
             break
         
         noEntries += 1
         
+        revDict = json.loads(revision[1])
         # Skip revisions marked with "rollback"
-        if "rollback" in revision.keys():
+        if "rollback" in revDict.keys():
+            print("third")
             continue
             
-        revDict = json.loads(revision[1])
         for field, val in revDict.items():
             # Keep only the newest revisions.
             if field in resTask:

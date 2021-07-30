@@ -28,13 +28,14 @@ const UpdateTask = (props) => {
   const [assigned_to, setAssigned_to] = useState('')
   const [assigned, setAssigned] = useState('')
   const [noDeadline, setNoDeadline] = useState(false)
+  const [timeTaken, setTimeTaken] = useState('')
   const [completionValue, setCompletionValue] = useState('')
 
   // Get task
   const [task, setTask] = useState('')
   const taskID = props.location.state.id;
   useEffect(() => {
-    axios.get(`http://localhost:5000/tasks/${store.getState().id}`).then((res) => {
+    axios.get(`http://localhost:5000/tasks/created/${store.getState().id}`).then((res) => {
       const taskList = JSON.parse(res.data);
       for (let i = 0; i < taskList.length; i++) {
         if (taskList[i].id === taskID) {
@@ -77,6 +78,10 @@ const UpdateTask = (props) => {
       updateTask.time_estimate = timeEst;
     }
 
+    if (timeTaken !== '') {
+      updateTask.time_taken = timeTaken;
+    }
+
     if (cState) {
       updateTask.current_state = cState;
     }
@@ -92,7 +97,7 @@ const UpdateTask = (props) => {
     if (noDeadline === true) {
       updateTask.deadline = 'None'
     }
-    
+    console.log(updateTask)
     setTask(updateTask)
     handleShow()
     setStartDAlert('')
@@ -163,11 +168,20 @@ const UpdateTask = (props) => {
     }
   }
 
+  function rollBack() {
+    history.push({
+      pathname: './rollback',
+      state: {task}
+    })
+  }
+
   return(
     <>
       <div className="m-5">
+      <button className="btn btn-success btn-lg" onClick={() => rollBack()}>Rollback to a previous version</button>
+      <br /><br />
       <div className="row">
-        <h1 className="col">Updating Task #{task.id}: {task.title}</h1>
+        <h1 className="col">Updating Task: {task.title}</h1>
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
       <h3>Please enter the fields you wish to update</h3>
@@ -225,6 +239,13 @@ const UpdateTask = (props) => {
           <div className="col-sm-4">
             <input className="form-control input-lg" type="number" min="0" onChange={(e) => setTimeEst(e.target.value)} ></input>
             &nbsp;&nbsp;Current Time Estimate - {task.time_estimate} hours
+          </div>
+        </div>
+        <div className="form-group row mb-5">
+          <label htmlFor="description" className="col-sm-3 col-form-label">Update Time Taken to Complete (Number of Hours)</label>
+          <div className="col-sm-4">
+            <input className="form-control input-lg" type="number" min="0" onChange={(e) => setTimeTaken(e.target.value)} ></input>
+            &nbsp;&nbsp;Current Time Taken to Complete - {task.time_taken} hours
           </div>
         </div>
         <br/>
