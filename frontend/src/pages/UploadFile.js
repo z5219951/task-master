@@ -4,8 +4,6 @@ import reqwest from 'reqwest';
 import 'antd/dist/antd.css';
 import './Photo.css'
 import React from 'react'
-import { Component } from 'react';
-import store from '../store';
 
 
 class UploadFile extends React.Component {

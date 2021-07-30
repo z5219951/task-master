@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Groups.css'
 import axios from 'axios'
-import { Button } from 'react-bootstrap';
 import store from '../store';
 import ViewProfileButton from '../components/ViewProfileButton'
 
