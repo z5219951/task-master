@@ -170,23 +170,20 @@ class Users(Resource):
                     JOIN    users   ON groups.user = users.id
                     JOIN    tasks   ON tasks.assigned_to = users.id
                     WHERE   groups.id = {id}
-                    AND     tasks.project != {project};
+                    AND     (tasks.project = null OR tasks.project = {project});
                     """
 
         c.execute(query)
 
-        task_obj = c.fetchone()
-        if (task_obj is None):
-            return []
-        
+        data = c.fetchone()
         task_list = []
 
-        while (task_obj is not None):
-            task_id = task_obj[0]
+        while (data is not None):
+            task_id = data[0]
 
             task_list.append(task_id)
 
-            task_obj = c.fetchone()
+            data = c.fetchone()
         
         return json.dumps(task_list)
 
