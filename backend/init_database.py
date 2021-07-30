@@ -143,6 +143,7 @@ if __name__ == '__main__':
                 userId          integer     not null,
                 timestamp       text        not null,
                 revision        text        not null,
+                rollback        text        not null,
                 foreign key     (taskId)    references tasks (id),
                 foreign key     (userId)    references users (id),
                 constraint      connection  primary key (taskId, revId)
