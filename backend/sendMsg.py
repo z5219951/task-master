@@ -7,8 +7,12 @@ import platform
 #Adapted from https://medium.com/swlh/working-with-dialogflow-using-python-client-cb2196d579a4
 
 def sendMessage(msg):
+    path = os.path.abspath(__file__).split('/')
+    path.pop()
+    path.append('applicationAuthServiceAcct.json')
+    path = "/".join(path)
     if(platform.system()=='Linux'):
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getcwd()+'/backend/applicationAuthServiceAcct.json'
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = path
     elif(platform.system()=='Windows'):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'applicationAuthServiceAcct.json'
 
