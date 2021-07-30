@@ -52,7 +52,7 @@ const ProjectCard = (props) => {
     <div className="card my-2 mx-5"> 
       <div className="card-header">
         <div className="row display-5">
-          <div className="col">Project #{project.id} - {project.name}</div>
+          <div className="col">{project.name}</div>
           <div className="col-md-2"><button className="btn btn-secondary btn-lg" onClick={() => handleUpdate()}>Update Project</button><br/></div>
         </div>
       </div>
@@ -65,7 +65,7 @@ const ProjectCard = (props) => {
           return <div key={index} className="card-text">Task #{task.id}: {task.title} - {task.current_state} &nbsp;
             <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
           </div>
-          }) : 'No Tasks'}
+          }) : <div>No Tasks Connected</div>}
           </p>
       </div>
     </div>

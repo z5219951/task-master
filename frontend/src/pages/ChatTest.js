@@ -11,6 +11,9 @@ import dayjs from 'dayjs'
 class ChatTest extends Component{
     constructor(props) {
         super(props);
+        if (store.getState() === undefined || store.getState().id === "") {
+            this.props.history.push('/home')
+        }
         let date = new Date().getMonth()+'-'+new Date().getDate();
         const bot = {
             id: -1,
@@ -29,6 +32,7 @@ class ChatTest extends Component{
             chatBot:bot,
             user:{},
             msgList:[startMessage],
+            userInform:{}
         }
     }
     componentDidMount = ()=>{
@@ -47,7 +51,8 @@ class ChatTest extends Component{
                         nickname: data.first_name+' '+data.last_name,
                         date: date,
                         desc: data.username,
-                    }
+                    },
+                    userInform:data
                 }))
             })
         } catch (error) {
@@ -55,29 +60,41 @@ class ChatTest extends Component{
         }
     }
     getRes = (res)=>{
-        // get response
-        console.log("Response:",res);
+        // send message to the backserver
+        const msgNew = {"message": res.message.content, "user":this.state.userInform};
+        // set user message to the interface
         this.setState((pre)=>({
             msgList:[...pre.msgList,res]
         }));
-        // send reply message, repeat the word for testing
-        let botReply = {};
-        for(const key in res) {
-            botReply[key] = res[key]
-        }
-        
+        // send reply message, 
+        let botReply = JSON.parse(JSON.stringify(res));
         botReply._id=botReply._id.slice(0,-1);
         botReply.user = this.state.chatBot;
         botReply.date = dayjs().unix();
-        this.setState((pre)=>({
-            msgList:[...pre.msgList,botReply]
-        }));
+        try {
+            axios.defaults.crossDomain=true;
+            axios.post('http://localhost:5000/chatbot',msgNew).then((res)=>{
+                console.log(res);
+                botReply.message.content = res.data.fulfillment_text;
+                this.setState((pre)=>({
+                    msgList:[...pre.msgList,botReply]
+                }));
+            })
+        } catch (error) {
+            console.log(error);
+            botReply.message.content = "Meet some errors. Please try it again";
+            this.setState((pre)=>({
+                msgList:[...pre.msgList,botReply]
+            }));
+        }
         
     }
     render (){
         return(
             <Fragment>
+                <div className="container">
                 <Chat contact={this.state.chatBot} me={this.state.user} onSend={this.getRes} chatList={this.state.msgList} style={{width: 600,height: 500,}}/>
+                </div>
             </Fragment>
         )
     }

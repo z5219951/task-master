@@ -18,3 +18,6 @@ Developed backend routes and implementation for task update, groups, and labels.
 
 Week 7:
 Implemented backend for file uploads. Bug fixed my implementation with feedback from Charles and Wayne in the frontend.
+
+Week 8:
+Implemented backend for projects, bugfixed and optimised previous functionality to provide easier access and useability.

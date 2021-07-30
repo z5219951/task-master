@@ -139,22 +139,40 @@ class Users(Resource):
         return json.dumps(group_list)
 
 
+task_payload = api.model('task group payload', {
+    "project": fields.Integer
+})
 @api.route('/<int:id>/tasks', methods=['GET'])
 class Users(Resource):
     @api.response(200, 'Tasks successfully received')
     @api.response(400, 'Bad request')
     @api.doc(description="Get all tasks for all users of a group")
+    @api.expect(task_payload)
     def get(self, id):
+        project = request.args.get('project')
+            
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
-        query = f"""
-                SELECT  tasks.id
-                FROM    groups
-                JOIN    users   ON groups.user = users.id
-                JOIN    tasks   ON tasks.assigned_to = users.id
-                WHERE   groups.id = {id};
-                """
+        query = ''
+        if project is None:
+            query = f"""
+                    SELECT  tasks.id
+                    FROM    groups
+                    JOIN    users   ON groups.user = users.id
+                    JOIN    tasks   ON tasks.assigned_to = users.id
+                    WHERE   groups.id = {id};
+                    """
+        else:
+            query = f"""
+                    SELECT  tasks.id
+                    FROM    groups
+                    JOIN    users   ON groups.user = users.id
+                    JOIN    tasks   ON tasks.assigned_to = users.id
+                    WHERE   groups.id = {id}
+                    AND     tasks.project != {project};
+                    """
+
         c.execute(query)
 
         task_obj = c.fetchone()

@@ -271,7 +271,8 @@ class Users(Resource):
                 """
         try:
             c.execute(query)
-        except:
+        except Exception as e:
+            print(e)
             print(query)
             c.close()
             conn.close()
@@ -426,7 +427,46 @@ class Users(Resource):
 
         return json.dumps(url_list)
 
-@api.route('/revisons/<int:taskId>', methods=['GET'])
+taskByDatePayload = api.model('taskByDate', {
+    "date": fields.String
+})
+
+#get task for a single date.
+
+## I THINK THIS IS REDUNDANT
+@api.route('/getTaskByDate/<int:owner>', methods=['GET'])
+class Tasks(Resource):
+    @api.response(200, 'Successfully retrieved task info')
+    @api.response(404, 'Not Found')
+    @api.doc(description="Gets all tasks assigned to a user on a specific day")
+    @api.expect(taskByDatePayload)
+    
+    
+    def get(self,owner):
+        # parser = reqparse.RequestParser()
+        # parser.add_argument('date', required=True)
+        # args = parser.parse_args()
+        date = request.args.get('date')
+
+
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        query = f"""
+                SELECT  title
+                FROM    tasks
+                WHERE   owner = '{owner}'
+                AND     deadline = '{date}'
+                AND     current_state IS NOT "Completed" 
+                """    
+        c.execute(query)
+        tasks = c.fetchall()
+        conn.commit()
+        c.close()
+        conn.close()
+
+        print(tasks)
+        return(tasks)
+@api.route('/revisions/<int:taskId>', methods=['GET'])
 class Tasks(Resource):
     @api.response(200, 'Sucessfully returned list of revisions')
     @api.response(400, 'Unexpected error')
@@ -444,17 +484,18 @@ class Tasks(Resource):
             """
 
         c.execute(query)
-        revisons = c.fetchall()
+        revisions = c.fetchall()
         conn.close()
         
         res = []
-        for r in revisons:
+        for r in revisions:
             userDict = getUserByID(r[1])
             revDict = {
-                "revisonId": r[0],
+                "revisionId": r[0],
                 "userName": userDict["first_name"] + " " + userDict["last_name"],
+                "userEmail": userDict["email"],
                 "timestamp": r[2],
-                "revison": json.loads(r[3])
+                "revision": json.loads(r[3])
                 }
             res.append(revDict)
         
@@ -470,7 +511,7 @@ class Tasks(Resource):
     @api.response(200, 'Sucessfully modified task back to the requested old state')
     @api.response(400, 'Database error')
     @api.expect(rollback_payload)
-    @api.doc(description="Given a taskId and revisonID, will update task to have \
+    @api.doc(description="Given a taskId and revisionID, will update task to have \
                           the old state. Non-reversible process. Will return \
                           True if sucessfully executed, False otherwise")
     def post(self):

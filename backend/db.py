@@ -49,3 +49,24 @@ def getUserByID(id):
     conn.close()
 
     return data
+
+
+def getUsersByFirstLastName(firstName , lastName):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    #Should we be grabbing the password from here?
+    firstName = firstName.lower()
+    lastName = lastName.lower()
+    query = f"""
+            SELECT  id
+            FROM    users
+            WHERE   lower(first_name) = '{firstName}'
+            AND     lower(last_name) Like '%{lastName}%';
+            """
+
+    c.execute(query)
+    data = c.fetchall()
+    c.close()
+    conn.close()
+
+    return data

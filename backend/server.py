@@ -1,4 +1,5 @@
 # standard library imports
+from chatbot import *
 import json
 import random
 import sys
@@ -17,12 +18,12 @@ import sqlite3
 # from config import config
 from db import *
 import friends
+from sendMsg import *
 import groups
 import tasks
 import user
 import labels
 import projects
-
 app = Flask(__name__)
 api = Api(app,
           default="ClickDown",  # Default namespace
@@ -322,10 +323,6 @@ class Users(Resource):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
         
-        # HOW TO IMPLEMENT LOGOUT???
-        # store JWT in db maybe? ->
-        # //Force JWT to expire from frontend
-        
         c.close()
         conn.close()
 
@@ -339,6 +336,47 @@ class Uploads(Resource):
     def get(self,path):
         print(f'path obtained is: {path}')
         return send_from_directory(PurePath(app.config['UPLOADS']), path, as_attachment=False)
+
+@api.route('/webhook', methods=['POST'])
+#largely deprecated, now exists to support current pipeline.
+class Webhook(Resource):
+    @api.doc(description="Receives responses via webhook - also supplies dialogflow with fulfilment messages")
+    def post(self):
+        response = {'fulfillment_text': "This is junk text!"}
+        return response,201
+
+@api.route('/chatbot', methods=['POST'])
+class Chatbot(Resource):
+    @api.doc(description="Handles front end passing messages to /chatbot to be sent to dialogflow")
+    def post(self):
+        req = json.loads(request.data)
+        #sends the req message to dialogflow
+        dfResponse = sendMessage(req["message"])
+        #dialogflow response
+        email = req["user"]["email"]
+        initMsg = req["message"]
+        #print(response)
+        intent = dfResponse.query_result.intent.display_name
+        reply = parseIntent(intent, dfResponse, email, initMsg)
+        # conn = sqlite3.connect('clickdown.db')
+        # c = conn.cursor()
+
+        # query = f"""
+        #         INSERT INTO messages (usr_msg_time, email, chat_response, user_msg)
+        #         VALUES ('datetime('now')', '{email}', '{reply[0]}', '{initMsg}');
+        #         """
+        # c.execute(query)
+
+        # conn.commit()
+        # c.close()
+        # conn.close()
+        print(reply)
+        return reply
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

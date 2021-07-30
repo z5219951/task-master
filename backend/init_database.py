@@ -16,11 +16,24 @@ if __name__ == '__main__':
     c.execute(query)
     query = 'drop table if exists labels'
     c.execute(query)
+    query = 'drop table if exists messages'
+    c.execute(query)
     query = 'drop table if exists revisions'
     c.execute(query)
     query = 'drop table if exists projects'
     c.execute(query)
     
+
+    # create table messages
+    query = """
+            CREATE TABLE IF NOT EXISTS messages (
+                usr_msg_time    datetime    ,
+                email           text        unique not null,
+                chat_response   text        not null,
+                user_msg        text        not null
+            );
+            """
+    c.execute(query)
     # create table users
     query = """
             CREATE TABLE IF NOT EXISTS users (

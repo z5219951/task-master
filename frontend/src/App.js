@@ -23,16 +23,17 @@ import UpdateTask from './pages/UpdateTask'
 import Groups from './pages/Groups';
 import CreateGroup from './pages/CreateGroup';
 import ViewProfile from './pages/ViewProfile'
-import TestPage from './pages/TestPage';
 import CalendarCom from './pages/CalendarCom';
 import TaskSearchResult from './pages/TaskSearchResult'
 import Connections from './pages/Connections'
 import CreateProject from './pages/CreateProject'
 import ViewTask from './pages/ViewTask'
+import Chatbot from './pages/Chatbot';
 import ViewGroupProject from './pages/ViewGroupProject'
 import UpdateProject from './pages/UpdateProject'
 import ViewMyProjects from './pages/ViewMyProjects'
 import ChatTest from './pages/ChatTest';
+import Rollback from './pages/Rollback';
 
 function App() {
 
@@ -57,16 +58,17 @@ function App() {
         <Route path='/groups' exact component={Groups} />
         <Route path='/creategroup' exact component={CreateGroup} />
         <Route path='/viewprofile' exact component={ViewProfile} />
-        <Route path='/testpage' exact component={TestPage} />
         <Route path='/calendar' exact component={CalendarCom} />
         <Route path='/taskSearchResult' exact component={TaskSearchResult} />
         <Route path='/connections' exact component={Connections} />
         <Route path='/createproject' exact component={CreateProject} />
         <Route path='/viewGroupProject' exact component={ViewGroupProject} />
         <Route path='/viewTask' exact component={ViewTask} />
+        <Route path='/chatbot' exact component={Chatbot} />
         <Route path='/updateProject' exact component={UpdateProject} />
         <Route path='/viewMyProjects' exact component={ViewMyProjects} />
         <Route path='/chatTest' exact component={ChatTest} />
+        <Route path='/rollback' exact component={Rollback} />
         <Route path='/' component={Home} />
       </Switch>
     </>

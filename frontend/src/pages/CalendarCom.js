@@ -30,7 +30,7 @@ class CalendarCom extends Component{
       end.setHours(0);
       let start = new Date(tasks[i].creation_date);
       start.setHours(0);
-      value._d .setHours(0);
+      value._d.setHours(0);
       if(start <= value._d && end >= value._d ) {
         listData.push({type:'warning',content:tasks[i].title})
       }
@@ -77,7 +77,7 @@ class CalendarCom extends Component{
   // get Tasks
   componentDidMount(){
     // get task detail
-    axios.get(`http://localhost:5000/tasks/created/${store.getState().id}`).then((res) => {
+    axios.get(`http://localhost:5000/tasks/assigned/${store.getState().id}`).then((res) => {
       let taskList = JSON.parse(res.data);
       if(!taskList) {
         taskList = [];
@@ -125,7 +125,7 @@ class CalendarCom extends Component{
       end.setHours(0);
       let start = new Date(tasks[i].creation_date);
       start.setHours(0);
-      value._d .setHours(0);
+      value._d.setHours(0);
       if(start <= value._d && end >= value._d ) {
         listData.push(tasks[i]);
       }

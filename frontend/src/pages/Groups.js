@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Groups.css'
 import axios from 'axios'
-import { Button } from 'react-bootstrap';
 import store from '../store';
 import ViewProfileButton from '../components/ViewProfileButton'
 
@@ -57,7 +56,7 @@ class Groups extends Component{
             this.state.list.map((item,index)=>
             <div className="card my-2 mx-5" key={index}> 
                 <div className="card-header" padding="100px">
-                    <h2>Group #{item.groupID}: {item.groupName}</h2>
+                    <h2>{item.groupName}</h2>
                 </div>
                 <div className="card-body text-muted" padding="100px">
                     {this.getMem(item.members)}
