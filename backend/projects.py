@@ -1,3 +1,4 @@
+import ast
 import json
 
 from flask import Flask, request, jsonify, Blueprint
@@ -94,7 +95,7 @@ class Users(Resource):
         parser.add_argument('tasks', required=True)
         args = parser.parse_args()
 
-        task_list = request.get_json()['tasks']
+        task_list = ast.literal_eval(request.get_json()['tasks'])
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
