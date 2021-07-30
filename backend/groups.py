@@ -154,14 +154,21 @@ class Users(Resource):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
+        query = f"""
+                SELECT  *
+                FROM    tasks;
+                """
+        c.execute(query)
+        print(c.fetchall())
+
         if project is None:
             query = f"""
                     SELECT  tasks.id
                     FROM    groups
                     JOIN    users   ON groups.user = users.id
                     JOIN    tasks   ON tasks.assigned_to = users.id
-                    WHERE   groups.id = {id}
-                    AND     tasks.project is null;
+                    WHERE   (groups.id = {id})
+                    AND     (tasks.project is null);
                     """
         else:
             query = f"""
