@@ -351,14 +351,12 @@ class Chatbot(Resource):
     @api.doc(description="Handles front end passing messages to /chatbot to be sent to dialogflow")
     def post(self):
         req = json.loads(request.data)
-        #sends the req message to dialogflow
         dfResponse = sendMessage(req["message"])
-        #dialogflow response
         email = req["user"]["email"]
         initMsg = req["message"]
-        #print(response)
         intent = dfResponse.query_result.intent.display_name
         reply = parseIntent(intent, dfResponse, email, initMsg)
+        #Fix datetime push in sql query by python preproc if time permits.
         # conn = sqlite3.connect('clickdown.db')
         # c = conn.cursor()
 
@@ -420,6 +418,52 @@ class Users(Resource):
                         SET     reminded = 1
                         WHERE   id = {id};
                         """
+
+#calculates and sends back an updated estimate given a task
+#Account for who's putting in the time estimate vs who the task is assigned to?
+#think about whether estimates are more reflective of a manager's ability to discern task effort or a worker's
+#ability to get stuff done?
+#Should be more indicative of a manager's ability to guestimate time reqs...
+update_estimate = api.model('update estimate', {
+    "owner": fields.String,
+    "time_estimate": fields.Integer,
+    "assigned_to": fields.String
+})
+@api.route('/estimate', methods=['GET'])
+class Chatbot(Resource):
+    @api.doc(description="Calculates and sends back an updated estimate")
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('owner', required=True)
+        parser.add_argument('time_estimate', required=True)
+        parser.add_argument('assigned_to')
+        args = parser.parse_args()
+        assigned = args.assigned_to
+        owner = int(args.owner)
+        estimate = args.time_estimate
+        if(assigned == ''):
+            assigned = owner
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # get time estimates for this owner
+        query = f"""
+                SELECT  time_estimate, time_taken
+                FROM tasks
+                WHERE owner = {owner}
+                AND current_state = 'Completed'
+                """
+        c.execute(query)
+        compList = c.fetchall()
+
+        conn.commit()
+        c.close()
+        conn.close()    
+        #Get tasks by status loop through them and calculate an estimate factor
+        print(compList)
+        return(compList)
+        #return updatedEstimate
+
 
 
 if __name__ == '__main__':
