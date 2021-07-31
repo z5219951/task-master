@@ -354,10 +354,10 @@ class Tasks(Resource):
         for task_info in full_task_list:
             # Seach based on id, name, label, desc, deadline
             if ((task_info.get("id") == needle) or \
-                (needle in task_info.get("deadline")) or \
-                (needle in task_info.get("title").lower()) or \
+                (needle == task_info.get("deadline")) or \
+                (needle == task_info.get("title").lower()) or \
                 (needle in task_info.get("labels").lower()) or \
-                (needle in task_info.get("description").lower())):
+                (needle == task_info.get("description").lower())):
                 res_list.append(task_info)
                 
         return json.dumps(res_list), 200
