@@ -21,8 +21,10 @@ const Profile = () => {
   const [companyName, setCompanyName] = useState('')
   const [removeNumber, setRemoveNumber] = useState(false)
   const [removeCompany, setRemoveCompany] = useState(false)
+  const [removePicture, setRemovePicture] = useState(false)
   const [passwordAlert, setPasswordAlert] = useState('')
   const [show, setShow] = useState(false);
+  const [newData, setNewData] = useState('')
 
   function backClick () {
     history.push('./profile')
@@ -35,12 +37,16 @@ const Profile = () => {
   useEffect(() => {
     axios.defaults.crossDomain=true;
     axios.get('http://localhost:5000/user/'+currentUser).then((res) => {
-    setUser(JSON.parse(res.data))
-    }).then(() => {
-    })
+      setUser(JSON.parse(res.data))
+      }).then(() => {
+      })
   },[])
 
-  function handleSubmit () {
+  useEffect(() => {
+
+    if (newData === '') {
+      return 
+    }
     if (currentPassword !== '' && newPassword !== '' && confirmPassword !== '') {
       if (currentPassword !== user.password) {
         setPasswordAlert('Incorrect Current Password')
@@ -92,11 +98,26 @@ const Profile = () => {
     if (removeCompany === false && companyName !== '') {
       updateDet.company = companyName; // Change selected field
     }
-    
+
+    if (removePicture === true) {
+      updateDet.image_path = null
+    }
+
+    if(removePicture === false) {
+      updateDet.image_path = newData.image_path 
+    }
+
+    console.log(updateDet)
     setUser(updateDet); //Set user
     handleShow()
 
-  }
+  }, [newData]) 
+
+  function getLatestDet() {
+    axios.get('http://localhost:5000/user/'+currentUser).then((res) => {
+      setNewData(JSON.parse(res.data))
+  })
+}
 
   function handleRemoveNumber () {
     if (removeNumber === false) {
@@ -113,6 +134,14 @@ const Profile = () => {
       setRemoveCompany(false)
     }
   }
+
+  function handleRemovePic () {
+    if (removePicture === false) {
+      setRemovePicture(true) 
+    } else {
+      setRemovePicture(false)
+    }
+ }  
 
   useEffect(() => {
     if (Object.keys(user).length !== 0) {
@@ -132,9 +161,11 @@ const Profile = () => {
       <br/>
       <div className="form">
       <div className="form-group row mb-5">
-          <label htmlFor="password" className="col-sm-3 col-form-label">Update Photo</label>
+          <label htmlFor="password" className="col-sm-3 col-form-label">Update Profile Picture</label>
           <div className="col-sm-5">
             <Photo imageUrl={user.image_path}></Photo>
+            <input type="checkbox" id="noPic" name="noPic" checked={removePicture} onChange={(e) => handleRemovePic()}></input>&nbsp;
+            <label htmlFor="noPic"> Remove my Profile Picture</label><br></br>
           </div>
         </div>
       <div className="form-group row mb-5">
@@ -182,7 +213,7 @@ const Profile = () => {
             <label htmlFor="noCompany"> Remove my Company</label><br></br>
           </div>
         </div>
-        <button type="button" className="btn btn-primary" onClick={(e) => handleSubmit()}>Submit</button>
+        <button type="button" className="btn btn-primary" onClick={(e) => getLatestDet()}>Submit</button>
       </div>
       <Modal animation={false} show={show} onHide={handleClose}>
         <Modal.Header>

@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import store from '../store'
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import pic from '../blank.jpg'
 
 const Profile = () => {
   const history = useHistory();
@@ -42,7 +43,7 @@ const Profile = () => {
       </div>
       <br/>
       <div>
-        {user.image_path !== 'None' ? <img src={user.image_path} alt="profile" style={{width:'150px', height:'150px'}} className="rounded mx-auto d-block" /> : ''} 
+        {user.image_path !== 'None' ? <img src={user.image_path} alt="profile" style={{width:'150px', height:'150px'}} className="rounded mx-auto d-block" /> : <img src={pic} alt="profile" style={{width:'150px', height:'150px'}} className="rounded mx-auto d-block" />} 
         <br />
         <table className="table table-striped table-secondary table-hover table-bordered border-dark" >    
           <tbody>
