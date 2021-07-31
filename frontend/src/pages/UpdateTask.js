@@ -97,6 +97,8 @@ const UpdateTask = (props) => {
     if (noDeadline === true) {
       updateTask.deadline = 'None'
     }
+
+    updateTask.userId = store.getState().id
     console.log(updateTask)
     setTask(updateTask)
     handleShow()
