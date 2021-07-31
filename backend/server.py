@@ -403,15 +403,15 @@ class Users(Resource):
             title = task_list[id][1]
             email = task_list[id][2]
             deadline = datetime.strptime(task_list[id][0], '%Y-%m-%d').date()
-            today = date.today().strftime('%Y-%m-%d')
+            today = date.today()
             delta = today - deadline
 
-            if delta < 3:
+            if delta < timedelta(days=3):
                 with app.app_context():
                     msg = Message(subject="You have a task deadline soon!",
                                 sender='clickdown3900@gmail.com',
                                 recipients=[f"{email}"], 
-                                body=f"Task {title} is due soon. If it is already completed, please mark it 'Complete' on ClickDown.")
+                                body=f"Your task '{title}' is due soon. If it is already completed, please mark it 'Complete' on ClickDown.")
                     mail.send(msg)
                 query = f"""
                         UPDATE  tasks
