@@ -27,3 +27,12 @@ Week 7
 Hooked up the front and backend to the parts implemented in week 6. Reworked the taskboard and task display, 
 allowing tasks to be filtered by state of completion and users to view created and assigned tasks separately. 
 Added a list of assigned tasks to each user's profile.
+
+Week 8
+Implemented 'projects' on the frontend to encapsulate tasks. Includes functionalities to create, update and view projects.
+Also finalised work on the frontend for features such as viewing uploaded files and profile pictures.
+
+Week 9
+Continued work on 'projects', coordinating with Justin to link the backend to the frontend. Implemented version rollback for tasks
+in the frontend with Gavin who worked on the backend for the feature. Added a few UX features such as the display of a user's profile
+photo on the navigation bar and the ability for a user to remove their profile picture.  
