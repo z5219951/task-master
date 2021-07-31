@@ -307,6 +307,7 @@ logout_payload = api.model('logout info', {
     "id": fields.Integer
 })
 
+#Do we still need a logout route?
 @api.route('/logout', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully logged out')
@@ -317,15 +318,6 @@ class Users(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('id', required=True)
         args = parser.parse_args()
-        # print(args)
-
-        id = args.id
-
-        conn = sqlite3.connect('clickdown.db')
-        c = conn.cursor()
-        
-        c.close()
-        conn.close()
 
         return {'value': True}
 
@@ -356,20 +348,21 @@ class Chatbot(Resource):
         initMsg = req["message"]
         intent = dfResponse.query_result.intent.display_name
         reply = parseIntent(intent, dfResponse, email, initMsg)
-        #Fix datetime push in sql query by python preproc if time permits.
-        # conn = sqlite3.connect('clickdown.db')
-        # c = conn.cursor()
+        cRes = reply['fulfillment_text']
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        timestamp = datetime.now()
+        query = f"""
+                INSERT INTO messages (usr_msg_time, email, chat_response, user_msg)
+                VALUES ('{timestamp}', '{email}', '{cRes}', '{initMsg}');
+                """
+        c.execute(query)
+        print(query)
 
-        # query = f"""
-        #         INSERT INTO messages (usr_msg_time, email, chat_response, user_msg)
-        #         VALUES ('datetime('now')', '{email}', '{reply[0]}', '{initMsg}');
-        #         """
-        # c.execute(query)
+        conn.commit()
+        c.close()
+        conn.close()
 
-        # conn.commit()
-        # c.close()
-        # conn.close()
-        print(reply)
         return reply
 
 @api.route('/reminder', methods=['GET'])
@@ -418,12 +411,21 @@ class Users(Resource):
                         SET     reminded = 1
                         WHERE   id = {id};
                         """
+        c.close()
+        conn.close()
 
 #calculates and sends back an updated estimate given a task
+
 #Account for who's putting in the time estimate vs who the task is assigned to?
 #think about whether estimates are more reflective of a manager's ability to discern task effort or a worker's
 #ability to get stuff done?
 #Should be more indicative of a manager's ability to guestimate time reqs...
+#perceived difficulty
+#owner vs updater
+
+
+#Change owner to assigned to
+#Otherwise this works
 update_estimate = api.model('update estimate', {
     "owner": fields.String,
     "time_estimate": fields.Integer,
@@ -440,7 +442,7 @@ class Chatbot(Resource):
         args = parser.parse_args()
         assigned = args.assigned_to
         owner = int(args.owner)
-        estimate = args.time_estimate
+        estimate = int(args.time_estimate)
         if(assigned == ''):
             assigned = owner
         conn = sqlite3.connect('clickdown.db')
@@ -460,10 +462,78 @@ class Chatbot(Resource):
         c.close()
         conn.close()    
         #Get tasks by status loop through them and calculate an estimate factor
-        print(compList)
-        return(compList)
-        #return updatedEstimate
+        error = 0
+        for i in compList:
+            est = i[0]
+            taken = i[1]
+            error += taken/est
+            print("error is ", error)
+        adjustmentFactor = error / len(i)
+        print("adjustmentFactor is ", adjustmentFactor)
+        adjEstimate = estimate * adjustmentFactor
+        print("adjustedEstimate is ", adjEstimate)
+        return adjEstimate
 
+#Untested currently??
+#smidge effed, gets syntax error
+# @api.route('/chatHistory/<string:email>', methods=['GET'])
+# class ChatHistory(Resource):
+#     @api.response(200, 'Successfully retrieved history')
+#     @api.response(400, 'Bad Request')
+#     @api.doc(description="Checks the database for a user's chat history")
+#     def get(self,email):
+#         conn = sqlite3.connect('clickdown.db')
+#         c = conn.cursor()
+
+#         query = f"""
+#                 SELECT  user_msg, chat_response
+#                 FROM    messages
+#                 WHERE   email = {email}
+#                 ORDER BY usr_msg_time
+#                 """
+        
+#         c.execute(query)
+#         msgList = c.fetchall()
+#         c.close()
+#         conn.close()
+#         return msgList
+
+@api.route('/busy/<string:email>', methods=['GET'])
+class Busyness(Resource):
+    @api.response(200, 'Successfully retrieved user busyness')
+    @api.response(400, 'Bad Request')
+    @api.doc(description="Calculates and returns how busy a user is for the next 7 days")
+    def get(self,email):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        owner = getOwner(email)
+        #"2021-07-31" - deadline example
+
+        query = f"""
+                SELECT  time_estimate, deadline
+                FROM    tasks
+                WHERE   owner = {owner}
+                AND current_state != 'Completed'
+                """
+        
+        c.execute(query)
+        timeList = c.fetchall()
+        c.close()
+        conn.close()
+        today = datetime.now()
+        busyTotal = 0
+        for i in timeList:
+            deadline = i[1]
+            deadline = datetime.strptime(deadline, '%Y-%m-%d')
+            #fenceposting gets real weird here...
+            if(deadline >= today - timedelta(1) and deadline <= today + timedelta(7)):
+                busyTotal += i[0]
+
+        return busyTotal
+
+
+
+        
 
 
 if __name__ == '__main__':
