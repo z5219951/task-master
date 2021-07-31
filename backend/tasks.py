@@ -10,6 +10,7 @@ from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
 import sqlite3
 
 from friends import friendListGet, getUserByID
+from labels import rawStrToList
 
 bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 api = Namespace("tasks", "Operations for tasks")
@@ -60,8 +61,8 @@ class Users(Resource):
                         '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}',
                         '{args.assigned_to}', '{args.time_taken}', 0);
                 """
-        c.execute(query)
         print(query)
+        c.execute(query)
 
         query = f"""
                 SELECT  id
@@ -79,7 +80,7 @@ class Users(Resource):
         conn.close()
         
         # Create an entry in the task edit history
-        revisionsInitialise(id)
+        revisionsAppend(id, args.owner)
 
         return {'id': id},200
 
@@ -220,9 +221,9 @@ class Users(Resource):
 
 
 # update task info
-update_payload = api.model('update info', {
+update_payload = api.model('update task info', {
     "id": fields.String,
-    "owner": fields.String,
+    "userId": fields.String,
     "title": fields.String,
     "description": fields.String,
     "creation_date": fields.String,
@@ -243,7 +244,7 @@ class Users(Resource):
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', required=True)
-        parser.add_argument('owner')
+        parser.add_argument('userId', required=True)
         parser.add_argument('title')
         parser.add_argument('description')
         parser.add_argument('creation_date')
@@ -261,8 +262,7 @@ class Users(Resource):
 
         query = f"""
                 UPDATE  tasks
-                SET     owner = '{args.owner}',
-                        title = '{args.title}',
+                SET     title = '{args.title}',
                         description = '{args.description}',
                         creation_date = '{args.creation_date}',
                         deadline = '{args.deadline}',
@@ -277,7 +277,6 @@ class Users(Resource):
             c.execute(query)
         except Exception as e:
             print(e)
-            print(query)
             c.close()
             conn.close()
             return {'value': False}
@@ -286,8 +285,7 @@ class Users(Resource):
         c.close()
         conn.close()
         
-        # TODO Here, assumption that the owner executed the task update
-        revisionsAppend(args.id, args.owner)
+        revisionsAppend(args.id, args.userId)
 
         return {'value': True}
 
@@ -331,7 +329,6 @@ class Tasks(Resource):
         # Sort tasks by earliest deadlines
         query = query + (f"ORDER BY    deadline ASC;\n")
         
-        print(query)
         c.execute(query)
         data_list = c.fetchall()
         
@@ -354,16 +351,19 @@ class Tasks(Resource):
             full_task_list.append(task_info)
         
         res_list = []
-        print(full_task_list)
         for task_info in full_task_list:
             # Seach based on id, name, label, desc, deadline
+            print(task_info.get("labels"))
             if ((task_info.get("id") == needle) or \
-                (needle in task_info.get("deadline")) or \
-                (needle in task_info.get("title").lower()) or \
-                (needle in task_info.get("labels").lower()) or \
-                (needle in task_info.get("description").lower())):
+                (needle == task_info.get("deadline")) or \
+                (needle == task_info.get("title").lower()) or \
+                (needle == task_info.get("description").lower())):
                 res_list.append(task_info)
-                
+
+            labelList = rawStrToList(task_info.get("labels").lower())
+            if needle in labelList:
+                res_list.append(task_info)
+
         return json.dumps(res_list), 200
 
 
@@ -470,36 +470,32 @@ class Tasks(Resource):
 
         print(tasks)
         return(tasks)
+        
 @api.route('/revisions/<int:taskId>', methods=['GET'])
 class Tasks(Resource):
     @api.response(200, 'Sucessfully returned list of revisions')
     @api.response(400, 'Unexpected error')
     @api.doc(description="Given a taskId, will return a json list of the \
                           revision history. This history includes: involved user, \
-                          timestamp and revision made.")
+                          timestamp, revision dictionary, and rollbackTime \
+                          (The orignal time of the rollbacked revision, 0 otherwise).")
     def get(self, taskId):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
-        query = f"""
-            SELECT  revId, userId, timestamp, revision
-            FROM    revisions
-            WHERE   taskId = '{taskId}'
-            ORDER BY timestamp
-            """
-
-        c.execute(query)
-        revisions = c.fetchall()
-        conn.close()
         
+        revList = getRevisions(taskId)
         res = []
-        for r in revisions:
-            userDict = getUserByID(r[1])
+        for r in revList:
+            userDict = getUserByID(r["userId"])
+            diff, rollbackTime = revisionDiff(int(r["taskId"]), int(r["revId"]))
+            
             revDict = {
-                "revisionId": r[0],
-                "userName": userDict["first_name"] + " " + userDict["last_name"],
-                "userEmail": userDict["email"],
-                "timestamp": r[2],
-                "revision": json.loads(r[3])
+                "revisionId":  r["revId"],
+                "userName":    userDict["first_name"] + " " + userDict["last_name"],
+                "userEmail":   userDict["email"],
+                "timestamp":   r["timestamp"],
+                "revision":    diff,
+                "rollbackTime":rollbackTime
                 }
             res.append(revDict)
         
@@ -508,6 +504,7 @@ class Tasks(Resource):
         
 rollback_payload = api.model('rollback', {
     "taskId":       fields.Integer,
+    "userId":       fields.Integer,
     "revisionId":   fields.Integer
 })
 @api.route('/rollback', methods=['POST'])
@@ -515,51 +512,48 @@ class Tasks(Resource):
     @api.response(200, 'Sucessfully modified task back to the requested old state')
     @api.response(400, 'Database error')
     @api.expect(rollback_payload)
-    @api.doc(description="Given a taskId and revisionID, will update task to have \
-                          the old state. Non-reversible process. Will return \
-                          True if sucessfully executed, False otherwise")
+    @api.doc(description="Given a taskId, userId, and revisonID, will update \
+                          task to prior state. Returns True if sucessful, \
+                          False otherwise")
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('taskId', required=True)
+        parser.add_argument('userId', required=True)
         parser.add_argument('revisionId', required=True)
 
         args = parser.parse_args()
         
         taskId = int(args.taskId)
+        userId = int(args.userId)
         revId = int(args.revisionId)
         
-        taskState, currRevId = assembleTask(taskId, revId)
-
+        # Check valid taskId
+        revList = getRevisions(taskId)
+        if len(revList) == 0:
+            return {"value": False}, 200
+        
+        # Check validity of revID so that rollback is to an existing older state
+        if (revId < 0) or (revId >= revList[-1]["revId"]):
+            return {"value": False}, 200
+                            
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
         
-        for field, newVal in taskState.items():
+        rollbackState = revList[revId]
+        for field, newVal in rollbackState["revision"].items():
             query = f"""
                     UPDATE  tasks
                     SET     {field} = '{newVal}'
                     WHERE   id = {taskId};
                     """
-            try:
-                c.execute(query)
-                conn.commit()
-            except:
-                print("Error at rollback update")
-                return {"value": False}, 400
-        
-        # Delete revision entries with revId greater than the argument supplied
-        query = f"""
-                DELETE
-                FROM    revisions
-                WHERE   taskId = '{taskId}'
-                AND     revId > '{revId}';
-                """
-        try:
             c.execute(query)
             conn.commit()
-        except:
-            print("Error at rollback delete")
+        
+        # Insert revision to the end of the "revisions" table
+        index = revList[-1]["revId"] + 1
+        
+        if not revisionsInsert(taskId, index, userId, json.dumps(rollbackState["revision"]), revId):
             return {"value": False}, 400
-
         
         return {"value": True}, 200
 
@@ -598,101 +592,105 @@ def getTaskbyId(taskId):
 
 # Add entry into the "revisions" table for a new task. Field are initialised
 # as the values intially passed in to create the task
-def revisionsInitialise(taskId):
+def revisionsAppend(taskId, userId):
     revision = getTaskbyId(taskId)
-    owner = revision["owner"]
     
-    # Remove non-revisiable fields
+    # Remove non-revisible fields
     del revision["owner"]
     del revision["creation_date"]
     del revision["labels"]
     del revision["file_paths"]
+    
+    revList = getRevisions(taskId)
 
-    conn = sqlite3.connect('clickdown.db')
-    c = conn.cursor()
+    if (len(revList) == 0):
+        index = 0
     
-    query = f"""
-            INSERT INTO revisions (taskId, revId, userId, timestamp, revision)
-            VALUES ('{taskId}', '{0}', '{owner}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{json.dumps(revision)}');
-            """
-    try:
-        c.execute(query)
-        conn.commit()
-        conn.close()
+    else:
+         # Validate that there are changes
+        if (revList[-1]["revision"] == revision):
+            return False
+        else:
+            index = revList[-1]["revId"] + 1
     
-    except:
-        conn.close()
-        return False
-        
-    return True
+    sucess = revisionsInsert(taskId, index, userId, json.dumps(revision), -1)
+    
+    return sucess
 
-# On updating an exisiting task, the "revisions" table will keep track of 
-# changes made to the task and assign an unique revId
-def revisionsAppend(taskId, userId):
-    currTaskState = getTaskbyId(taskId)
-    oldTaskState, maxRevId  = assembleTask(taskId, -1)
-    
-    revision = {}
-    # Create a dictionary of the changes between the task in the "tasks" table and 
-    # the task within the "revisions" table
-    for field, oldVal in oldTaskState.items():
-        if (currTaskState[field] != oldVal):
-            revision[field] = currTaskState[field]
-    
-    # Check if revisions is empty
-    if bool(revision) is False:
-        return True
-    
-    conn = sqlite3.connect('clickdown.db')
-    c = conn.cursor()
-    
-    query = f"""
-            INSERT INTO revisions (taskId, revId, userId, timestamp, revision)
-            VALUES ('{taskId}', '{maxRevId + 1}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{json.dumps(revision)}');
-            """
-    try:     
-        print(query)
-        c.execute(query)
-        conn.commit()
-        conn.close()
-    except:
-        conn.close()
+def revisionsInsert(taskId, revId, userId, revision, rollback):
+    if revision ==  "{}":
         return False
     
-    return True
-
-# Get the state of a task's fields that may change at revId. If revId = -1, it
-# will return the latest task object according to the "revisions" database.
-def assembleTask(taskId, revId):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
     
     query = f"""
-            SELECT  revId, revision
+            INSERT INTO revisions (taskId, revId, userId, timestamp, revision, rollback)
+            VALUES ('{taskId}', '{revId}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{revision}', '{rollback}');
+            """
+    c.execute(query)
+    conn.commit()
+    conn.close()
+
+    return True
+    
+def getRevisions(taskId):
+    conn = sqlite3.connect('clickdown.db')
+    c = conn.cursor()
+    
+    query = f"""
+            SELECT  taskId, revId, userId, timestamp, revision, rollback
             FROM    revisions
             WHERE   taskId = '{taskId}'
-            ORDER BY revId DESC;
+            ORDER BY revId ASC;
             """
-    
-    c.execute(query)    
-    revisionList = c.fetchall()
-    conn.close()
-    
-    # Assemble the task, prioritising fields that have more recently updated
-    # excluding edits made after the supplied revID
-    resTask = {}
-    for revision in revisionList:
-        # Ignore changes occuring after revID. revId = -1 means get all changes
-        if (revId != -1):
-            if revId < revision[0]:
-                continue
-            
-        revDict = json.loads(revision[1])
+    try:
+        c.execute(query)    
+        revisionList = c.fetchall()
+        conn.close()
 
-        for field, val in revDict.items():
-            if field in resTask:
-                continue
-            else:
-                resTask[field] = val
+    except:
+        conn.close()
+        return []
     
-    return resTask, revisionList[0][0]
+    if len(revisionList) == 0:
+        return []
+
+    res = []
+    for r in revisionList:
+        revision = {
+            "taskId":    int(r[0]),
+            "revId" :    int(r[1]),
+            "userId":    int(r[2]),
+            "timestamp": r[3],
+            "revision":  json.loads(r[4]),
+            "rollback":  int(r[5])
+        }
+        res.append(revision)
+    
+    return res
+
+def revisionDiff(taskId, revId):
+    revList = getRevisions(taskId)
+    
+    # Base case. Difference for first revision entry is itself
+    if (revId == 0):
+        return revList[0]["revision"], 0
+    
+    currRevision = revList[revId]
+    prevRevision = revList[revId - 1]
+    
+    # Check whether currRevision is a rollback
+    rollbackIndex = currRevision["rollback"]
+    rollbackTime = 0
+    if rollbackIndex != -1:
+        rollbackTime = revList[rollbackIndex]["timestamp"]
+    
+    diff = {}
+    for field, newVal in currRevision["revision"].items():
+
+        if prevRevision["revision"][field] != newVal:
+            diff[field] = newVal
+         
+    return diff, rollbackTime
+    

@@ -89,3 +89,13 @@ class Users(Resource):
         conn.close()
 
         return {'value': True}
+
+# Extract only the label names into a list
+def rawStrToList(dbStr):
+    rawLabelList = json.loads(dbStr)
+    
+    labelList = []
+    for l in rawLabelList:
+        labelList.append(l["label"])
+    
+    return labelList
