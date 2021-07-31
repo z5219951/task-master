@@ -529,7 +529,7 @@ class Busyness(Resource):
             if(deadline >= today - timedelta(1) and deadline <= today + timedelta(7)):
                 busyTotal += i[0]
 
-        return busyTotal
+        return (busyTotal/40)*100
 
 
 
