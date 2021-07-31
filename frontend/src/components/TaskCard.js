@@ -16,6 +16,7 @@ const TaskCard = (props) => {
   const [formattedLabels, setFormattedLabels] = useState('')
   const [updateLabel, setUpdateLabel] = useState(false)
   const [assigned, setAssigned] = useState('')
+  const [createdBy, setCreatedBy] = useState('')
   const [filepath, setFilePath] = useState(tasks.file_paths)
 
   function handleClick() {
@@ -34,6 +35,14 @@ const TaskCard = (props) => {
      if (tasks.assigned_to !== '' || tasks.assigned_to !== undefined) {
       axios.get(`http://localhost:5000/user/${tasks.assigned_to}`).then((res) => {
       setAssigned(JSON.parse(res.data).email)
+      })
+    }
+
+    if (tasks.owner !== '' || tasks.owner !== undefined) {
+      console.log(tasks.owner)
+      axios.get(`http://localhost:5000/user/${tasks.owner}`).then((res) => {
+        setCreatedBy(JSON.parse(res.data).email)
+        console.log(JSON.parse(res.data).email)
       })
     }
 
@@ -122,6 +131,7 @@ const TaskCard = (props) => {
       <div className="card-body text-muted" padding="100px">
         <p className="card-text">Description: <br/>{tasks.description}</p>
         <p className="card-text">Assigned to: {assigned}</p>
+        <p className="card-text">Created By: {createdBy}</p>
       </div>
       <div className="card-footer text-muted" padding="100px">
         <p className="card-text m-1"><em>Labels: {currentLabels}</em></p>

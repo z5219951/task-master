@@ -65,6 +65,7 @@ const UpdateTask = (props) => {
   function handleSubmit () {
 
     const updateTask = {...task}; // Copy task into updateTask
+    console.log(updateTask)
 
     if (name !== '') {
       updateTask.title = name;
@@ -183,7 +184,7 @@ const UpdateTask = (props) => {
       <button className="btn btn-success btn-lg" onClick={() => rollBack()}>Rollback to a previous version</button>
       <br /><br />
       <div className="row">
-        <h1 className="col">Updating Task: {task.title}</h1>
+        <h1 className="col">Updating Task ID #{task.id}: {task.title}</h1>
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
       <h3>Please enter the fields you wish to update</h3>
