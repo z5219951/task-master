@@ -10,6 +10,8 @@ collaborate with, and search for any tasks within your network of task master
 collaborators. You can even see an estimate of how busy each of your connected task
 masters is.
 
+# How to run
+
 **Run two terminals**
 *Run the backend from folder #1 (backend) and the frontend from folder #2 (frontend)*
 1. cd backend
