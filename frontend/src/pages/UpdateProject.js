@@ -169,7 +169,7 @@ const UpdateProject = (props) => {
           <div className="col">
           {tasks ? tasks.map((task, index) => {
             return <div key={task.id}>
-              <h5><input type="checkbox" className="form-check-input m-1" onClick={(e) => handleTasks(e)} defaultChecked={checkSelected(selectedTasks, task.id, index)} key={index} value={index}/>Task #{task.id} - {task.title} &nbsp;
+              <h5><input type="checkbox" className="form-check-input m-1" onClick={(e) => handleTasks(e)} defaultChecked={checkSelected(selectedTasks, task.id, index)} key={index} value={index}/> {task.title} - (Task ID: #{task.id}) &nbsp;
               <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
               </h5> 
               <br/></div>

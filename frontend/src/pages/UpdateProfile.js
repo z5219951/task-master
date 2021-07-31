@@ -30,7 +30,7 @@ const Profile = () => {
     history.push('./profile')
   }
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {setShow(false); window.location.reload()};
   const handleShow = () => setShow(true);
 
   const currentUser = store.getState().id;

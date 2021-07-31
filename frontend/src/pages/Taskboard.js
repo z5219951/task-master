@@ -50,17 +50,11 @@ const Taskboard = () => {
     }
   }
 
-  function viewProject () {
-    history.push('./viewMyProjects')
-  }
-
   return (
     <>
     <div className='padding'> 
       <h1> Welcome to your Taskboard</h1>
       <SearchTask />
-        <button type="button" className="btn btn-success btn-lg m-1" onClick={() => { viewProject()}}> View My Projects</button>
-      <br/>
       <br/>
         <button type="button" className="btn btn-primary btn-lg w-100" onClick={() => { createTask()}}> Create Task </button>
         <br/><br/>

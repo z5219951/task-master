@@ -55,6 +55,7 @@ const ProjectCard = (props) => {
           <div className="col">{project.name}</div>
           <div className="col-md-2"><button className="btn btn-secondary btn-lg" onClick={() => handleUpdate()}>Update Project</button><br/></div>
         </div>
+          <div className="card-text text-muted">Project ID: #{project.id}</div>
       </div>
       <div className="card-body text-muted" padding="100px">
         <progress value={progressVal}></progress> 
@@ -62,7 +63,7 @@ const ProjectCard = (props) => {
         <p className="card-text">Description: <br/>{project.description}</p>
         <p className="card-text">Connected Tasks: 
         {tasks && tasks.length !== 0 ? tasks.map((task, index) => {
-          return <div key={index} className="card-text">Task #{task.id}: {task.title} - {task.current_state} &nbsp;
+          return <div key={index} className="card-text">{task.title} - {task.current_state} (Task ID: #{task.id}) &nbsp;
             <button className="col-md-2 btn btn-secondary btn-sm" onClick={() => handleView(task)}>View Task</button>
           </div>
           }) : <div>No Tasks Connected</div>}
