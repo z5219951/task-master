@@ -10,6 +10,7 @@ from flask_restx import Resource, Api, fields, inputs, reqparse, Namespace
 import sqlite3
 
 from friends import friendListGet, getUserByID
+from labels import rawStrToList
 
 bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 api = Namespace("tasks", "Operations for tasks")
@@ -222,7 +223,7 @@ class Users(Resource):
 # update task info
 update_payload = api.model('update task info', {
     "id": fields.String,
-    "owner": fields.String,
+    "userId": fields.String,
     "title": fields.String,
     "description": fields.String,
     "creation_date": fields.String,
@@ -243,7 +244,7 @@ class Users(Resource):
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', required=True)
-        parser.add_argument('owner')
+        parser.add_argument('userId', required=True)
         parser.add_argument('title')
         parser.add_argument('description')
         parser.add_argument('creation_date')
@@ -253,7 +254,6 @@ class Users(Resource):
         parser.add_argument('time_estimate')
         parser.add_argument('assigned_to')
         parser.add_argument('time_taken')
-
         args = parser.parse_args()
         # print(args)
 
@@ -285,7 +285,7 @@ class Users(Resource):
         c.close()
         conn.close()
         
-        revisionsAppend(args.id, args.owner)
+        revisionsAppend(args.id, args.userId)
 
         return {'value': True}
 
@@ -353,13 +353,17 @@ class Tasks(Resource):
         res_list = []
         for task_info in full_task_list:
             # Seach based on id, name, label, desc, deadline
+            print(task_info.get("labels"))
             if ((task_info.get("id") == needle) or \
                 (needle == task_info.get("deadline")) or \
                 (needle == task_info.get("title").lower()) or \
-                (needle in task_info.get("labels").lower()) or \
                 (needle == task_info.get("description").lower())):
                 res_list.append(task_info)
-                
+
+            labelList = rawStrToList(task_info.get("labels").lower())
+            if needle in labelList:
+                res_list.append(task_info)
+
         return json.dumps(res_list), 200
 
 
@@ -609,8 +613,6 @@ def revisionsAppend(taskId, userId):
         else:
             index = revList[-1]["revId"] + 1
     
-    print("IN APPEND")
-    print(revision)
     sucess = revisionsInsert(taskId, index, userId, json.dumps(revision), -1)
     
     return sucess
