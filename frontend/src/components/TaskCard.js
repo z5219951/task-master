@@ -111,8 +111,9 @@ const TaskCard = (props) => {
     <div className="card my-2 mx-5"> 
       <div className="card-header">
         <div className="row display-5">
-          <div className="col">Task ID #{tasks.id}: {tasks.title}</div>
+          <div className="col">{tasks.title}</div>
           {update ? <div className="col-md-2"><button className="btn btn-secondary btn-lg" onClick={() => handleClick()}>Update Task</button><br/></div> : ''}
+          <p className="card-text m-1">Task ID: #{tasks.id}</p>
           <p className="card-text m-1">Task Status: {tasks.current_state}</p>
           <p className="card-text col m-1"><em>Deadline: {tasks.deadline !== 'None' ? tasks.deadline : 'No deadline'} </em></p>
           <p className="card-text col m-1">Estimated completion time: {tasks.time_estimate} hours</p>

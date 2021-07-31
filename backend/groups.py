@@ -150,18 +150,25 @@ class Users(Resource):
     @api.expect(task_payload)
     def get(self, id):
         project = request.args.get('project')
-            
+        print(project)
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
-        query = ''
+        query = f"""
+                SELECT  *
+                FROM    tasks;
+                """
+        c.execute(query)
+        print(c.fetchall())
+
         if project is None:
             query = f"""
                     SELECT  tasks.id
                     FROM    groups
                     JOIN    users   ON groups.user = users.id
                     JOIN    tasks   ON tasks.assigned_to = users.id
-                    WHERE   groups.id = {id};
+                    WHERE   (groups.id = {id})
+                    AND     (tasks.project is null);
                     """
         else:
             query = f"""
@@ -169,24 +176,21 @@ class Users(Resource):
                     FROM    groups
                     JOIN    users   ON groups.user = users.id
                     JOIN    tasks   ON tasks.assigned_to = users.id
-                    WHERE   groups.id = {id}
-                    AND     tasks.project != {project};
+                    WHERE   (groups.id = {id})
+                    AND     (tasks.project is null OR tasks.project = {project});
                     """
-
+        print(query)
         c.execute(query)
 
-        task_obj = c.fetchone()
-        if (task_obj is None):
-            return []
-        
+        data = c.fetchone()
         task_list = []
 
-        while (task_obj is not None):
-            task_id = task_obj[0]
+        while (data is not None):
+            task_id = data[0]
 
             task_list.append(task_id)
 
-            task_obj = c.fetchone()
+            data = c.fetchone()
         
         return json.dumps(task_list)
 

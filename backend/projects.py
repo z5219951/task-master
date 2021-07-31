@@ -1,3 +1,4 @@
+import ast
 import json
 
 from flask import Flask, request, jsonify, Blueprint
@@ -59,6 +60,14 @@ class Users(Resource):
         c.execute(query)
         id = c.fetchone()[0]
 
+        query = f"""
+                UPDATE  tasks
+                SET     project = null
+                WHERE   project = {id};
+                """
+        c.execute(query)
+        conn.commit()
+
         for task in task_list:
             query = f"""
                     UPDATE  tasks
@@ -94,7 +103,7 @@ class Users(Resource):
         parser.add_argument('tasks', required=True)
         args = parser.parse_args()
 
-        task_list = request.get_json()['tasks']
+        task_list = ast.literal_eval(request.get_json()['tasks'])
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -104,8 +113,16 @@ class Users(Resource):
                 SET     groupid = '{args.groupid}',
                         name = '{args.name}',
                         description = '{args.description}',
-                        tasks = {json.dumps(task_list)}
+                        tasks = '{json.dumps(task_list)}'
                 WHERE   id = {args.id};
+                """
+        c.execute(query)
+        conn.commit()
+
+        query = f"""
+                UPDATE  tasks
+                SET     project = null
+                WHERE   project = {args.id};
                 """
         c.execute(query)
         conn.commit()

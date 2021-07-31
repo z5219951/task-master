@@ -131,7 +131,7 @@ class Register extends Component{
     <div className="container">
       <div className="containerBox">
         <form className="form-signin">
-          <p className="form-signin-heading">Please sign in</p>
+          <p className="form-signin-heading">Please Provide Your Information</p>
           <label htmlFor="inputEmail" className="sr-only loginDes">Email address <span className='redStar'>*</span> </label>
           <input type="email" id="inputEmail" className="form-control" placeholder="Email address" onChange={this.handleInput} name="email" value = {this.state.email} required autoFocus/>
           <p className="alertName">{this.state.emailAlert}</p>

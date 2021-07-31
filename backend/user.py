@@ -53,7 +53,8 @@ update_payload = api.model('update info', {
     "last_name": fields.String,
     "phone_number": fields.String,
     "company": fields.String,
-    "labels": fields.String
+    "labels": fields.String,
+    "image_path": fields.String
 })
 
 @api.route('/update', methods=['PUT'])
@@ -73,6 +74,7 @@ class Users(Resource):
         parser.add_argument('phone_number')
         parser.add_argument('company')
         parser.add_argument('labels')
+        parser.add_argument('image_path')
         args = parser.parse_args()
         # print(args)
         
@@ -88,7 +90,8 @@ class Users(Resource):
                         last_name = '{args.last_name}',
                         phone_number = '{args.phone_number}',
                         company = '{args.company}',
-                        labels = '{args.labels}'
+                        labels = '{args.labels}',
+                        image_path = '{args.image_path}'
                 WHERE   id = '{args.id}';
                 """
         try:

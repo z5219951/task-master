@@ -8,7 +8,11 @@ import platform
 
 def sendMessage(msg):
     if(platform.system()=='Linux'):
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getcwd()+'/backend/applicationAuthServiceAcct.json'
+        path = os.path.abspath(__file__).split('/')
+        path.pop()
+        path.append('applicationAuthServiceAcct.json')
+        path = "/".join(path)
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = path
     elif(platform.system()=='Windows'):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'applicationAuthServiceAcct.json'
 

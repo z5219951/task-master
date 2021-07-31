@@ -15,7 +15,8 @@ bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 api = Namespace("tasks", "Operations for tasks")
 
 # create task
-task_payload = api.model('task_payload', {
+#Priority and difficulty/indicative load?
+task_payload = api.model('task', {
     "owner": fields.Integer,
     "title": fields.String,
     "description": fields.String,
@@ -53,8 +54,11 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, time_taken)
-                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}', '{args.time_taken}');
+                INSERT INTO tasks (owner, title, description, creation_date, deadline,
+                    labels, current_state, time_estimate, assigned_to, time_taken, reminded)
+                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', 
+                        '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}',
+                        '{args.assigned_to}', '{args.time_taken}', 0);
                 """
         print(query)
         c.execute(query)

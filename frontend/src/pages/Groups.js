@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Groups.css'
 import axios from 'axios'
-import { Button } from 'react-bootstrap';
 import store from '../store';
 import ViewProfileButton from '../components/ViewProfileButton'
 
@@ -58,6 +57,7 @@ class Groups extends Component{
             <div className="card my-2 mx-5" key={index}> 
                 <div className="card-header" padding="100px">
                     <h2>{item.groupName}</h2>
+                    <div className="card-text text-muted">Group ID: #{item.groupID}</div>
                 </div>
                 <div className="card-body text-muted" padding="100px">
                     {this.getMem(item.members)}
@@ -90,14 +90,20 @@ class Groups extends Component{
     createGroup = ()=>{
         this.props.history.push('./creategroup');
     }
+
+    viewProject = () => {
+        this.props.history.push('./viewMyProjects')
+    }
+
     render(){
         return(
             <Fragment>
                <div className="container">
                     <div className="groups_container">
                         <div className="group_btn_box">
-                            <button type="button" className="btn btn-info btn-xs request_back" onClick={this.handleBack}>Back</button>
-                            <button type="button" className="btn btn-success btn-xs request_back" onClick={this.createGroup}>Create Group</button>
+                            <button type="button" className="btn btn-info btn-lg request_back" onClick={this.handleBack}>Back</button>
+                            <button type="button" className="btn btn-success btn-lg request_back" onClick={this.createGroup}>Create Group</button>
+                            <button type="button" className="btn btn-success btn-lg m-1" onClick={this.viewProject}> View My Projects</button>
                         </div>
                         <h1>Groups you are in</h1>
                         <div className="group_lists">

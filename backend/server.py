@@ -24,6 +24,7 @@ import tasks
 import user
 import labels
 import projects
+
 app = Flask(__name__)
 api = Api(app,
           default="ClickDown",  # Default namespace
@@ -141,7 +142,7 @@ class Users(Resource):
             return {'value': False},200    
         
         recovery = -1
-
+        print(email)
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
@@ -153,7 +154,7 @@ class Users(Resource):
             query = f"""
                 SELECT  count(*)
                 FROM    users
-                WHERE   recovery = '{args.recovery}';
+                WHERE   recovery = '{recovery}';
                 """
             c.execute(query)
             count = c.fetchone()[0]
@@ -350,14 +351,12 @@ class Chatbot(Resource):
     @api.doc(description="Handles front end passing messages to /chatbot to be sent to dialogflow")
     def post(self):
         req = json.loads(request.data)
-        #sends the req message to dialogflow
         dfResponse = sendMessage(req["message"])
-        #dialogflow response
         email = req["user"]["email"]
         initMsg = req["message"]
-        #print(response)
         intent = dfResponse.query_result.intent.display_name
         reply = parseIntent(intent, dfResponse, email, initMsg)
+        #Fix datetime push in sql query by python preproc if time permits.
         # conn = sqlite3.connect('clickdown.db')
         # c = conn.cursor()
 
@@ -373,8 +372,97 @@ class Chatbot(Resource):
         print(reply)
         return reply
 
+@api.route('/reminder', methods=['GET'])
+class Users(Resource):
+    @api.response(200, 'Successfully sent emails')
+    @api.response(400, 'Bad Request')
+    @api.doc(description="Checks the database to see if task reminders need to be sent")
+    def get(self):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
 
+        query = f"""
+                SELECT  t.id, t.deadline, t.title, u.email
+                FROM    tasks t
+                JOIN    users u ON u.id = t.owner
+                WHERE   reminded = 0;
+                """
+        c.execute(query)
 
+        data = c.fetchone()
+        task_list = {}
+
+        while data is not None:
+            task_list[data[0]] = [data[1], data[2], data[3]]
+            data = c.fetchone()
+
+        if task_list == {}:
+            return
+
+        for id in task_list:
+            title = task_list[id][1]
+            email = task_list[id][2]
+            deadline = datetime.strptime(task_list[id][0], '%Y-%m-%d').date()
+            today = date.today().strftime('%Y-%m-%d')
+            delta = today - deadline
+
+            if delta < 3:
+                with app.app_context():
+                    msg = Message(subject="You have a task deadline soon!",
+                                sender='clickdown3900@gmail.com',
+                                recipients=[f"{email}"], 
+                                body=f"Task {title} is due soon. If it is already completed, please mark it 'Complete' on ClickDown.")
+                    mail.send(msg)
+                query = f"""
+                        UPDATE  tasks
+                        SET     reminded = 1
+                        WHERE   id = {id};
+                        """
+
+#calculates and sends back an updated estimate given a task
+#Account for who's putting in the time estimate vs who the task is assigned to?
+#think about whether estimates are more reflective of a manager's ability to discern task effort or a worker's
+#ability to get stuff done?
+#Should be more indicative of a manager's ability to guestimate time reqs...
+update_estimate = api.model('update estimate', {
+    "owner": fields.String,
+    "time_estimate": fields.Integer,
+    "assigned_to": fields.String
+})
+@api.route('/estimate', methods=['GET'])
+class Chatbot(Resource):
+    @api.doc(description="Calculates and sends back an updated estimate")
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('owner', required=True)
+        parser.add_argument('time_estimate', required=True)
+        parser.add_argument('assigned_to')
+        args = parser.parse_args()
+        assigned = args.assigned_to
+        owner = int(args.owner)
+        estimate = args.time_estimate
+        if(assigned == ''):
+            assigned = owner
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+
+        # get time estimates for this owner
+        query = f"""
+                SELECT  time_estimate, time_taken
+                FROM tasks
+                WHERE owner = {owner}
+                AND current_state = 'Completed'
+                """
+        c.execute(query)
+        compList = c.fetchall()
+
+        conn.commit()
+        c.close()
+        conn.close()    
+        #Get tasks by status loop through them and calculate an estimate factor
+        print(compList)
+        return(compList)
+        #return updatedEstimate
 
 
 

@@ -1,6 +1,5 @@
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import ViewProfile from '../pages/ViewProfile'
 
 const ViewProfileButton = (props) => {
   const history = useHistory();

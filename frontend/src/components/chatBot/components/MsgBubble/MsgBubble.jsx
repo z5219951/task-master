@@ -12,7 +12,7 @@ export default function MsgBubble({ data, isMe }) {
         return (
           <img
             className={toClasses([style.img_content])}
-            src={message.content}
+            src={message.content} alt="user photo"
           />
         )
       default:
