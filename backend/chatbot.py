@@ -8,7 +8,7 @@ from datetime import *
 
 def parseIntent(intent, dfResponse, email, initMsg):
     owner = getOwner(email)
-    response = {'fulfillment_text': "Sorry, I don't understand. Please send me correct message."}
+    response = {'fulfillment_text': "Sorry, I don't understand. Please rephrase and try again."}
     if(intent == "AddTask"):
         today = date.today()
         params = dfResponse.query_result.parameters
@@ -20,7 +20,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
         #print(deadline)
         owner = getOwner(email)
         addTask(owner, title, title, today, deadline, labels="", current_state="Not Started", time_estimate=1, assigned_to=owner)
-        response = {'fulfillment_text': "I have added a task {} for {}!".format(title, deadline)}
+        response = {'fulfillment_text': "I have added a task called \"{}\" for {}!".format(title, deadline)}
         #print(response)
 
 
@@ -39,11 +39,11 @@ def parseIntent(intent, dfResponse, email, initMsg):
                 dailyTaskList+=i[0] + ", "
             taskQueryRes = dailyTaskList[0:len(dailyTaskList)-2]
             if(len(tasks)>1):
-                response = {'fulfillment_text': "Your tasks for {} are {}".format(singleDate, taskQueryRes)}
+                response = {'fulfillment_text': "Your tasks for {} are \"{}\"".format(singleDate, taskQueryRes)}
                 #print(response)
                 return response
             elif(len(tasks)==1):
-                response = {'fulfillment_text': "Your task for {} is {}".format(singleDate, taskQueryRes)}
+                response = {'fulfillment_text': "Your task for {} is \"{}\"".format(singleDate, taskQueryRes)}
                 return response
             else:
                 response = {'fulfillment_text': "You don't have any tasks for {}".format(singleDate)}
@@ -61,7 +61,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
                     for i in tasks:
                         res += str(i[0]) + " "
                     res += "\n"
-            response = {'fulfillment_text': "Your tasks are as follows: {}".format(res)}
+            response = {'fulfillment_text': "Your tasks are as follows: \"{}\"".format(res)}
             #print(response)
 
 
