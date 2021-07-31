@@ -46,7 +46,7 @@ const RevisionCard = (props) => {
       <div className="card-footer" padding="100px">
         <div className="row display-5"> 
           {revision.rollback}
-          <div className="card-text">{revision.rollbackTime !== 0 ? <span>Rolled Back by</span>: <span>{index === 0 ? 'Created' : 'Modified'}</span>} by {revision.userName} ({revision.userEmail}) 
+          <div className="card-text">{revision.rollbackTime !== 0 ? <span>Rolled Back</span>: <span>{index === 0 ? 'Created' : 'Modified'}</span>} by {revision.userName} ({revision.userEmail}) 
           <br />{revision.timestamp}</div><br />
           <button className="btn btn-success btn-lg" onClick={() => handleRollback()}>Version Rollback</button>
         </div>
