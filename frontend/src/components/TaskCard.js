@@ -60,6 +60,7 @@ const TaskCard = (props) => {
 
   function handleLabels(labels) {
     tasks.labels = JSON.stringify(labels)
+    tasks["curr_user"] = store.getState().id
     axios.put(`http://localhost:5000/tasks/update `, tasks)
 
     // Trigger updateLabel useEffect

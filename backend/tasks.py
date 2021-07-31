@@ -75,7 +75,7 @@ class Users(Resource):
         conn.close()
         
         # Create an entry in the task edit history
-        revisionsInitialise(id, args.owner)
+        revisionsAppend(id, args.owner)
 
         return {'id': id},200
 
@@ -227,7 +227,8 @@ update_payload = api.model('update info', {
     "current_state": fields.String,
     "time_estimate": fields.Integer,
     "assigned_to": fields.String,
-    "time_taken": fields.Integer
+    "time_taken": fields.Integer,
+    "curr_user": fields.Integer
 })
 
 @api.route('/update', methods=['PUT'])
@@ -249,6 +250,8 @@ class Users(Resource):
         parser.add_argument('time_estimate')
         parser.add_argument('assigned_to')
         parser.add_argument('time_taken')
+        parser.add_argument('curr_user')
+
         args = parser.parse_args()
         # print(args)
 
@@ -281,8 +284,7 @@ class Users(Resource):
         c.close()
         conn.close()
         
-        # TODO Here, assumption that the owner executed the task update
-        revisionsAppend(args.id, args.owner)
+        revisionsAppend(args.id, args.curr_user)
 
         return {'value': True}
 
@@ -470,7 +472,8 @@ class Tasks(Resource):
     @api.response(400, 'Unexpected error')
     @api.doc(description="Given a taskId, will return a json list of the \
                           revision history. This history includes: involved user, \
-                          timestamp and revision made.")
+                          timestamp, revision dictionary, and rollback flag \
+                          (True if rollback is not equal to -1).")
     def get(self, taskId):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -480,16 +483,14 @@ class Tasks(Resource):
         for r in revList:
             userDict = getUserByID(r["userId"])
             diff = revisionDiff(int(r["taskId"]), int(r["revId"]))
-            rollbackState = False
-            if "rollback" in r.keys():
-                rollbackState = True
+
             revDict = {
                 "revisionId": r["revId"],
                 "userName":   userDict["first_name"] + " " + userDict["last_name"],
                 "userEmail":  userDict["email"],
                 "timestamp":  r["timestamp"],
                 "revision":   diff,
-                "rollback": rollbackState
+                "rollback":   r["rollback"]
                 }
             res.append(revDict)
         
@@ -522,23 +523,18 @@ class Tasks(Resource):
         revId = int(args.revisionId)
         
         # Check valid taskId
-        if len(getTaskbyId(taskId)) == 0:
-            return {"value": False}, 200
-
         revList = getRevisions(taskId)
-        
         if len(revList) == 0:
             return {"value": False}, 200
         
-        # Check validity of revID so that rollback is to an existing state
+        # Check validity of revID so that rollback is to an existing older state
         if (revId < 0) or (revId >= revList[-1]["revId"]):
             return {"value": False}, 200
-                
-        rollbackState = revList[revId]
-            
+                            
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
         
+        rollbackState = revList[revId]
         for field, newVal in rollbackState["revision"].items():
             query = f"""
                     UPDATE  tasks
@@ -548,10 +544,8 @@ class Tasks(Resource):
             c.execute(query)
             conn.commit()
         
-        # Determine index to insert
-        index = 0
-        if len(revList) != 0:
-            index = revList[-1]["revId"] + 1
+        # Insert revision to the end of the "revisions" table
+        index = revList[-1]["revId"] + 1
         
         if not revisionsInsert(taskId, index, userId, json.dumps(rollbackState["revision"]), revId):
             return {"value": False}, 400
@@ -593,18 +587,6 @@ def getTaskbyId(taskId):
 
 # Add entry into the "revisions" table for a new task. Field are initialised
 # as the values intially passed in to create the task
-def revisionsInitialise(taskId, userId):
-    revision = getTaskbyId(taskId)
-    
-    # Remove non-revisible fields
-    del revision["owner"]
-    del revision["creation_date"]
-    del revision["labels"]
-    del revision["file_paths"]
-    
-    revisionsInsert(taskId, 0, userId, json.dumps(revision), -1)
-    conn = sqlite3.connect('clickdown.db')
-        
 def revisionsAppend(taskId, userId):
     revision = getTaskbyId(taskId)
     
@@ -615,20 +597,20 @@ def revisionsAppend(taskId, userId):
     del revision["file_paths"]
     
     revList = getRevisions(taskId)
-    
-    # Determine index to insert
-    revId = 0
-    if len(revList) != 0:
-        revId = revList[-1]["revId"] + 1
-        
-    # Validate that there are changes
-    if (revList[-1]["revision"] == revision):
-        return False
-    
-    revisionsInsert(taskId, revId, userId, json.dumps(revision), "-1")
-        
-    return True
 
+    if (len(revList) == 0):
+        index = 0
+    
+    else:
+         # Validate that there are changes
+        if (revList[-1]["revision"] == revision):
+            return False
+        else:
+            index = revList[-1]["revId"] + 1
+
+    sucess = revisionsInsert(taskId, index, userId, json.dumps(revision), -1)
+      
+    return sucess
 
 def revisionsInsert(taskId, revId, userId, revision, rollback):
     if revision ==  "{}":
@@ -661,10 +643,14 @@ def getRevisions(taskId):
         c.execute(query)    
         revisionList = c.fetchall()
         conn.close()
+
     except:
         conn.close()
         return []
     
+    if len(revisionList) == 0:
+        return []
+
     res = []
     for r in revisionList:
         revision = {
@@ -686,21 +672,8 @@ def revisionDiff(taskId, revId):
     if (revId == 0):
         return revList[0]["revision"]
     
-    prevRevision = revList[revId - 1]
     currRevision = revList[revId]
-    
-    if currRevision["rollback"] == "-1":
-        prevRevision = revList[currRevision["rollback"]]
-    
-    else:
-        # Find revision that isn't marked with rollback flag
-        index = revId - 1
-        while prevRevision["rollback"] == "-1":
-            if (index < 0):
-                return {}
-                
-            prevRevision = revList[index]
-            index = index - 1
+    prevRevision = revList[revId - 1]
     
     diff = {}
     for field, newVal in currRevision["revision"].items():
