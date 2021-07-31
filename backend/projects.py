@@ -60,6 +60,14 @@ class Users(Resource):
         c.execute(query)
         id = c.fetchone()[0]
 
+        query = f"""
+                UPDATE  tasks
+                SET     project = null
+                WHERE   project = {id};
+                """
+        c.execute(query)
+        conn.commit()
+
         for task in task_list:
             query = f"""
                     UPDATE  tasks

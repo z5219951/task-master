@@ -142,7 +142,7 @@ class Users(Resource):
             return {'value': False},200    
         
         recovery = -1
-
+        print(email)
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
@@ -154,7 +154,7 @@ class Users(Resource):
             query = f"""
                 SELECT  count(*)
                 FROM    users
-                WHERE   recovery = '{args.recovery}';
+                WHERE   recovery = '{recovery}';
                 """
             c.execute(query)
             count = c.fetchone()[0]

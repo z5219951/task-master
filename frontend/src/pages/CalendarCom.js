@@ -26,12 +26,9 @@ class CalendarCom extends Component{
     }
     for(let i = 0; i < tasks.length;i++) {
       let end = new Date(tasks[i].deadline);
-      end.setDate(end.getDate()+1);
-      end.setHours(0);
-      let start = new Date(tasks[i].creation_date);
-      start.setHours(0);
       value._d.setHours(0);
-      if(start <= value._d && end >= value._d ) {
+      // check last day
+      if(end.getFullYear() === value._d.getFullYear() && end.getMonth() === value._d.getMonth()&& end.getDate() === value._d.getDate()) {
         listData.push({type:'warning',content:tasks[i].title})
       }
     }
@@ -86,47 +83,14 @@ class CalendarCom extends Component{
         taskLists:taskList
       }))
     })
-    // this.setState(()=>(
-    //   {
-    //     taskLists:[{
-    //       owner: 0,
-    //       title: "test1",
-    //       description: "test des",
-    //       creation_date: "2021-06-10",
-    //       deadline: "2021-07-19",
-    //       current_state: "Not Started",
-    //       progress: 20,
-    //       time_estimate: 5,
-    //       difficulty: "Very Easy",
-    //       id:1,
-    //       labels:[]
-    //     },{
-    //       owner: 0,
-    //       title: "test2",
-    //       description: "test des",
-    //       creation_date: "2021-06-18",
-    //       deadline: "2021-07-10",
-    //       current_state: "Not Started",
-    //       progress: 20,
-    //       time_estimate: 5,
-    //       difficulty: "Very Easy",
-    //       id:2,
-    //       labels:[]
-    //     }]
-    //   }
-    // ))
   }
   onSelect = (value)=>{
     let listData = [];
     let tasks = this.state.taskLists;
     for(let i = 0; i < tasks.length;i++) {
       let end = new Date(tasks[i].deadline);
-      end.setDate(end.getDate()+1);
-      end.setHours(0);
-      let start = new Date(tasks[i].creation_date);
-      start.setHours(0);
       value._d.setHours(0);
-      if(start <= value._d && end >= value._d ) {
+      if(end.getFullYear() === value._d.getFullYear() && end.getMonth() === value._d.getMonth()&& end.getDate() === value._d.getDate()) {
         listData.push(tasks[i]);
       }
     }
