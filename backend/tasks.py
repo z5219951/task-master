@@ -56,8 +56,8 @@ class Users(Resource):
                 INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, time_taken)
                 VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}', '{args.assigned_to}', '{args.time_taken}');
                 """
-        c.execute(query)
         print(query)
+        c.execute(query)
 
         query = f"""
                 SELECT  id
@@ -227,8 +227,7 @@ update_payload = api.model('update task info', {
     "current_state": fields.String,
     "time_estimate": fields.Integer,
     "assigned_to": fields.String,
-    "time_taken": fields.Integer,
-    "curr_user": fields.Integer
+    "time_taken": fields.Integer
 })
 
 @api.route('/update', methods=['PUT'])
@@ -250,7 +249,6 @@ class Users(Resource):
         parser.add_argument('time_estimate')
         parser.add_argument('assigned_to')
         parser.add_argument('time_taken')
-        parser.add_argument('curr_user')
 
         args = parser.parse_args()
         # print(args)
@@ -260,8 +258,7 @@ class Users(Resource):
 
         query = f"""
                 UPDATE  tasks
-                SET     owner = '{args.owner}',
-                        title = '{args.title}',
+                SET     title = '{args.title}',
                         description = '{args.description}',
                         creation_date = '{args.creation_date}',
                         deadline = '{args.deadline}',
@@ -284,7 +281,6 @@ class Users(Resource):
         c.close()
         conn.close()
         
-        #TODO get actual user
         revisionsAppend(args.id, args.owner)
 
         return {'value': True}
@@ -473,8 +469,8 @@ class Tasks(Resource):
     @api.response(400, 'Unexpected error')
     @api.doc(description="Given a taskId, will return a json list of the \
                           revision history. This history includes: involved user, \
-                          timestamp, revision dictionary, and rollback flag \
-                          (True if rollback is not equal to -1).")
+                          timestamp, revision dictionary, and rollbackTime \
+                          (The orignal time of the rollbacked revision, 0 otherwise).")
     def get(self, taskId):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -483,15 +479,15 @@ class Tasks(Resource):
         res = []
         for r in revList:
             userDict = getUserByID(r["userId"])
-            diff = revisionDiff(int(r["taskId"]), int(r["revId"]))
-
+            diff, rollbackTime = revisionDiff(int(r["taskId"]), int(r["revId"]))
+            
             revDict = {
-                "revisionId": r["revId"],
-                "userName":   userDict["first_name"] + " " + userDict["last_name"],
-                "userEmail":  userDict["email"],
-                "timestamp":  r["timestamp"],
-                "revision":   diff,
-                "rollback":   r["rollback"]
+                "revisionId":  r["revId"],
+                "userName":    userDict["first_name"] + " " + userDict["last_name"],
+                "userEmail":   userDict["email"],
+                "timestamp":   r["timestamp"],
+                "revision":    diff,
+                "rollbackTime":rollbackTime
                 }
             res.append(revDict)
         
@@ -673,10 +669,16 @@ def revisionDiff(taskId, revId):
     
     # Base case. Difference for first revision entry is itself
     if (revId == 0):
-        return revList[0]["revision"]
+        return revList[0]["revision"], 0
     
     currRevision = revList[revId]
     prevRevision = revList[revId - 1]
+    
+    # Check whether currRevision is a rollback
+    rollbackIndex = currRevision["rollback"]
+    rollbackTime = 0
+    if rollbackIndex != -1:
+        rollbackTime = revList[rollbackIndex]["timestamp"]
     
     diff = {}
     for field, newVal in currRevision["revision"].items():
@@ -684,5 +686,5 @@ def revisionDiff(taskId, revId):
         if prevRevision["revision"][field] != newVal:
             diff[field] = newVal
          
-    return diff
+    return diff, rollbackTime
     
