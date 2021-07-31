@@ -216,7 +216,7 @@ class Users(Resource):
 
 
 # update task info
-update_payload = api.model('update info', {
+update_payload = api.model('update task info', {
     "id": fields.String,
     "owner": fields.String,
     "title": fields.String,
@@ -284,7 +284,8 @@ class Users(Resource):
         c.close()
         conn.close()
         
-        revisionsAppend(args.id, args.curr_user)
+        #TODO get actual user
+        revisionsAppend(args.id, args.owner)
 
         return {'value': True}
 
@@ -607,9 +608,11 @@ def revisionsAppend(taskId, userId):
             return False
         else:
             index = revList[-1]["revId"] + 1
-
+    
+    print("IN APPEND")
+    print(revision)
     sucess = revisionsInsert(taskId, index, userId, json.dumps(revision), -1)
-      
+    
     return sucess
 
 def revisionsInsert(taskId, revId, userId, revision, rollback):
