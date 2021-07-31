@@ -165,7 +165,7 @@ const UpdateProject = (props) => {
           </div>
         </div> 
         <div className="form-group row mb-5">
-          <label htmlFor="description" className="col-sm-3 col-form-label">Tasks</label>
+          <label htmlFor="description" className="col-sm-3 col-form-label">Unassigned tasks from group members</label>
           <div className="col">
           {tasks ? tasks.map((task, index) => {
             return <div key={task.id}>

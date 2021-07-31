@@ -374,12 +374,12 @@ class Chatbot(Resource):
         print(reply)
         return reply
 
-@api.route('/reminder', methods=['PUT'])
+@api.route('/reminder', methods=['GET'])
 class Users(Resource):
     @api.response(200, 'Successfully sent emails')
     @api.response(400, 'Bad Request')
     @api.doc(description="Checks the database to see if task reminders need to be sent")
-    def put(self):
+    def get(self):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 

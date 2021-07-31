@@ -105,7 +105,7 @@ class Users(Resource):
                 SET     groupid = '{args.groupid}',
                         name = '{args.name}',
                         description = '{args.description}',
-                        tasks = {json.dumps(task_list)}
+                        tasks = '{json.dumps(task_list)}'
                 WHERE   id = {args.id};
                 """
         c.execute(query)
