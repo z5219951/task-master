@@ -244,6 +244,7 @@ class Users(Resource):
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', required=True)
+        parser.add_argument('userId', required=True)
         parser.add_argument('title')
         parser.add_argument('description')
         parser.add_argument('creation_date')
@@ -253,7 +254,6 @@ class Users(Resource):
         parser.add_argument('time_estimate')
         parser.add_argument('assigned_to')
         parser.add_argument('time_taken')
-        parser.add_argument('userId')
         args = parser.parse_args()
         # print(args)
 
@@ -285,8 +285,7 @@ class Users(Resource):
         c.close()
         conn.close()
         
-        # TODO change to userID
-        revisionsAppend(args.id, args.owner)
+        revisionsAppend(args.id, args.userId)
 
         return {'value': True}
 
