@@ -24,6 +24,7 @@ import tasks
 import user
 import labels
 import projects
+import revisions
 
 app = Flask(__name__)
 api = Api(app,
@@ -43,6 +44,8 @@ app.register_blueprint(labels.bp)
 api.add_namespace(labels.api)
 app.register_blueprint(projects.bp)
 api.add_namespace(projects.api)
+app.register_blueprint(revisions.bp)
+api.add_namespace(revisions.api)
 
 app.config["UPLOADS"] = PurePath(Path(__file__).parent.resolve())
 

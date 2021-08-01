@@ -92,6 +92,9 @@ class Users(Resource):
 
 # Extract only the label names into a list
 def rawStrToList(dbStr):
+    if dbStr == "":
+        return []
+        
     rawLabelList = json.loads(dbStr)
     
     labelList = []

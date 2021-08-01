@@ -10,7 +10,7 @@ const Rollback = (props) => {
   console.log(task)
   const [revisions, setRevisions] = useState('')
   useEffect(() => {
-    axios.get(`http://localhost:5000/tasks/revisions/${task.id}`).then((res) => {
+    axios.get(`http://localhost:5000/revisions/${task.id}`).then((res) => {
     console.log(JSON.parse(res.data))
     setRevisions(JSON.parse(res.data))
   })

@@ -27,7 +27,7 @@ const RevisionCard = (props) => {
 
   function handleRollback() {
     const data = {'taskId': Number(taskId), 'userId': userId, 'revisionId': Number(revision.revisionId)}
-    axios.post('http://localhost:5000/tasks/rollback', data).then((res) => {
+    axios.post('http://localhost:5000/revisions/rollback', data).then((res) => {
       console.log(res.data)
       history.push('./taskboard')
     })
