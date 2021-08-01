@@ -129,7 +129,7 @@ class Users(Resource):
     def get(self, userId):
         return json.dumps(friendListGet(userId)), 200
         
-### HELPER FUNCTIONS ### 
+# HELPER FUNCTIONS
 def getUserByID(id):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()

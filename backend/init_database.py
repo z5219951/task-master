@@ -74,7 +74,6 @@ if __name__ == '__main__':
                 foreign key     (groupid)   references groups (id)
             );
             """
-    print(query)
     c.execute(query)
 
     # create table tasks

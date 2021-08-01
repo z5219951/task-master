@@ -2,16 +2,15 @@ import os
 import dialogflow
 from google.api_core.exceptions import InvalidArgument
 import platform
-#platform.system() ==> Windows / Linux switch case
 
 #Adapted from https://medium.com/swlh/working-with-dialogflow-using-python-client-cb2196d579a4
 
 def sendMessage(msg):
+    path = os.path.abspath(__file__).split('/')
+    path.pop()
+    path.append('applicationAuthServiceAcct.json')
+    path = "/".join(path)
     if(platform.system()=='Linux'):
-        path = os.path.abspath(__file__).split('/')
-        path.pop()
-        path.append('applicationAuthServiceAcct.json')
-        path = "/".join(path)
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = path
     elif(platform.system()=='Windows'):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'applicationAuthServiceAcct.json'

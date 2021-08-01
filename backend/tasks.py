@@ -49,7 +49,6 @@ class Users(Resource):
         parser.add_argument('assigned_to', required=False)
         parser.add_argument('time_taken', required=False)
         args = parser.parse_args()
-        #print(args)
         
         query = f"""        
                 INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, time_taken, reminded)
@@ -176,8 +175,6 @@ class Users(Resource):
             task_list.append(task_info)
             data = c.fetchone()
 
-        # print(task_list)
-
         c.close()
         conn.close()
 
@@ -223,8 +220,6 @@ class Users(Resource):
             task_list.append(task_info)
             data = c.fetchone()
 
-        # print(task_list)
-
         c.close()
         conn.close()
 
@@ -266,7 +261,6 @@ class Users(Resource):
         parser.add_argument('assigned_to')
         parser.add_argument('time_taken')
         args = parser.parse_args()
-        print(args)
 
         query = f"""
                 UPDATE  tasks
@@ -301,7 +295,6 @@ class Users(Resource):
             c.execute(query, queryParams)
  
         except Exception as e:
-            print(e)
             c.close()
             conn.close()
             return {'value': False}
@@ -400,7 +393,6 @@ class Users(Resource):
     @api.response(400, 'Bad Request')
     @api.doc(description="Receives a file and stores it in the backend")
     def post(self, task_id):
-        print(f'upload received task_id is: {task_id}')
         files = request.files.getlist('file')
         url_list = []
 
@@ -408,26 +400,16 @@ class Users(Resource):
         c = conn.cursor()
 
         for file in files:
-            print(f'upload received filetype is: {type(file)}')
             filename = secure_filename(file.filename)
 
             if filename != '':
                 dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tasks', str(task_id))
-                # dir = PurePath(Path(__file__).parent.resolve(), 'tasks', str(task_id))
                 os.makedirs(dir, exist_ok=True)
                 path = os.path.join(dir, filename)
-                # path = PurePath(dir, filename)
-                # path example: 'tasks/123/file.png'
-                
-                print(f'path type is: {type(path)}')
-                print(f'path name is: {path}')
                 file.save(path)
 
                 url = 'http://localhost:5000/uploads/tasks/' + str(task_id) + '/' + filename 
-                print(url)
                 url_list.append(url)
-
-                print(f"appended to list: {url}")
         
         query = f"""
                 SELECT  file_paths
@@ -448,7 +430,6 @@ class Users(Resource):
                 SET     file_paths = ?
                 WHERE   id = ?;
                 '''
-        print(query)
         c.execute(query, (f'{url_list}', f'{task_id}'))
         
         conn.commit()
@@ -457,7 +438,7 @@ class Users(Resource):
 
         return json.dumps(url_list)
 
-### Helper Functions ###
+# Helper Functions
 # Return a dictionary representation of a task in the database
 def getTaskbyId(taskId):
     conn = sqlite3.connect('clickdown.db')

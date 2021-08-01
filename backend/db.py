@@ -36,7 +36,6 @@ def user_exists(username):
 def getUserByID(id):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
-    #Should we be grabbing the password from here?
     query = f"""
             SELECT  id, username, password, email, first_name, last_name, phone_number, company, labels, image_path
             FROM    users
@@ -54,7 +53,6 @@ def getUserByID(id):
 def getUsersByFirstLastName(firstName , lastName):
     conn = sqlite3.connect('clickdown.db')
     c = conn.cursor()
-    #Should we be grabbing the password from here?
     firstName = firstName.lower()
     lastName = lastName.lower()
     query = f"""
