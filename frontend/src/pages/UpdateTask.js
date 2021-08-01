@@ -30,6 +30,9 @@ const UpdateTask = (props) => {
   const [noDeadline, setNoDeadline] = useState(false)
   const [timeTaken, setTimeTaken] = useState('')
   const [completionValue, setCompletionValue] = useState('')
+  
+  var today = new Date();
+  const currentDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
 
   // Get task
   const [task, setTask] = useState('')
@@ -92,6 +95,10 @@ const UpdateTask = (props) => {
     }
 
     if (noDeadline === false && dueD !== '') {
+      if (Date.parse(dueD) < Date.parse(currentDate)) {
+        setDueDAlert('Please enter a valid deadline')
+        return
+      }
       updateTask.deadline = dueD;
     }
 
