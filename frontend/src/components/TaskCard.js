@@ -39,10 +39,8 @@ const TaskCard = (props) => {
     }
 
     if (tasks.owner !== '' || tasks.owner !== undefined) {
-      console.log(tasks.owner)
       axios.get(`http://localhost:5000/user/${tasks.owner}`).then((res) => {
         setCreatedBy(JSON.parse(res.data).email)
-        console.log(JSON.parse(res.data).email)
       })
     }
 
@@ -68,9 +66,9 @@ const TaskCard = (props) => {
   },[updateLabel])
 
   function handleLabels(labels) {
+    tasks.userId = store.getState().id
     tasks.labels = JSON.stringify(labels)
     axios.put(`http://localhost:5000/tasks/update `, tasks)
-
     // Trigger updateLabel useEffect
     if (updateLabel) {
       setUpdateLabel(false)

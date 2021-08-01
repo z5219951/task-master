@@ -255,11 +255,10 @@ class Users(Resource):
         parser.add_argument('assigned_to')
         parser.add_argument('time_taken')
         args = parser.parse_args()
-        # print(args)
+        print(args)
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
-
         query = f"""
                 UPDATE  tasks
                 SET     title = '{args.title}',

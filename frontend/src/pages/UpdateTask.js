@@ -108,7 +108,8 @@ const UpdateTask = (props) => {
   }
 
   useEffect(() => {
-    if (Object.keys(task).length !== 0) {
+    if (task && Object.keys(task).length !== 0) {
+      task.userId = store.getState().id
       axios.put(`http://localhost:5000/tasks/update `, task)
       
       if (task.assigned_to !== '' || task.assigned_to !== undefined) {
