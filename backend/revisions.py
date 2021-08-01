@@ -86,9 +86,9 @@ class Tasks(Resource):
             query = f"""
                     UPDATE  tasks
                     SET     {field} = ?
-                    WHERE   id = {taskId};
+                    WHERE   id = ?;
                     """
-            c.execute(query, (str(newVal)))
+            c.execute(query, (f'{newVal}', f'{taskId}'))
             conn.commit()
         
         # Insert revision to the end of the "revisions" table
@@ -139,7 +139,15 @@ def revisionsInsert(taskId, revId, userId, revision, rollback):
             INSERT INTO revisions (taskId, revId, userId, timestamp, revision, rollback)
             VALUES (?, ?, ?, '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', ?, ?);
             """
-    c.execute(query, (f'{taskId}', f'{revId}',f'{userId}', f'{revision}', f'{rollback}'))
+    print(query)
+    c.execute(query, [f'{taskId}', f'{revId}',f'{userId}', f'{revision}', f'{rollback}'])
+    
+    # query = f"""
+    #         INSERT INTO revisions (taskId, revId, userId, timestamp, revision, rollback)
+    #         VALUES ('{taskId}', '{revId}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{revision}', '{rollback}');
+    #         """
+
+    # c.execute(query)
     conn.commit()
     conn.close()
 
@@ -156,7 +164,7 @@ def getRevisions(taskId):
             ORDER BY revId ASC;
             """
     try:
-        c.execute(query, (str(userId)))    
+        c.execute(query, [f'{taskId}'])    
         revisionList = c.fetchall()
         conn.close()
 

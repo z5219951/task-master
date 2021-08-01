@@ -23,10 +23,10 @@ class Users(Resource):
         query = f"""
                 SELECT  labels
                 FROM    users
-                WHERE   id = '{user}';
+                WHERE   id = ?;
                 """
 
-        c.execute(query)
+        c.execute(query, [f'{user}'])
         data = []
 
         try:
@@ -62,27 +62,28 @@ class Users(Resource):
         query = f"""
                 SELECT  labels
                 FROM    users
-                WHERE   id = '{user}';
+                WHERE   id = ?;
                 """
-        c.execute(query)
+        c.execute(query, [f'{user}'])
         existing = ''
         query = ''
         try:
             existing = c.fetchone()[0]
             query = f"""
                     UPDATE  users
-                    SET     labels = '{existing + ', ' + args.labels}'
-                    WHERE   id = '{user}';
+                    SET     labels = ?
+                    WHERE   id = ?;
                     """
+            c.execute(query, (f"{existing + ', ' + args.labels}", f'{user}'))
+
         except:
             existing = ''
             query = f"""
                     UPDATE  users
-                    SET     labels = '{args.labels}'
-                    WHERE   id = '{user}';
+                    SET     labels = ?
+                    WHERE   id = ?;
                     """
-        print(query)
-        c.execute(query)
+            c.execute(query, [f'{args.labels, user}'])
 
         conn.commit()
         c.close()

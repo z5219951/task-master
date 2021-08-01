@@ -26,10 +26,10 @@ class Users(Resource):
         query = f"""
             SELECT  user_from
             FROM    friend_requests
-            WHERE   user_to = '{userInfo["id"]}'
+            WHERE   user_to = ?
             """
         
-        c.execute(query)
+        c.execute(query, [f'{userInfo["id"]}'])
         friendRequests = c.fetchall()
         
         for id in friendRequests:
@@ -136,10 +136,10 @@ def getUserByID(id):
     query = f"""
             SELECT  id, username, email, first_name, last_name, phone_number, company
             FROM    users
-            WHERE   id = '{id}';
+            WHERE   id = ?;
             """
 
-    c.execute(query)
+    c.execute(query, [f'{id}'])
     data = c.fetchone()
     c.close()
     conn.close()
@@ -165,10 +165,10 @@ def getUserByEmail(email):
     query = f"""
             SELECT  id
             FROM    users
-            WHERE   email = '{email}';
+            WHERE   email = ?;
             """
 
-    c.execute(query)
+    c.execute(query, [f'{email}'])
     data = c.fetchone()
     conn.close()
 
@@ -199,11 +199,11 @@ def friendRequestAdd(user_from, user_to):
     
     query = f"""
             INSERT INTO friend_requests (user_from, user_to)
-            VALUES ('{user_from}', '{user_to}');
+            VALUES (?, ?);
             """
 
     try: 
-        c.execute(query)
+        c.execute(query, (f'{user_from}', f'{user_to}'))
         
     # If a request exists already
     except sqlite3.IntegrityError:
@@ -223,11 +223,11 @@ def friendRequestRemove(user_from, user_to):
     query = f"""
         SELECT  *
         FROM    friend_requests
-        WHERE   user_to = '{user_to}'
-        AND     user_from = '{user_from}';
+        WHERE   user_to = ?
+        AND     user_from = ?;
         """
     
-    c.execute(query)
+    c.execute(query, (f'{user_to}', f'{user_from}'))
     data = c.fetchone()
     
     if data is None:
@@ -237,10 +237,10 @@ def friendRequestRemove(user_from, user_to):
         query = f"""
                 DELETE
                 FROM    friend_requests
-                WHERE   user_to = '{user_to}'
-                AND     user_from = '{user_from}';
+                WHERE   user_to = ?
+                AND     user_from = ?;
                 """
-        c.execute(query)
+        c.execute(query, (f'{user_to}', f'{user_from}'))
         conn.commit()
     
     return True
@@ -252,9 +252,9 @@ def friendListAdd(userA, userB):
     
     query = f"""
             INSERT INTO friend_list (user_a, user_b)
-            VALUES ('{userA}', '{userB}');
+            VALUES (?, ?);
             """
-    c.execute(query)
+    c.execute(query, (f'{userA}', f'{userB}'))
     conn.commit()
 
 # Return a list of users connected to the given userId
@@ -268,13 +268,13 @@ def friendListGet(userId):
             CREATE TEMP TABLE friends
             AS SELECT user_a
             FROM friend_list
-            WHERE user_b = '{userId}'
+            WHERE user_b = ?
             UNION
             SELECT user_b
             FROM friend_list
-            WHERE user_a = '{userId}';
+            WHERE user_a = ?;
             """
-    c.execute(query)
+    c.execute(query, (f'{userId}', f'{userId}'))
     
     # For above user Ids, get the corresponding entries within the users table
     query = f"""

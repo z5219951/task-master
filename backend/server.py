@@ -110,9 +110,20 @@ class Users(Resource):
 
         query = f"""
                 INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
-                VALUES ('{args.username}', '{args.password}', '{args.email}', '{args.first_name}', '{args.last_name}', '{args.phone_number}', '{args.company}');
+                VALUES (?, ?, ?, ?, ?, ?, ?);
                 """
-        c.execute(query)
+                
+        queryParams = (
+            f'{args.username}',
+            f'{args.password}',
+            f'{args.email}',
+            f'{args.first_name}',
+            f'{args.last_name}',
+            f'{args.phone_number}',
+            f'{args.company}'
+        )
+        
+        c.execute(query, queryParams)
 
         conn.commit()
         c.close()
@@ -157,9 +168,9 @@ class Users(Resource):
             query = f"""
                 SELECT  count(*)
                 FROM    users
-                WHERE   recovery = '{recovery}';
+                WHERE   recovery = ?;
                 """
-            c.execute(query)
+            c.execute(query, [f'{recovery}'])
             count = c.fetchone()[0]
 
             if (count == 0):
@@ -168,10 +179,10 @@ class Users(Resource):
         # update in database
         query = f"""
                 UPDATE  users
-                SET     recovery = '{recovery}'
-                WHERE   email = '{email}';
+                SET     recovery = ?
+                WHERE   email = ?;
                 """
-        c.execute(query)
+        c.execute(query, (f'{recovery}', f'{email}'))
 
         conn.commit()
         c.close()
@@ -211,9 +222,9 @@ class Users(Resource):
         query = f"""
                 SELECT  count(*)
                 FROM    users
-                WHERE   recovery = '{args.recovery}';
+                WHERE   recovery = ?;
                 """
-        c.execute(query)
+        c.execute(query, [f'{args.recovery}'])
         count = c.fetchone()[0]
 
         c.close()
@@ -248,10 +259,10 @@ class Users(Resource):
         # change the password and reset code
         query = f"""
                 UPDATE  users
-                SET     password = '{args.new_password}', recovery = null
-                WHERE   email = '{args.email}';
+                SET     password = ?, recovery = null
+                WHERE   email = ?;
                 """
-        c.execute(query)
+        c.execute(query, (f'{args.new_password}', f'{args.email}'))
 
         conn.commit()
         c.close()
@@ -286,9 +297,9 @@ class Users(Resource):
         query = f"""
                 SELECT  id
                 FROM    users
-                WHERE   email = '{args.email}' and password = '{args.password}';
+                WHERE   email = ? and password = ?;
                 """
-        c.execute(query)
+        c.execute(query, (f'{args.email}', f'{args.password}'))
         id = c.fetchone()
         # print(id)
 
@@ -357,9 +368,9 @@ class Chatbot(Resource):
         timestamp = datetime.now()
         query = f"""
                 INSERT INTO messages (usr_msg_time, email, chat_response, user_msg)
-                VALUES ('{timestamp}', '{email}', '{cRes}', '{initMsg}');
+                VALUES (?, ?, ?, ?);
                 """
-        c.execute(query)
+        c.execute(query, (f'{timestamp}', f'{email}', f'{cRes}', f'{initMsg}'))
         print(query)
 
         conn.commit()
@@ -455,10 +466,10 @@ class Chatbot(Resource):
         query = f"""
                 SELECT  time_estimate, time_taken
                 FROM tasks
-                WHERE owner = {owner}
+                WHERE owner = ?
                 AND current_state = 'Completed'
                 """
-        c.execute(query)
+        c.execute(query, [f'{args.owner}'])
         compList = c.fetchall()
 
         conn.commit()
@@ -515,11 +526,11 @@ class Busyness(Resource):
         query = f"""
                 SELECT  time_estimate, deadline
                 FROM    tasks
-                WHERE   owner = {owner}
+                WHERE   owner = ?
                 AND current_state != 'Completed'
                 """
         
-        c.execute(query)
+        c.execute(query, [f'{owner}'])
         timeList = c.fetchall()
         c.close()
         conn.close()

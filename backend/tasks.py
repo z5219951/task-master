@@ -52,22 +52,21 @@ class Users(Resource):
         #print(args)
         
         query = f"""        
-                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, 
-                    time_estimate, assigned_to, time_taken, reminded)
+                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, time_taken, reminded)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0);
                 """
         
         queryParams = (
-            args.owner,
-            args.title,
-            args.description,
-            args.creation_date,
-            args.deadline,
-            args.labels,
-            args.current_state,
-            args.time_estimate,
-            args.assigned_to,
-            args.time_taken
+            f'{args.owner}',
+            f'{args.title}',
+            f'{args.description}',
+            f'{args.creation_date}',
+            f'{args.deadline}',
+            f'{args.labels}',
+            f'{args.current_state}',
+            f'{args.time_estimate}',
+            f'{args.assigned_to}',
+            f'{args.time_taken}'
         )
         
         conn = sqlite3.connect('clickdown.db')
@@ -84,7 +83,7 @@ class Users(Resource):
                 AND     creation_date = ? ;
                 """
         
-        c.execute(query, (args.owner, args.title, args.description, args.creation_date))
+        c.execute(query, (f'{args.owner}', f'{args.title}', f'{args.description}', f'{args.creation_date}'))
         id = c.fetchone()[0]
 
         conn.commit()
@@ -113,7 +112,7 @@ class Users(Resource):
                 WHERE   id = ?;
                 """
     
-        c.execute(query, (id))
+        c.execute(query, [f'{id}'])
         data = c.fetchone()
         task_info = {}
         if (data is not None):
@@ -155,7 +154,7 @@ class Users(Resource):
                 ORDER BY    deadline;
                 """
 
-        c.execute(query, (str(owner)))
+        c.execute(query, [f'{owner}'])
         data = c.fetchone()
         task_list = []
 
@@ -196,14 +195,13 @@ class Users(Resource):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, 
-                    labels, current_state, time_estimate, assigned_to, file_paths, time_taken
+                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
                 WHERE   assigned_to = ?
                 ORDER BY    deadline;
                 """
 
-        c.execute(query, (str(owner)))
+        c.execute(query, [f'{owner}'])
         data = c.fetchone()
         task_list = []
 
@@ -284,16 +282,16 @@ class Users(Resource):
                 WHERE   id = ?;
                 """
         queryParams = (
-            args.title, 
-            args.description, 
-            args.creation_date, 
-            args.deadline,
-            args.labels,
-            args.current_state,
-            args.time_estimate, 
-            args.assigned_to,
-            args.time_taken,
-            args.id
+            f'{args.title}', 
+            f'{args.description}', 
+            f'{args.creation_date}', 
+            f'{args.deadline}',
+            f'{args.labels}',
+            f'{args.current_state}',
+            f'{args.time_estimate}', 
+            f'{args.assigned_to}',
+            f'{args.time_taken}',
+            f'{args.id}'
         )
         
         conn = sqlite3.connect('clickdown.db')
@@ -357,7 +355,7 @@ class Tasks(Resource):
         # Sort tasks by earliest deadlines
         query = query + (f"ORDER BY    deadline ASC;\n")
         
-        c.execute(query, (userId, userId))
+        c.execute(query, (f'{userId}', f'{userId}'))
         data_list = c.fetchall()
         
         conn.close()
@@ -437,7 +435,7 @@ class Users(Resource):
                 FROM    tasks
                 WHERE   id = ?;
                 """
-        c.execute(query, (task_id))
+        c.execute(query, [f'{task_id}'])
 
         existing = c.fetchone()
 
@@ -452,7 +450,7 @@ class Users(Resource):
                 WHERE   id = ?;
                 '''
         print(query)
-        c.execute(query, (url_list, task_id))
+        c.execute(query, (f'{url_list}', f'{task_id}'))
         
         conn.commit()
         c.close()
@@ -471,7 +469,7 @@ def getTaskbyId(taskId):
             FROM    tasks
             WHERE   id = ?
             """
-    c.execute(query, str(taskId))
+    c.execute(query, [f'{taskId}'])
     data = c.fetchone()
     
     if data is None:

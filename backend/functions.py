@@ -28,9 +28,9 @@ def getOwner(email):
         query = f"""
                 SELECT id
                 FROM users
-                WHERE email = '{email}'
+                WHERE email = ?
                 """
-        c.execute(query)
+        c.execute(query, [f'{email}'])
         print(query)
         id = c.fetchone()[0]
         conn.commit()
@@ -45,20 +45,39 @@ def addTask(owner, title, description, creation_date, deadline, labels, current_
 
     query = f"""
             INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, reminded)
-            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{labels}', '{current_state}', '{time_estimate}', '{assigned_to}', 0);
+            VALUES (?,?,?,?,?,?,?,?,?, 0);
             """
-    c.execute(query)
+    queryParams = (
+        f'{owner}',
+        f'{title}',
+        f'{description}',
+        f'{creation_date}',
+        f'{deadline}',
+        f'{labels}',
+        f'{current_state}',
+        f'{time_estimate}',
+        f'{assigned_to}'
+    )
+    
+    c.execute(query, queryParams)
     print(query)
 
     query = f"""
             SELECT  id
             FROM    tasks
-            WHERE   owner = '{owner}'
-            AND     title = '{title}'
-            AND     description = '{description}'
-            AND     creation_date = '{creation_date}';
+            WHERE   owner = ?
+            AND     title = ?
+            AND     description = ?
+            AND     creation_date = ?;
             """
-    c.execute(query)
+    queryParams = (
+        owner,
+        title,
+        description,
+        creation_date
+    )
+    
+    c.execute(query, queryParams)
     id = c.fetchone()[0]
 
     conn.commit()
@@ -72,11 +91,11 @@ def getAllTasks(owner):
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
                 FROM    tasks
-                WHERE   owner = '{owner}'
+                WHERE   owner = ?
                 ORDER BY    deadline NULLS LAST;
                 """
 
-        c.execute(query)
+        c.execute(query, [f'{owner}'])
         data = c.fetchone()
         task_list = []
 
@@ -110,11 +129,11 @@ def getAssignedTasks(owner):
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
                 FROM    tasks
-                WHERE   assigned_to = '{owner}'
+                WHERE   assigned_to = ?
                 ORDER BY    deadline NULLS LAST;
                 """
 
-        c.execute(query)
+        c.execute(query, [f'{owner}'])
         data = c.fetchone()
         task_list = []
 
@@ -147,19 +166,32 @@ def updateTask(owner, title, description, creation_date, deadline, labels, curre
 
         query = f"""
                 UPDATE  tasks
-                SET     owner = '{owner}',
-                        title = '{title}',
-                        description = '{description}',
-                        creation_date = '{creation_date}',
-                        deadline = '{deadline}',
-                        labels = '{labels}',
-                        current_state = '{current_state}',
-                        time_estimate = '{time_estimate}',
-                        assigned_to = '{assigned_to}'
-                WHERE   id = '{id}';
+                SET     owner = ?,
+                        title = ?,
+                        description = ?,
+                        creation_date = ?,
+                        deadline = ?,
+                        labels = ?,
+                        current_state = ?,
+                        time_estimate = ?,
+                        assigned_to = ?
+                WHERE   id = ?;
                 """
+        queryParams = (
+            f'{owner}',
+            f'{title}',
+            f'{description}',
+            f'{creation_date}',
+            f'{deadline}',
+            f'{labels}',
+            f'{current_state}',
+            f'{time_estimate}',
+            f'{assigned_to}',
+            f'{id}'
+        )
+        
         try:
-            c.execute(query)
+            c.execute(query, queryParams)
         except:
             c.close()
             conn.close()
@@ -183,10 +215,10 @@ def getRequestedConnectionsList(email):
         query = f"""
             SELECT  user_from
             FROM    friend_requests
-            WHERE   user_to = '{userInfo["id"]}'
+            WHERE   user_to = ?
             """
         
-        c.execute(query)
+        c.execute(query, [f'{userInfo["id"]}'])
         friendRequests = c.fetchall()
         
         for id in friendRequests:
@@ -196,17 +228,17 @@ def getRequestedConnectionsList(email):
         
         return requests_list
 
-def getTasksOnADate(owner,Date):
+def getTasksOnADate(owner, date):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
         query = f"""
                 SELECT  title
                 FROM    tasks
-                WHERE   owner = '{owner}'
-                AND     deadline = '{Date}'
+                WHERE   owner = ?
+                AND     deadline = ?
                 AND     current_state IS NOT "Completed" 
                 """    
-        c.execute(query)
+        c.execute(query, (f'{owner}', f'{date}'))
         tasks = c.fetchall()
         conn.commit()
         c.close()
