@@ -476,27 +476,27 @@ class Chatbot(Resource):
 
 #Untested currently??
 #smidge effed, gets syntax error
-# @api.route('/chatHistory/<string:email>', methods=['GET'])
-# class ChatHistory(Resource):
-#     @api.response(200, 'Successfully retrieved history')
-#     @api.response(400, 'Bad Request')
-#     @api.doc(description="Checks the database for a user's chat history")
-#     def get(self,email):
-#         conn = sqlite3.connect('clickdown.db')
-#         c = conn.cursor()
+@api.route('/chatHistory/<string:email>', methods=['GET'])
+class ChatHistory(Resource):
+    @api.response(200, 'Successfully retrieved history')
+    @api.response(400, 'Bad Request')
+    @api.doc(description="Checks the database for a user's chat history")
+    def get(self,email):
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
 
-#         query = f"""
-#                 SELECT  user_msg, chat_response
-#                 FROM    messages
-#                 WHERE   email = {email}
-#                 ORDER BY usr_msg_time
-#                 """
+        query = f"""
+                SELECT  user_msg, chat_response
+                FROM    messages
+                WHERE   email = {email}
+                ORDER BY usr_msg_time
+                """
         
-#         c.execute(query)
-#         msgList = c.fetchall()
-#         c.close()
-#         conn.close()
-#         return msgList
+        c.execute(query)
+        msgList = c.fetchall()
+        c.close()
+        conn.close()
+        return msgList
 
 @api.route('/busy/<string:email>', methods=['GET'])
 class Busyness(Resource):

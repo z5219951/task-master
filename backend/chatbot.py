@@ -114,7 +114,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
             friendListAdd(users[0][0] , owner)
             response = {'fulfillment_text': "Accepted request for {}".format(firstName + " " + lastName)}
             print(response)
-            return response,200
+            return response
         response = {'fulfillment_text': "Request failed, no request found for {}".format(firstName + " " + lastName)}
         print(response)
         #Handle accepting a user's connection request
@@ -147,10 +147,15 @@ def parseIntent(intent, dfResponse, email, initMsg):
         if (friendRequestRemove(users[0][0] , owner )):
             response = {'fulfillment_text': "Declined request for {}".format(firstName + " " + lastName)}
             print(response)
-            return response,200
+            return response
         response = {'fulfillment_text': "Request failed, no request found for {}".format(firstName + " " + lastName)}
         print(response)
-        return response,401
+        return response
+
+    elif(intent=="Help"):
+        response = {'fulfillment_text': "I can help you to add a task, check what tasks you have and when, tell you who wants to connect with you and manage these connections."}
+        print(response)
+        return response
 
 
     return response
