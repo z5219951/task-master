@@ -515,22 +515,24 @@ class Busyness(Resource):
         query = f"""
                 SELECT  time_estimate, deadline
                 FROM    tasks
-                WHERE   owner = {owner}
+                WHERE   assigned_to = {owner}
                 AND current_state != 'Completed'
                 """
         
         c.execute(query)
         timeList = c.fetchall()
+        print(timeList)
         c.close()
         conn.close()
         today = datetime.now()
         busyTotal = 0
         for i in timeList:
-            deadline = i[1]
-            deadline = datetime.strptime(deadline, '%Y-%m-%d')
-            #fenceposting gets real weird here...
-            if(deadline >= today - timedelta(1) and deadline <= today + timedelta(7)):
-                busyTotal += i[0]
+            if (i[1] != 'None'):
+                deadline = i[1]
+                deadline = datetime.strptime(deadline, '%Y-%m-%d')
+                #fenceposting gets real weird here...
+                if(deadline >= today - timedelta(1) and deadline <= today + timedelta(7)):
+                    busyTotal += i[0]
 
         return (busyTotal/40)*100
 
