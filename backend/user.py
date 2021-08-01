@@ -77,26 +77,40 @@ class Users(Resource):
         parser.add_argument('image_path')
         args = parser.parse_args()
         # print(args)
-        
+
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
         query = f"""
                 UPDATE  users
-                SET     username = '{args.username}',
-                        password = '{args.password}',
-                        email = '{args.email}',
-                        first_name = '{args.first_name}',
-                        last_name = '{args.last_name}',
-                        phone_number = '{args.phone_number}',
-                        company = '{args.company}',
-                        labels = '{args.labels}',
-                        image_path = '{args.image_path}'
-                WHERE   id = '{args.id}';
+                SET     username = ?,
+                        password = ?,
+                        email = ?,
+                        first_name = ?,
+                        last_name = ?,
+                        phone_number = ?,
+                        company = ?,
+                        labels = ?,
+                        image_path = ?
+                WHERE   id = ?;
                 """
+        queryParams = (
+            f'{args.username}',
+            f'{args.password}',
+            f'{args.email}',
+            f'{args.first_name}',
+            f'{args.last_name}',
+            f'{args.phone_number}',
+            f'{args.company}',
+            f'{args.labels}',
+            f'{args.image_path}',
+            f'{args.id}'
+        )
+        
         try:
-            c.execute(query)
-        except:
+            c.execute(query, queryParams)
+        except Exception as e:
+            print(e)
             c.close()
             conn.close()
             # split up username and email later
@@ -142,10 +156,10 @@ class Users(Resource):
 
         query = f'''
                 UPDATE  users
-                SET     image_path = '{url}'
-                WHERE   id = {user_id};
+                SET     image_path = ?
+                WHERE   id = ?;
                 '''
-        c.execute(query)
+        c.execute(query, (f'{url}', f'{user_id}'))
         
         print(f"stored in database: {url}")
 
@@ -176,14 +190,14 @@ class Users(Resource):
         query = f"""
                 SELECT  *
                 FROM    users
-                WHERE   lower(email) = '{needle}'
-                or      lower(first_name) = '{needle}'
-                or      lower(last_name) = '{needle}'
-                or      phone_number = '{needle}'
-                or      lower(company) = '{needle}';
+                WHERE   lower(email) = ?
+                or      lower(first_name) = ?
+                or      lower(last_name) = ?
+                or      phone_number = ?
+                or      lower(company) = ?;
                 """
         
-        c.execute(query)
+        c.execute(query, (f'{needle}', f'{needle}',f'{needle}',f'{needle}',f'{needle}'))
         data = c.fetchall()
         
         # Check if search needle matches FIRST LAST
@@ -195,11 +209,11 @@ class Users(Resource):
             query = f"""
             SELECT  *
             FROM    users
-            WHERE   lower(first_name) = '{first_name}'
-            AND     lower(last_name) = '{last_name}'
+            WHERE   lower(first_name) = ?
+            AND     lower(last_name) = ?
             """
             
-            c.execute(query)
+            c.execute(query, (f'{first_name}', f'{last_name}'))
             data.append(c.fetchone())
         
         res = []
@@ -225,10 +239,10 @@ class Users(Resource):
                 SELECT  p.id, p.name, p.description, p.tasks, p.groupid
                 FROM    projects p
                 JOIN    groups g ON p.groupid = g.id 
-                WHERE   g.user = {id};
+                WHERE   g.user = ?;
                 """
                 
-        c.execute(query)
+        c.execute(query, [f'{id}'])
         data = c.fetchone()
         project_list = []
 

@@ -166,7 +166,7 @@ class UserRequest extends Component{
     }
     render(){
         return (
-            <Fragment>
+            <div className="container">
                 <div className='request_container'>
                 <button type="button" className="btn btn-info btn-xs request_back" onClick={this.handleBack}>Back</button>
                     <p>Request Lists</p>
@@ -189,7 +189,7 @@ class UserRequest extends Component{
                     </Button>
                     </Modal.Footer>
                 </Modal>
-            </Fragment>
+            </div>
         )
     }
 }

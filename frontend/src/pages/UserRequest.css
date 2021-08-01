@@ -1,5 +1,5 @@
 .request_list{
-    width: 100vw;
+    width: 80%;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -13,8 +13,7 @@
     border-radius:20px;
     min-height: 20vh;
     margin-top: 10vh;
-    width: 120vw;
-    margin-left: 10vw;
+    width: 80vw;
 }
 .user_request_box{
     width: 90%;

@@ -53,9 +53,9 @@ class Users(Resource):
         for user in user_list:
             query = f"""
                     INSERT INTO groups (id, name, user)
-                    VALUES ({count}, '{name}', '{user}');
+                    VALUES (?, ?, ?);
                     """
-            c.execute(query)
+            c.execute(query, (f'{count}', f'{name}', f'{user}'))
 
         conn.commit()
 
@@ -74,9 +74,9 @@ class Users(Resource):
         query = f"""
                 SELECT  id, name
                 FROM    groups
-                WHERE   user = '{user_id}'
+                WHERE   user = ?
                 """
-        c.execute(query)
+        c.execute(query, [f'{user_id}'])
 
         group_list = []
 
@@ -103,9 +103,9 @@ class Users(Resource):
                     FROM    users
                     JOIN    groups
                     ON      groups.user = users.id
-                    WHERE   groups.id = '{id}'
+                    WHERE   groups.id = ?
                     """
-            c2.execute(query)
+            c2.execute(query, [f'{id}'])
 
 
             user = c2.fetchone()
@@ -167,20 +167,21 @@ class Users(Resource):
                     FROM    groups
                     JOIN    users   ON groups.user = users.id
                     JOIN    tasks   ON tasks.assigned_to = users.id
-                    WHERE   (groups.id = {id})
+                    WHERE   (groups.id = ?)
                     AND     (tasks.project is null);
                     """
+            c.execute(query, [f'{id}'])
+
         else:
             query = f"""
                     SELECT  tasks.id
                     FROM    groups
                     JOIN    users   ON groups.user = users.id
                     JOIN    tasks   ON tasks.assigned_to = users.id
-                    WHERE   (groups.id = {id})
-                    AND     (tasks.project is null OR tasks.project = {project});
+                    WHERE   (groups.id = ?)
+                    AND     (tasks.project is null OR tasks.project = ?);
                     """
-        print(query)
-        c.execute(query)
+            c.execute(query, (f'{id}', f'{project}'))
 
         data = c.fetchone()
         task_list = []
@@ -207,10 +208,10 @@ class Users(Resource):
         query = f"""
                 SELECT  id, name, description, tasks, groupid
                 FROM    projects
-                WHERE   groupid = {id};
+                WHERE   groupid = ?;
                 """
         print(query)
-        c.execute(query)
+        c.execute(query, [f'{id}'])
         data = c.fetchone()
         project_list = []
 
