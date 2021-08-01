@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react'
+import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
 import axios from 'axios'
@@ -30,7 +30,6 @@ class SearchUser extends Component{
         // send request
         const type = e.target.name;
         const requestUser = Number(e.target.value);
-        console.log(requestUser);
         if(type === "profile") {
             alert("go to profile")
             // send profile user id
@@ -49,7 +48,6 @@ class SearchUser extends Component{
                     url = "http://localhost:5000/request_search_email";
                 }
                 axios.post(url, data).then((res)=>{
-                    console.log(res);
                     const result = true;
                     if(result) {
                         this.setState(()=>({
@@ -105,7 +103,6 @@ class SearchUser extends Component{
             }
             axios.post(url,data).then((res)=>{
                 const testResult = JSON.parse(res.data);
-                console.log(testResult);
                 let warn = ''
                 if(testResult.length === 0) {
                     warn = 'No result'

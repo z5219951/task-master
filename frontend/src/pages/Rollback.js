@@ -5,13 +5,10 @@ import RevisionCard from '../components/RevisionCard'
 
 const Rollback = (props) => {
   const history = useHistory()
-  console.log(props)
   const task = props.location.state.task
-  console.log(task)
   const [revisions, setRevisions] = useState('')
   useEffect(() => {
     axios.get(`http://localhost:5000/revisions/${task.id}`).then((res) => {
-    console.log(JSON.parse(res.data))
     setRevisions(JSON.parse(res.data))
   })
   }, [])

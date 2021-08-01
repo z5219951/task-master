@@ -35,7 +35,6 @@ class LogoutButton extends Component{
                 type:'user_email',
                 value: ""
             }
-            console.log(store.getState())
             store.dispatch(action);
             store.dispatch(loggedIn);
             store.dispatch(deletEmail);

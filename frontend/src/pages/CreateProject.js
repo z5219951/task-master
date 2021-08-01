@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import store from '../store';
-import ViewTask from './ViewTask'
 
 const CreateProject = (props) => {
   const group = props.location.state.group
@@ -38,11 +37,8 @@ const CreateProject = (props) => {
 
     const project = {name: name, description: description, connected_tasks: connectedTasks, assigned_to: group.groupID, created_by: store.getState().id}
     axios.post('http://localhost:5000/projects/create', project).then((res) => {
-      console.log(res)
       history.push('./groups')
     })
-    console.log(project)
-    console.log(JSON.stringify(project))
   }
 
   // Get tasks associated with users in the group
@@ -51,7 +47,6 @@ const CreateProject = (props) => {
     
     axios.get(`http://localhost:5000/groups/${group.groupID}/tasks`).then((res) => {
       const taskList = JSON.parse(res.data);
-      console.log(res.data)
       setTaskids(taskList)
     })
 
@@ -62,7 +57,6 @@ const CreateProject = (props) => {
     if (taskids) {
       taskids.map((id) => {
         axios.get(`http://localhost:5000/tasks/${id}`).then((res) => {
-          console.log(res.data)
           setTasks(tasks => [...tasks, JSON.parse(res.data)])
     })
       })
@@ -76,7 +70,6 @@ const CreateProject = (props) => {
     } else {
       newTaskList[e.target.value] = true
     }
-    console.log(newTaskList)
     setTaskList(newTaskList)
     setConnectedTasks([])
   }
@@ -90,10 +83,6 @@ const CreateProject = (props) => {
       })
     }
   }, [taskList])
-
-  useEffect(() => {
-    console.log(connectedTasks)
-  }, [connectedTasks])
 
   function handleView (task) {
     history.push({

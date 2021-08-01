@@ -1,10 +1,8 @@
 import './Padding.css'
-import UpdateDetail from './UpdateDetail.js'
 import { useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import store from '../store';
 import axios from 'axios';
-import Card from "react-bootstrap/Card";
 import './Profile.css'
 import { Button, Modal } from 'react-bootstrap';
 import Photo from './Photo'
@@ -63,7 +61,6 @@ const Profile = () => {
           return
         }
         const updateDet = {...user}; // Copy user into updateDet
-        console.log(updateDet)
         updateDet.password = newPassword; // Change selected field
         setUser(updateDet); //Set user
         setPasswordAlert('')
@@ -107,7 +104,6 @@ const Profile = () => {
       updateDet.image_path = newData.image_path 
     }
 
-    console.log(updateDet)
     setUser(updateDet); //Set user
     handleShow()
 
@@ -146,7 +142,6 @@ const Profile = () => {
   useEffect(() => {
     if (Object.keys(user).length !== 0) {
       axios.put(`http://localhost:5000/user/update `, user)
-      console.log(user)
     } 
   }, [user])
 

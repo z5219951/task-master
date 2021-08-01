@@ -4,7 +4,6 @@ import TaskCard from '../components/TaskCard'
 const ViewTask = (props) => {
   const task = props.location.task.task
   const history = useHistory()
-  console.log(props.location.task.task)
   function backClick() {
     history.goBack()
   }

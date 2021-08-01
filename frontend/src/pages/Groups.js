@@ -24,7 +24,6 @@ class Groups extends Component{
             axios.defaults.crossDomain=true;
             axios.get('http://localhost:5000/groups/'+userId).then((res)=>{
             // store the user id in store
-            console.log(res)
             // const result = JSON.parse(res.data);
             const testResult = JSON.parse(res.data);
             let warn = ''
@@ -51,7 +50,6 @@ class Groups extends Component{
         )
     }
     getItem = ()=>{
-        console.log(this.state.list);
         return (
             this.state.list.map((item,index)=>
             <div className="card my-2 mx-5" key={index}> 

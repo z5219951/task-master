@@ -12,12 +12,10 @@ const ProjectCard = (props) => {
   const [group, setGroup] = useState('')
 
   useEffect(() => {
-    console.log (project.tasks)
     setTasks([])   
     if (project.tasks) {
       JSON.parse(project.tasks).map((id) => {
         axios.get(`http://localhost:5000/tasks/${id}`).then((res) => {
-          console.log(res.data)
           setTasks(tasks => [...tasks, JSON.parse(res.data)])
         })
       })   
@@ -26,7 +24,6 @@ const ProjectCard = (props) => {
     axios.get(`http://localhost:5000/groups/${store.getState().id}`).then((res) => {
       const groups = JSON.parse(res.data)
       groups.map((groupLoop) => {
-        console.log(groupLoop)
         if (Number(groupLoop.groupID) === Number(project.groupid)) {
           setGroup(groupLoop)
         }

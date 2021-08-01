@@ -23,7 +23,6 @@ const TaskSearchResult = (props) => {
     }
     axios.post('http://localhost:5000/tasks/search', data).then((res)=> {
       setSearchResult(JSON.parse(res.data))
-      console.log(JSON.parse(res.data))
     })
 
   },[props.location])

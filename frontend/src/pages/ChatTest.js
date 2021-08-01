@@ -43,7 +43,6 @@ class ChatTest extends Component{
         try {
             axios.get('http://localhost:5000/user/'+currentUser).then((res)=>{
                 const data = JSON.parse(res.data);
-                console.log(data);
                 this.setState(()=>({
                     user:{
                         id:data.id,
@@ -74,7 +73,6 @@ class ChatTest extends Component{
         try {
             axios.defaults.crossDomain=true;
             axios.post('http://localhost:5000/chatbot',msgNew).then((res)=>{
-                console.log(res);
                 botReply.message.content = res.data.fulfillment_text;
                 this.setState((pre)=>({
                     msgList:[...pre.msgList,botReply]

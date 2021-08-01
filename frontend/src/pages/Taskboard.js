@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SearchTask from '../components/SearchTask'
 import ShowTasks from '../components/ShowTasks'
-import { ToggleButton } from 'react-bootstrap';
 
 const Taskboard = () => {
   const history = useHistory();
@@ -20,10 +19,6 @@ const Taskboard = () => {
 
   function createTask() {
     history.push('/createTask')
-  }
-
-  function createProject() {
-    history.push('/createProject')
   }
 
   // Get tasks created by and assigned to the logged in user

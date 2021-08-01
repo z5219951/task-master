@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react'
+import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
 import axios from 'axios'
@@ -36,7 +36,6 @@ class UserRequest extends Component{
             axios.defaults.crossDomain=true;
             axios.get(url).then((res)=>{
             // store the user id in store
-            console.log(res)
             // const result = JSON.parse(res.data);
             const testResult = res.data;
             let warn = ''
@@ -127,7 +126,6 @@ class UserRequest extends Component{
                 }
                 axios.get(url).then((res)=>{
                 // store the user id in store
-                console.log(res)
                 // const result = JSON.parse(res.data);
                 const testResult = res.data
                 let warn = ''
@@ -152,7 +150,6 @@ class UserRequest extends Component{
         this.props.history.push('./taskboard');
     }
     getItem = ()=>{
-        console.log(this.state.list);
         return (
             this.state.list.map((item,index)=><div key = {index}className="user_request_box">
                 <p className="user_request_name">{item.userName}</p>

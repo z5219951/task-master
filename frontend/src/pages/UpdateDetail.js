@@ -1,5 +1,4 @@
 import './Padding.css'
-import { useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import store from '../store'
 import axios from 'axios';
@@ -81,7 +80,6 @@ const UpdateDetail = (props) => {
   // Special case for password handling
   function handlePassword(oldPassword, newPassword, confirmPass) {
     setUpdateDetAlert('')
-    console.log(user['password'])
     if (oldPassword !== user['password']) {
       setUpdateDetAlert('Current password incorrect!')
       return;

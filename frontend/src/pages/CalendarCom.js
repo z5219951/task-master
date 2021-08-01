@@ -94,7 +94,7 @@ class CalendarCom extends Component{
         listData.push(tasks[i]);
       }
     }
-    console.log(listData);
+    
     if(!listData.length) {
       return;
     }
