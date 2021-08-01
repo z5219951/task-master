@@ -44,8 +44,8 @@ def addTask(owner, title, description, creation_date, deadline, labels, current_
     c = conn.cursor()
 
     query = f"""
-            INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to)
-            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{labels}', '{current_state}', '{time_estimate}', '{assigned_to}');
+            INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, reminded)
+            VALUES ('{owner}', '{title}', '{description}', '{creation_date}', '{deadline}', '{labels}', '{current_state}', '{time_estimate}', '{assigned_to}', 0);
             """
     c.execute(query)
     print(query)
