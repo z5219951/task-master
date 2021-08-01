@@ -10,7 +10,6 @@ const CreateProject = (props) => {
   const [description, setDescription] = useState('')
   const [nameAlert, setNameAlert] = useState('')
   const [descriptionAlert, setDescriptionAlert] = useState('')
-  const [createdTasks, setCreatedTasks] = useState('');
   const [taskList, setTaskList] = useState([])
   const [connectedTasks, setConnectedTasks] = useState([])
   const [taskids, setTaskids] = useState()

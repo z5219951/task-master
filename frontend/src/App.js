@@ -1,12 +1,10 @@
 import './App.css';
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Navigation from './components/Navigation'
 import Taskboard from './pages/Taskboard'
-import SignedInNav from './components/SignedInNav'
 import Profile from './pages/Profile'
 import UpdateProfile from './pages/UpdateProfile'
 import CreateTask from './pages/CreateTask'
@@ -15,8 +13,6 @@ import VerifyCode from './pages/VerifyCode';
 import RePassWord from './pages/RePassWord';
 import CheckCode from './pages/CheckCode';
 import NavbarControl from './components/NavbarControl'
-import store from './store';
-import { connect } from 'react-redux';
 import UserRequest from './pages/UserRequest';
 import SearchUser from './pages/SearchUser';
 import UpdateTask from './pages/UpdateTask'
