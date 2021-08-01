@@ -6,6 +6,7 @@ import { Button, Modal } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select';
 import Slider from '@material-ui/core/Slider';
+import './UpdateTask.css'
 
 const UpdateTask = (props) => {
   const history = useHistory();
@@ -200,7 +201,7 @@ const UpdateTask = (props) => {
       <div className="form-group row mb-5">
         <label htmlFor="cState" className="col-sm-3 col-form-label">Update Completion State</label>
         <div className="col-sm-5">
-          <Slider
+          <Slider className="slider"
           defaultValue={0}
           aria-labelledby="discrete-slider-custom"
           step={null}
