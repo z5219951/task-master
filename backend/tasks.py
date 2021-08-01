@@ -356,8 +356,8 @@ class Tasks(Resource):
             print(task_info.get("labels"))
             if ((task_info.get("id") == needle) or \
                 (needle == task_info.get("deadline")) or \
-                (needle == task_info.get("title").lower()) or \
-                (needle == task_info.get("description").lower())):
+                (needle in task_info.get("title").lower()) or \
+                (needle in task_info.get("description").lower())):
                 res_list.append(task_info)
             
             labelList = labels.rawStrToList(task_info.get("labels").lower())
