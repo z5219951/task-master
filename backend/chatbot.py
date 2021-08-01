@@ -1,5 +1,5 @@
 from friends import *
-from functions import *
+from chatbotHelpers import *
 from datetime import *
 
 def parseIntent(intent, dfResponse, email, initMsg):

@@ -1,5 +1,6 @@
 # standard library imports
 from chatbot import *
+from chatbotHelpers import *
 import json
 import random
 import sys
