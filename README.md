@@ -12,10 +12,16 @@ masters is.
 
 # How to run
 
-**Run two terminals**
+**3rd party requirements:**
+Ngrok is needed in order to correctly forward the local deployment to dialogflow for running the chatbot.
+Ngrok can be downloaded from here:
+https://ngrok.com/download
+
+**Run three terminals**
 *Run the backend from folder #1 (backend) and the frontend from folder #2 (frontend)*
 1. cd backend
 2. cd frontend
+3. ngrok.exe
 
 **BACKEND**
 **installation**
@@ -32,6 +38,12 @@ masters is.
 
 **running the app**
 1. yarn start
+
+**Once running, do the following in terminal 3 (the one running the ngrok.exe)**
+1. /ngrok authtoken 1fO0GH3r1oJj1g1d2NkAhF6Ofhu_2yJz2aRc9WaN7aEgdMQb8
+2. ngrok.exe http -region=au -hostname=comp3900.au.ngrok.io 5000
+
+This will expose port 5000 to the public url comp3900.au.ngrok.io which allows Dialogflow to send processed messages.
 
 **Accessing the web page**
 1. http://localhost:3000 
