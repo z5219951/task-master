@@ -16,6 +16,7 @@ const TaskCard = (props) => {
   const [formattedLabels, setFormattedLabels] = useState('')
   const [updateLabel, setUpdateLabel] = useState(false)
   const [assigned, setAssigned] = useState('')
+  const [createdBy, setCreatedBy] = useState('')
   const [filepath, setFilePath] = useState(tasks.file_paths)
 
   function handleClick() {
@@ -34,6 +35,12 @@ const TaskCard = (props) => {
      if (tasks.assigned_to !== '' || tasks.assigned_to !== undefined) {
       axios.get(`http://localhost:5000/user/${tasks.assigned_to}`).then((res) => {
       setAssigned(JSON.parse(res.data).email)
+      })
+    }
+
+    if (tasks.owner !== '' || tasks.owner !== undefined) {
+      axios.get(`http://localhost:5000/user/${tasks.owner}`).then((res) => {
+        setCreatedBy(JSON.parse(res.data).email)
       })
     }
 
@@ -59,9 +66,9 @@ const TaskCard = (props) => {
   },[updateLabel])
 
   function handleLabels(labels) {
+    tasks.userId = store.getState().id
     tasks.labels = JSON.stringify(labels)
     axios.put(`http://localhost:5000/tasks/update `, tasks)
-
     // Trigger updateLabel useEffect
     if (updateLabel) {
       setUpdateLabel(false)
@@ -112,7 +119,7 @@ const TaskCard = (props) => {
       <div className="card-header">
         <div className="row display-5">
           <div className="col">{tasks.title}</div>
-          {update ? <div className="col-md-2"><button className="btn btn-secondary btn-lg" onClick={() => handleClick()}>Update Task</button><br/></div> : ''}
+          {update ? <div className="col-md-2"><button className="btn btn-secondary btn-m" onClick={() => handleClick()}>Update Task</button><br/></div> : ''}
           <p className="card-text m-1">Task ID: #{tasks.id}</p>
           <p className="card-text m-1">Task Status: {tasks.current_state}</p>
           <p className="card-text col m-1"><em>Deadline: {tasks.deadline !== 'None' ? tasks.deadline : 'No deadline'} </em></p>
@@ -122,6 +129,7 @@ const TaskCard = (props) => {
       <div className="card-body text-muted" padding="100px">
         <p className="card-text">Description: <br/>{tasks.description}</p>
         <p className="card-text">Assigned to: {assigned}</p>
+        <p className="card-text">Created By: {createdBy}</p>
       </div>
       <div className="card-footer text-muted" padding="100px">
         <p className="card-text m-1"><em>Labels: {currentLabels}</em></p>

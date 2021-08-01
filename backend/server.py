@@ -24,6 +24,7 @@ import tasks
 import user
 import labels
 import projects
+import revisions
 
 app = Flask(__name__)
 api = Api(app,
@@ -43,6 +44,8 @@ app.register_blueprint(labels.bp)
 api.add_namespace(labels.api)
 app.register_blueprint(projects.bp)
 api.add_namespace(projects.api)
+app.register_blueprint(revisions.bp)
+api.add_namespace(revisions.api)
 
 app.config["UPLOADS"] = PurePath(Path(__file__).parent.resolve())
 
@@ -512,22 +515,24 @@ class Busyness(Resource):
         query = f"""
                 SELECT  time_estimate, deadline
                 FROM    tasks
-                WHERE   owner = {owner}
+                WHERE   assigned_to = {owner}
                 AND current_state != 'Completed'
                 """
         
         c.execute(query)
         timeList = c.fetchall()
+        print(timeList)
         c.close()
         conn.close()
         today = datetime.now()
         busyTotal = 0
         for i in timeList:
-            deadline = i[1]
-            deadline = datetime.strptime(deadline, '%Y-%m-%d')
-            #fenceposting gets real weird here...
-            if(deadline >= today - timedelta(1) and deadline <= today + timedelta(7)):
-                busyTotal += i[0]
+            if (i[1] != 'None'):
+                deadline = i[1]
+                deadline = datetime.strptime(deadline, '%Y-%m-%d')
+                #fenceposting gets real weird here...
+                if(deadline >= today - timedelta(1) and deadline <= today + timedelta(7)):
+                    busyTotal += i[0]
 
         return (busyTotal/40)*100
 

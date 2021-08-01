@@ -27,7 +27,7 @@ const RevisionCard = (props) => {
 
   function handleRollback() {
     const data = {'taskId': Number(taskId), 'userId': userId, 'revisionId': Number(revision.revisionId)}
-    axios.post('http://localhost:5000/tasks/rollback', data).then((res) => {
+    axios.post('http://localhost:5000/revisions/rollback', data).then((res) => {
       console.log(res.data)
       history.push('./taskboard')
     })
@@ -38,7 +38,7 @@ const RevisionCard = (props) => {
     <div className="card my-2 mx-5"> 
       <div className="card-header">
         <div className="row display-5">
-          <div className="card-text">{revision.rollbackTime !== 0 ? <span><h5>Rolled Back:</h5></span> : <span>{index === 0 ? <h5>Created As:</h5> : <h5>Changes Made:</h5>}</span>} {revision.revision && Object.entries(revision.revision).length !== 0 ? Object.entries(revision.revision).map(([key,value]) => {
+          <div className="card-text">{revision.rollbackTime !== 0 ? <span><h5>Rolled back to version at {revision.rollbackTime} with the following changes:</h5></span> : <span>{index === 0 ? <h5>Created As:</h5> : <h5>New Changes Made:</h5>}</span>} {revision.revision && Object.entries(revision.revision).length !== 0 ? Object.entries(revision.revision).map(([key,value]) => {
             return <div>{key}: {value.toString()}</div>
           }): 'No change to version directly above'} </div><br />
         </div>

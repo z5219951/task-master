@@ -34,3 +34,6 @@ Added api for searching of connected users and tasks.
 Week 8:
 Participated in weekly meetings, and wrote minutes report. Completed the backend
 implementation for tasks edit history / rollbacks. (CWC-69)
+
+Week 9: 
+Changed implementation of task rollback to keep copies of the older states.

@@ -46,7 +46,7 @@ class Home extends Component{
             </div>
             <div className="home_content_box home_content_box_center">
               <div className="text_container text_container2">
-                <h2 className="home_title2">Contect Us</h2>
+                <h2 className="home_title2">Contact Us</h2>
                 <div className="contact_details">
                   <div className="contact_box">
                     <p>Nicholai Rank</p>
