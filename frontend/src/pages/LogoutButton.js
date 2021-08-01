@@ -27,9 +27,19 @@ class LogoutButton extends Component{
                 type:'loggedIn',
                 value: false
             }
+            const deletEmail = {
+                type:'reset_email',
+                value: ""
+            }
+            const deletEmail2 = {
+                type:'user_email',
+                value: ""
+            }
             console.log(store.getState())
             store.dispatch(action);
-            store.dispatch(loggedIn)
+            store.dispatch(loggedIn);
+            store.dispatch(deletEmail);
+            store.dispatch(deletEmail2);
             // after logout, it will go to home page
             this.props.history.push('./home');
             })
