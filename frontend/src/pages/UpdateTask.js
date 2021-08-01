@@ -30,6 +30,9 @@ const UpdateTask = (props) => {
   const [noDeadline, setNoDeadline] = useState(false)
   const [timeTaken, setTimeTaken] = useState('')
   const [completionValue, setCompletionValue] = useState('')
+  
+  var today = new Date();
+  const currentDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
 
   // Get task
   const [task, setTask] = useState('')
@@ -65,6 +68,7 @@ const UpdateTask = (props) => {
   function handleSubmit () {
 
     const updateTask = {...task}; // Copy task into updateTask
+    console.log(updateTask)
 
     if (name !== '') {
       updateTask.title = name;
@@ -91,6 +95,10 @@ const UpdateTask = (props) => {
     }
 
     if (noDeadline === false && dueD !== '') {
+      if (Date.parse(dueD) < Date.parse(currentDate)) {
+        setDueDAlert('Please enter a valid deadline')
+        return
+      }
       updateTask.deadline = dueD;
     }
 
@@ -107,7 +115,8 @@ const UpdateTask = (props) => {
   }
 
   useEffect(() => {
-    if (Object.keys(task).length !== 0) {
+    if (task && Object.keys(task).length !== 0) {
+      task.userId = store.getState().id
       axios.put(`http://localhost:5000/tasks/update `, task)
       
       if (task.assigned_to !== '' || task.assigned_to !== undefined) {
@@ -183,7 +192,7 @@ const UpdateTask = (props) => {
       <button className="btn btn-success btn-lg" onClick={() => rollBack()}>Rollback to a previous version</button>
       <br /><br />
       <div className="row">
-        <h1 className="col">Updating Task: {task.title}</h1>
+        <h1 className="col">Updating Task ID #{task.id}: {task.title}</h1>
         <button className="col-md-2 btn btn-secondary btn-lg" onClick={() => backClick()}>Back</button>
       </div>
       <h3>Please enter the fields you wish to update</h3>

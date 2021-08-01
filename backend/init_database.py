@@ -27,8 +27,8 @@ if __name__ == '__main__':
     # create table messages
     query = """
             CREATE TABLE IF NOT EXISTS messages (
-                usr_msg_time    text    	,
-                email           text        unique not null,
+                usr_msg_time    timestamp   not null,
+                email           text        not null,
                 chat_response   text        not null,
                 user_msg        text        not null
             );
@@ -93,7 +93,7 @@ if __name__ == '__main__':
                 file_paths      text        ,
                 project         integer     ,
                 time_taken      integer     ,
-		reminded	integer		not null,
+		reminded	integer	    not null,
                 foreign key     (owner)     references users (id)
                 foreign key     (assigned_to)  references users (id)
                 foreign key     (project)   references projects (id)

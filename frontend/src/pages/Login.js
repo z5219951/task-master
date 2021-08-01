@@ -82,6 +82,7 @@ class Login extends Component{
               value: this.state.email
             }
             store.dispatch(userEmail);
+            axios.get('http://localhost:5000/reminder')
             this.props.history.push('./taskboard');
           } else {
             // incorrect password
