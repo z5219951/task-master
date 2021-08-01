@@ -8,9 +8,9 @@ def email_exists(email):
     query = f"""
             SELECT  count(*)
             FROM    users
-            WHERE   email = '{email}';
+            WHERE   email = ?;
             """
-    c.execute(query)
+    c.execute(query, [f'{email}'])
     count = c.fetchone()[0]
 
     if (count == 1):
@@ -24,9 +24,9 @@ def user_exists(username):
     query = f"""
             SELECT  count(*)
             FROM    users
-            WHERE   username = '{username}';
+            WHERE   username = ?;
             """
-    c.execute(query)
+    c.execute(query, [f'{username}'])
     count = c.fetchone()[0]
 
     if (count == 1):
@@ -40,10 +40,10 @@ def getUserByID(id):
     query = f"""
             SELECT  id, username, password, email, first_name, last_name, phone_number, company, labels, image_path
             FROM    users
-            WHERE   id = '{id}';
+            WHERE   id = ?;
             """
 
-    c.execute(query)
+    c.execute(query, [f'{id}'])
     data = c.fetchone()
     c.close()
     conn.close()
@@ -60,11 +60,11 @@ def getUsersByFirstLastName(firstName , lastName):
     query = f"""
             SELECT  id
             FROM    users
-            WHERE   lower(first_name) = '{firstName}'
-            AND     lower(last_name) Like '%{lastName}%';
+            WHERE   lower(first_name) = ?
+            AND     lower(last_name) Like '%?%';
             """
 
-    c.execute(query)
+    c.execute(query, (f'{firstName}', f'{lastName}'))
     data = c.fetchall()
     c.close()
     conn.close()

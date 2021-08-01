@@ -50,29 +50,40 @@ class Users(Resource):
         parser.add_argument('time_taken', required=False)
         args = parser.parse_args()
         #print(args)
-
+        
+        query = f"""        
+                INSERT INTO tasks (owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, time_taken, reminded)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0);
+                """
+        
+        queryParams = (
+            f'{args.owner}',
+            f'{args.title}',
+            f'{args.description}',
+            f'{args.creation_date}',
+            f'{args.deadline}',
+            f'{args.labels}',
+            f'{args.current_state}',
+            f'{args.time_estimate}',
+            f'{args.assigned_to}',
+            f'{args.time_taken}'
+        )
+        
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
-
-        query = f"""
-                INSERT INTO tasks (owner, title, description, creation_date, deadline,
-                    labels, current_state, time_estimate, assigned_to, time_taken, reminded)
-                VALUES ('{args.owner}', '{args.title}', '{args.description}', '{args.creation_date}', 
-                        '{args.deadline}', '{args.labels}', '{args.current_state}', '{args.time_estimate}',
-                        '{args.assigned_to}', '{args.time_taken}', 0);
-                """
-        print(query)
-        c.execute(query)
+        
+        c.execute(query, queryParams)
 
         query = f"""
                 SELECT  id
                 FROM    tasks
-                WHERE   owner = '{args.owner}'
-                AND     title = '{args.title}'
-                AND     description = '{args.description}'
-                AND     creation_date = '{args.creation_date}';
+                WHERE   owner = ?
+                AND     title = ?
+                AND     description = ?
+                AND     creation_date = ? ;
                 """
-        c.execute(query)
+        
+        c.execute(query, (f'{args.owner}', f'{args.title}', f'{args.description}', f'{args.creation_date}'))
         id = c.fetchone()[0]
 
         conn.commit()
@@ -98,10 +109,10 @@ class Users(Resource):
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
-                WHERE   id = '{id}';
+                WHERE   id = ?;
                 """
-
-        c.execute(query)
+    
+        c.execute(query, [f'{id}'])
         data = c.fetchone()
         task_info = {}
         if (data is not None):
@@ -139,11 +150,11 @@ class Users(Resource):
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
-                WHERE   owner = '{owner}'
+                WHERE   owner = ?
                 ORDER BY    deadline;
                 """
 
-        c.execute(query)
+        c.execute(query, [f'{owner}'])
         data = c.fetchone()
         task_list = []
 
@@ -186,11 +197,11 @@ class Users(Resource):
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken
                 FROM    tasks
-                WHERE   assigned_to = '{owner}'
+                WHERE   assigned_to = ?
                 ORDER BY    deadline;
                 """
 
-        c.execute(query)
+        c.execute(query, [f'{owner}'])
         data = c.fetchone()
         task_list = []
 
@@ -257,23 +268,38 @@ class Users(Resource):
         args = parser.parse_args()
         print(args)
 
-        conn = sqlite3.connect('clickdown.db')
-        c = conn.cursor()
         query = f"""
                 UPDATE  tasks
-                SET     title = '{args.title}',
-                        description = '{args.description}',
-                        creation_date = '{args.creation_date}',
-                        deadline = '{args.deadline}',
-                        labels = '{args.labels}',
-                        current_state = '{args.current_state}',
-                        time_estimate = '{args.time_estimate}',
-                        assigned_to = '{args.assigned_to}',
-                        time_taken = '{args.time_taken}'
-                WHERE   id = '{args.id}';
+                SET     title = ?,
+                        description = ?,
+                        creation_date = ?,
+                        deadline = ?,
+                        labels = ?,
+                        current_state = ?,
+                        time_estimate = ?,
+                        assigned_to = ?,
+                        time_taken = ?
+                WHERE   id = ?;
                 """
+        queryParams = (
+            f'{args.title}', 
+            f'{args.description}', 
+            f'{args.creation_date}', 
+            f'{args.deadline}',
+            f'{args.labels}',
+            f'{args.current_state}',
+            f'{args.time_estimate}', 
+            f'{args.assigned_to}',
+            f'{args.time_taken}',
+            f'{args.id}'
+        )
+        
+        conn = sqlite3.connect('clickdown.db')
+        c = conn.cursor()
+        
         try:
-            c.execute(query)
+            c.execute(query, queryParams)
+ 
         except Exception as e:
             print(e)
             c.close()
@@ -316,8 +342,8 @@ class Tasks(Resource):
         query = f"""
                 SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
                 FROM    tasks
-                WHERE   owner = '{userId}'
-                OR      assigned_to = '{userId}'
+                WHERE   owner = ?
+                OR      assigned_to = ?
                 """
         
         # Get tasks assigned to the friends of the given user
@@ -328,7 +354,7 @@ class Tasks(Resource):
         # Sort tasks by earliest deadlines
         query = query + (f"ORDER BY    deadline ASC;\n")
         
-        c.execute(query)
+        c.execute(query, (f'{userId}', f'{userId}'))
         data_list = c.fetchall()
         
         conn.close()
@@ -351,16 +377,17 @@ class Tasks(Resource):
         
         res_list = []
         for task_info in full_task_list:
+            
             # Seach based on id, name, label, desc, deadline
-            print(task_info.get("labels"))
+            labelList = labels.rawStrToList(task_info.get("labels"))
+            if needle in labelList:
+                res_list.append(task_info)
+                continue
+                
             if ((task_info.get("id") == needle) or \
                 (needle == task_info.get("deadline")) or \
                 (needle in task_info.get("title").lower()) or \
                 (needle in task_info.get("description").lower())):
-                res_list.append(task_info)
-            
-            labelList = labels.rawStrToList(task_info.get("labels").lower())
-            if needle in labelList:
                 res_list.append(task_info)
 
         return json.dumps(res_list), 200
@@ -405,9 +432,9 @@ class Users(Resource):
         query = f"""
                 SELECT  file_paths
                 FROM    tasks
-                WHERE   id = {task_id};
+                WHERE   id = ?;
                 """
-        c.execute(query)
+        c.execute(query, [f'{task_id}'])
 
         existing = c.fetchone()
 
@@ -418,57 +445,17 @@ class Users(Resource):
 
         query = f'''
                 UPDATE  tasks
-                SET     file_paths = "{url_list}"
-                WHERE   id = {task_id};
+                SET     file_paths = ?
+                WHERE   id = ?;
                 '''
         print(query)
-        c.execute(query)
+        c.execute(query, (f'{url_list}', f'{task_id}'))
         
         conn.commit()
         c.close()
         conn.close()
 
         return json.dumps(url_list)
-
-taskByDatePayload = api.model('taskByDate', {
-    "date": fields.String
-})
-
-#get task for a single date.
-
-## I THINK THIS IS REDUNDANT
-@api.route('/getTaskByDate/<int:owner>', methods=['GET'])
-class Tasks(Resource):
-    @api.response(200, 'Successfully retrieved task info')
-    @api.response(404, 'Not Found')
-    @api.doc(description="Gets all tasks assigned to a user on a specific day")
-    @api.expect(taskByDatePayload)
-    
-    
-    def get(self,owner):
-        # parser = reqparse.RequestParser()
-        # parser.add_argument('date', required=True)
-        # args = parser.parse_args()
-        date = request.args.get('date')
-
-
-        conn = sqlite3.connect('clickdown.db')
-        c = conn.cursor()
-        query = f"""
-                SELECT  title
-                FROM    tasks
-                WHERE   owner = '{owner}'
-                AND     deadline = '{date}'
-                AND     current_state IS NOT "Completed" 
-                """    
-        c.execute(query)
-        tasks = c.fetchall()
-        conn.commit()
-        c.close()
-        conn.close()
-
-        print(tasks)
-        return(tasks)
 
 ### Helper Functions ###
 # Return a dictionary representation of a task in the database
@@ -479,9 +466,9 @@ def getTaskbyId(taskId):
     query = f"""
             SELECT  owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to, file_paths
             FROM    tasks
-            WHERE   id = '{taskId}'
+            WHERE   id = ?
             """
-    c.execute(query)
+    c.execute(query, [f'{taskId}'])
     data = c.fetchone()
     
     if data is None:

@@ -44,37 +44,43 @@ class Users(Resource):
 
         query = f"""
                 INSERT INTO projects (groupid, name, description, tasks)
-                VALUES ('{groupid}', '{name}', '{description}', '{json.dumps(task_list)}');
+                VALUES (?, ?, ?, ?);
                 """
-        c.execute(query)
+        queryParams = (
+            f'{groupid}',
+            f'{name}',
+            f'{description}',
+            f'{json.dumps(task_list)}'
+        )
+        c.execute(query, queryParams)
         conn.commit()
 
         query = f"""
                 SELECT  id
                 FROM    projects
-                WHERE   groupid = '{groupid}'
-                AND     name = '{name}'
-                AND     description = '{description}'
-                AND     tasks = '{json.dumps(task_list)}';
+                WHERE   groupid = ?
+                AND     name = ?
+                AND     description = ?
+                AND     tasks = ?;
                 """
-        c.execute(query)
+        c.execute(query, queryParams)
         id = c.fetchone()[0]
 
         query = f"""
                 UPDATE  tasks
                 SET     project = null
-                WHERE   project = {id};
+                WHERE   project = ?;
                 """
-        c.execute(query)
+        c.execute(query, [f'{id}'])
         conn.commit()
 
         for task in task_list:
             query = f"""
                     UPDATE  tasks
-                    SET     project = {id}
-                    WHERE   id = {task}
+                    SET     project = ?
+                    WHERE   id = ?
                     """
-            c.execute(query)
+            c.execute(query, (f'{id}', f'{task}'))
             conn.commit()
 
         return {'value': True}
@@ -110,30 +116,38 @@ class Users(Resource):
 
         query = f"""
                 UPDATE  projects
-                SET     groupid = '{args.groupid}',
-                        name = '{args.name}',
-                        description = '{args.description}',
-                        tasks = '{json.dumps(task_list)}'
-                WHERE   id = {args.id};
+                SET     groupid = ?,
+                        name = ?,
+                        description = ?,
+                        tasks = ?
+                WHERE   id = ?;
                 """
-        c.execute(query)
+        queryParams = (
+            f'{args.groupid}', 
+            f'{args.name}', 
+            f'{args.description}', 
+            f'{json.dumps(task_list)}', 
+            f'{args.id}'
+        )
+        
+        c.execute(query, queryParams)
         conn.commit()
 
         query = f"""
                 UPDATE  tasks
                 SET     project = null
-                WHERE   project = {args.id};
+                WHERE   project = ?;
                 """
-        c.execute(query)
+        c.execute(query, [f'{args.id}'])
         conn.commit()
 
         for task in task_list:
             query = f"""
                     UPDATE  tasks
-                    SET     project = {args.id}
-                    WHERE   id = {task}
+                    SET     project = ?
+                    WHERE   id = ?
                     """
-            c.execute(query)
+            c.execute(query, (f'{id}', f'{task}'))
             conn.commit()
 
         return {'value': True}
@@ -151,11 +165,11 @@ class Users(Resource):
         query = f"""
                 SELECT  name, description
                 FROM    projects
-                WHERE   groupid = '{group_id}'
+                WHERE   groupid = ?
                 ORDER BY    name;
                 """
 
-        c.execute(query)
+        c.execute(query, [f'{group_id}'])
         try:
             data = c.fetchone()
         except:
@@ -191,11 +205,11 @@ class Users(Resource):
         query = f"""
                 SELECT  name, description
                 FROM    projects
-                WHERE   group = '{group_id}'
+                WHERE   group = ?
                 ORDER BY    name;
                 """
 
-        c.execute(query)
+        c.execute(query, [f'{group_id}'])
         try:
             data = c.fetchone()
         except:

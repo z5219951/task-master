@@ -85,10 +85,10 @@ class Tasks(Resource):
         for field, newVal in rollbackState["revision"].items():
             query = f"""
                     UPDATE  tasks
-                    SET     {field} = '{newVal}'
-                    WHERE   id = {taskId};
+                    SET     {field} = ?
+                    WHERE   id = ?;
                     """
-            c.execute(query)
+            c.execute(query, (f'{newVal}', f'{taskId}'))
             conn.commit()
         
         # Insert revision to the end of the "revisions" table
@@ -137,9 +137,17 @@ def revisionsInsert(taskId, revId, userId, revision, rollback):
     
     query = f"""
             INSERT INTO revisions (taskId, revId, userId, timestamp, revision, rollback)
-            VALUES ('{taskId}', '{revId}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{revision}', '{rollback}');
+            VALUES (?, ?, ?, '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', ?, ?);
             """
-    c.execute(query)
+    print(query)
+    c.execute(query, [f'{taskId}', f'{revId}',f'{userId}', f'{revision}', f'{rollback}'])
+    
+    # query = f"""
+    #         INSERT INTO revisions (taskId, revId, userId, timestamp, revision, rollback)
+    #         VALUES ('{taskId}', '{revId}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{revision}', '{rollback}');
+    #         """
+
+    # c.execute(query)
     conn.commit()
     conn.close()
 
@@ -152,11 +160,11 @@ def getRevisions(taskId):
     query = f"""
             SELECT  taskId, revId, userId, timestamp, revision, rollback
             FROM    revisions
-            WHERE   taskId = '{taskId}'
+            WHERE   taskId = ?
             ORDER BY revId ASC;
             """
     try:
-        c.execute(query)    
+        c.execute(query, [f'{taskId}'])    
         revisionList = c.fetchall()
         conn.close()
 
