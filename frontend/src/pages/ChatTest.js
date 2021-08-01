@@ -26,7 +26,7 @@ class ChatTest extends Component{
             _id: '-1',
             date: dayjs().unix(),
             user: bot,
-            message: { type: 'text', content: 'What can I do for you' },
+            message: { type: 'text', content: 'What can I do for you? Type "help" to see what I can do!' },
         }
         this.state={
             chatBot:bot,
