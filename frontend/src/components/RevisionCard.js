@@ -37,7 +37,7 @@ const RevisionCard = (props) => {
       <div className="card-header">
         <div className="row display-5">
           <div className="card-text">{revision.rollbackTime !== 0 ? <span><h5>Rolled back to version at {revision.rollbackTime} with the following changes:</h5></span> : <span>{index === 0 ? <h5>Created As:</h5> : <h5>New Changes Made:</h5>}</span>} {revision.revision && Object.entries(revision.revision).length !== 0 ? Object.entries(revision.revision).map(([key,value]) => {
-            return <div>{key}: {value.toString()}</div>
+            return <div key={key}>{key}: {value.toString()}</div>
           }): 'No change to version directly above'} </div><br />
         </div>
       </div>
