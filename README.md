@@ -37,7 +37,7 @@ This will expose port 5000 to the public url comp3900.au.ngrok.io which allows D
 2. Run $ yarn install
 #### Running the application:
 1. Open a terminal in the ‘/frontend’ directory of the repository
-2. yarn start
+2. Run $ yarn start
 3. To access the web page, type the following on your web browser:
 http://localhost:3000
 4. To access the API, type the following on your web browser:
