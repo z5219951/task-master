@@ -22,7 +22,8 @@ create_payload = api.model('create project payload', {
 class Users(Resource):
     @api.response(200, 'Project successfully created')
     @api.response(400, 'Bad request')
-    @api.doc(description="Create a project with the tasks")
+    @api.doc(description="Create a project with the tasks. Return json dict {value},\
+    value is true if sucessful, false otherwise")
     @api.expect(create_payload)
     def post(self):
         parser = reqparse.RequestParser()
@@ -98,7 +99,8 @@ update_payload = api.model('update group payload', {
 class Users(Resource):
     @api.response(200, 'Project successfully updated')
     @api.response(400, 'Bad request')
-    @api.doc(description="update a project")
+    @api.doc(description="Update a project. Returns json dict {value}, value is \
+    true if sucessful false otherwise")
     @api.expect(update_payload)
     def put(self):
         parser = reqparse.RequestParser()
@@ -157,7 +159,8 @@ class Users(Resource):
 class Users(Resource):
     @api.response(200, 'Projects successfully retrieved')
     @api.response(400, 'Bad request')
-    @api.doc(description="Get all projects for a group given its group id")
+    @api.doc(description="Get all projects for a group given its group id. \
+    Returns json list of dict [{name, description}]")
     def get(self, group_id):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -195,7 +198,8 @@ class Users(Resource):
 class Users(Resource):
     @api.response(200, 'Projects successfully retrieved')
     @api.response(400, 'Bad request')
-    @api.doc(description="Get all projects for a group given its group id")
+    @api.doc(description="Get all projects for a group given its group id. \
+    Returns json list of dictionaries [{name, description}]")
     def get(self, group_id):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()

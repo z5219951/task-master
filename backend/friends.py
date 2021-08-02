@@ -11,7 +11,7 @@ api = Namespace("friends", "Operations for adding/removing friends")
 class Users(Resource):
     @api.response(200, 'Got request/s')
     @api.response(400, 'Bad request')    
-    @api.doc(description="Search for pending friend requests")
+    @api.doc(description="Search for pending friend requests. Json list of [{requestUser, userName}]")
     def get(self, email):
         requests_list = []
     
@@ -52,7 +52,8 @@ request_payload = api.model('request connection', {
 class Users(Resource):
     @api.response(200, 'Request sucessfully sent and actioned in database')
     @api.response(400, 'Bad request - User/s does not exist')
-    @api.doc(description="Send a friend request to requested user")
+    @api.doc(description="Send a friend request to requested user. Return json \
+    dict {value} - value is true if sucessful, otherwise false")
     @api.expect(request_payload)
     def post(self):
         parser = reqparse.RequestParser()
@@ -74,7 +75,8 @@ class Users(Resource):
 class Users(Resource):
     @api.response(200, 'Decline command OK')
     @api.response(400, 'Bad request')
-    @api.doc(description="Remove friend request from database")
+    @api.doc(description="Remove friend request from database. Return json \
+    dict {value} - value is true if sucessful, otherwise false")
     @api.expect(request_payload)
     def post(self):
         parser = reqparse.RequestParser()
@@ -99,7 +101,8 @@ class Users(Resource):
 class Users(Resource):
     @api.response(200, 'Accept command OK')
     @api.response(400, 'Bad request - Friend request is not valid')
-    @api.doc(description="Link two account IDs as friends")
+    @api.doc(description="Link two account IDs as friends. Return json \
+    dict {value} - value is true if sucessful, otherwise false")
     @api.expect(request_payload)
     def post(self):
         parser = reqparse.RequestParser()
@@ -114,7 +117,7 @@ class Users(Resource):
         
         # Check if request is valid and within database
         if res == False:            
-            return {'value': False}
+            return {'value': False},200
         else:
             friendListAdd(user_from, user_to)
         
@@ -125,7 +128,8 @@ class Users(Resource):
 class Users(Resource):
     @api.response(200, 'Sucessfully searched for connected users')
     @api.response(400, 'Bad request')
-    @api.doc(description= "Returns all users that is connected to the given user")
+    @api.doc(description= "Returns all users that is connected to the given user. \
+    Returns json list [{requestedUser, name, email}]")
     def get(self, userId):
         return json.dumps(friendListGet(userId)), 200
         
