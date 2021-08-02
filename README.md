@@ -2,13 +2,12 @@
 
 # Introduction
 Be a master of tracking where you and your collaborators are with tasks that you've got
-an interest in, and use TaskMaster. This platform will allow task masters to maintain a
-profile that shows tasks being worked on at a glance, where task masters can connect
+an interest in, using ClickDown. This platform will allow clickers to maintain a
+profile that shows tasks being worked on at a glance, where clickers can connect
 with others on the platform, and communicate the state of each of their tasks through
-the platform. It provides an easy way to create and assign tasks to task masters you
-collaborate with, and search for any tasks within your network of task master
-collaborators. You can even see an estimate of how busy each of your connected task
-masters is.
+the platform. It provides an easy way to create and assign tasks to fellow clickers you
+collaborate with, and search for any tasks within your network of clicker
+collaborators. You can even see an estimate of how busy each of your connected clickers is.
 
 # Setting up and Running the System
 3rd party requirements: Ngrok is needed in order to correctly forward the local deployment to dialogflow for running the chatbot. Ngrok can be downloaded from here: https://ngrok.com/download
