@@ -64,10 +64,10 @@ def parseIntent(intent, dfResponse, email, initMsg):
                 startDateObj += timedelta(days=1)
                 tasks = getTasksOnADate(owner, startDateStr)
                 if(len(tasks)>0):
-                    res += startDateStr + " "
+                    res += " " + startDateStr + ": "
                     for i in tasks:
-                        res += str(i[0]) + " "
-                    res += "\n"
+                        res += str(i[0]) + ", "
+                    res = res[0:len(res)-2]
             response = {'fulfillment_text': "Your tasks are as follows: \"{}\"".format(res)}
 
     #Handle getting potential connection list
