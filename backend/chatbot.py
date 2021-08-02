@@ -4,9 +4,9 @@ from datetime import *
 
 def parseIntent(intent, dfResponse, email, initMsg):
     owner = getOwner(email)
-    #default response if no intent found
+    # default response if no intent found
     response = {'fulfillment_text': "Sorry, I don't understand. Please rephrase and try again. Ask for help to see suggested intents."}
-    #Handles adding a task
+    # handles adding a task
     if(intent == "AddTask"):
         today = date.today()
         params = dfResponse.query_result.parameters
@@ -16,14 +16,14 @@ def parseIntent(intent, dfResponse, email, initMsg):
         addTask(owner, title, title, today, deadline, labels="", current_state="Not Started", time_estimate=1, assigned_to=owner)
         response = {'fulfillment_text': "I have added a task called \"{}\" for {}!".format(title, deadline)}
 
-    #Handles retrieving a task list
+    # handles retrieving a task list
     elif(intent == "CheckTaskByDate"):
         params = dfResponse.query_result.parameters
         endDate = params.fields['date-time'].struct_value.fields['endDate'].string_value.split('T')[0]
         startDate = params.fields['date-time'].struct_value.fields['startDate'].string_value.split('T')[0]
-        #Single date request
+        # single date request
         if(startDate == ""):
-            # #no date edge case
+            # no date edge case
             if(len(params.fields['date'].list_value)==0):
                 tasks = getAllTasks(owner)
                 dailyTaskList = ''
@@ -54,7 +54,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
             else:
                 response = {'fulfillment_text': "You don't have any tasks for {}".format(singleDate)}
                 return response
-        #date-range request
+        # date-range request
         else:
             startDateObj = datetime.strptime(startDate, '%Y-%m-%d')
             endDateObj = datetime.strptime(endDate, '%Y-%m-%d')
@@ -70,7 +70,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
                     res = res[0:len(res)-2]
             response = {'fulfillment_text': "Your tasks are as follows: \"{}\"".format(res)}
 
-    #Handle getting potential connection list
+    # handle getting potential connection list
     elif(intent == "CheckRequestedConnections"):
         connRequests = getRequestedConnectionsList(email)
         reqConnections = ""
@@ -112,7 +112,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
         response = {'fulfillment_text': "Request failed, no request found for {}".format(firstName + " " + lastName)}
 
 
-    #Handle declining a connection if it exists
+    # handle declining a connection if it exists
     elif(intent == "DeclineConnection"):
         params = dfResponse.query_result.parameters
         fullName = params.fields['person'].struct_value['name']
@@ -139,7 +139,7 @@ def parseIntent(intent, dfResponse, email, initMsg):
         response = {'fulfillment_text': "Request failed, no request found for {}".format(firstName + " " + lastName)}
         return response
 
-    #Tells user what options they have available in the chatbot on request
+    # tells user what options they have available in the chatbot on request
     elif(intent=="Help"):
         response = {'fulfillment_text': "I can help you to add a task, check what tasks you have and when, tell you who wants to connect with you and manage these connections."}
         return response
