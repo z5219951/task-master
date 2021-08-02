@@ -74,7 +74,6 @@ if __name__ == '__main__':
                 foreign key     (groupid)   references groups (id)
             );
             """
-    print(query)
     c.execute(query)
 
     # create table tasks
@@ -149,31 +148,6 @@ if __name__ == '__main__':
                 foreign key     (userId)    references users (id),
                 constraint      connection  primary key (taskId, revId)
             );
-            """
-    c.execute(query)
-
-    # insert test data
-    query = f"""
-            INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
-            VALUES ('charles', '123456Qq', '1105282259@qq.com', 'Yue', 'Qi', '12345', '123');
-            """
-    c.execute(query)
-    
-    query = f"""
-            INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
-            VALUES ('gavin', 'Testing123', '1@gmail.com', 'Gavin', 'Wang', '54321', '321');
-            """
-    c.execute(query)
-    
-    query = f"""
-            INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
-            VALUES ('testA', 'Testing123', '2@gmail.com', 'Test', 'A', '54321', '321');
-            """
-    c.execute(query)
-    
-    query = f"""
-            INSERT INTO users (username, password, email, first_name, last_name, phone_number, company)
-            VALUES ('testB', 'Testing123', '3@gmail.com', 'Test', 'B', '54321', '321');
             """
     c.execute(query)
     
