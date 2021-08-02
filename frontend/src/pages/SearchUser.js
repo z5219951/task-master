@@ -112,11 +112,12 @@ class SearchUser extends Component{
                 for(let i = 0; i < testResult.length; i++) {
                     if(testResult[i].requestUser === Number(this.state.id)) {
                         testResult.splice(i,1);
-                        warn = "Can't add yourself!";
+                        if(testResult.length === 0) {
+                            warn = "Can't add yourself!";
+                        }
                         break;
                     }
                 }
-                const requestUser = testResult;
                 this.setState(()=>({
                     list:testResult,
                     noResult:warn,
