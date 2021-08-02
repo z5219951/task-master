@@ -92,7 +92,7 @@ const CreateTask = () => {
     setLabels(JSON.stringify(labels))
     const temp = labels
     temp.map((label) => {
-      if (existingLabels.includes(label.value) === false) {
+      if (existingLabels.includes(label.value) === false && JSON.stringify(label.value) !== 'None') {
         const data = {'labels': JSON.stringify(label.value)}
         axios.post(`http://localhost:5000/labels/${store.getState().id}`, data)
         setExistingLabels(existingLabels => [...existingLabels, label.value])
