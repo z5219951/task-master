@@ -83,7 +83,7 @@ class Users(Resource):
                     SET     labels = ?
                     WHERE   id = ?;
                     """
-            c.execute(query, [f'{args.labels, user}'])
+            c.execute(query, (f'{args.labels}', f'{user}'))
 
         conn.commit()
         c.close()
