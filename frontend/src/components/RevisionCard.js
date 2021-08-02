@@ -14,7 +14,6 @@ const RevisionCard = (props) => {
   const [lastEntry, setLastEntry] = useState(false)
 
   useEffect(() => {
-    console.log(props)
     if (props.length === props.index) {
       setLastEntry(true)
     }
