@@ -498,12 +498,12 @@ def booleanDecompose(searchTerm):
     plusTerms = []
     minusTerms = []
     
-    for term in enumerate(plusSplit):
-        if "NOT" not in term[1]:
-            plusTerms.append(term[1].strip())
+    for term in plusSplit:
+        if "NOT" not in term:
+            plusTerms.append(term.strip())
         
         else:
-            minusSplit = term[1].split("NOT")
+            minusSplit = term.split("NOT")
             
             for t in enumerate(minusSplit):
                 if (t[1] == ''):
