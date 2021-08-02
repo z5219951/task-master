@@ -66,7 +66,7 @@ class Users(Resource):
         res = friendRequestAdd(user_from, user_to)
         
         if res == False:
-            return {'value': False}, 400
+            return {'value': False}, 200
         
         return {'value': True},200
         

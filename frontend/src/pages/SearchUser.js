@@ -49,7 +49,8 @@ class SearchUser extends Component{
                     url = "http://localhost:5000/request_search_email";
                 }
                 axios.post(url, data).then((res)=>{
-                    const result = true;
+                    console.log(res);
+                    const result = res.data.value;
                     if(result) {
                         this.setState(()=>({
                             inform:'Connection request sent!'
