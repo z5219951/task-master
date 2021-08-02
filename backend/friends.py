@@ -66,7 +66,7 @@ class Users(Resource):
         res = friendRequestAdd(user_from, user_to)
         
         if res == False:
-            return {'value': False},400
+            return {'value': False}, 400
         
         return {'value': True},200
         
@@ -114,11 +114,11 @@ class Users(Resource):
         
         # Check if request is valid and within database
         if res == False:            
-            return {'value': False},400
+            return {'value': False}
         else:
             friendListAdd(user_from, user_to)
         
-        return {'value': True},200
+        return {'value': True}, 200
 
 
 @api.route('/lists/<int:userId>', methods=['GET'])
@@ -190,8 +190,9 @@ def friendRequestAdd(user_from, user_to):
     
     # Check that users are not already connected
     friends = friendListGet(user_to)
+    
     for f in friends:
-        if f["requestedUser"] == user_from:
+        if str(f["requestedUser"]) == (user_from):
             return False
     
     conn = sqlite3.connect('clickdown.db')
