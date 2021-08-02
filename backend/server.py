@@ -456,12 +456,16 @@ class Chatbot(Resource):
         c.close()
         conn.close()    
         #Loop through query results and calculate an estimate factor
+        #Loop through query results and calculate an estimate factor
         error = 0
-        for i in compList:
-            est = i[0]
-            taken = i[1]
-            error += taken/est
-        adjustmentFactor = error / len(i)
+        if(len(compList) > 0):
+            for i in compList:
+                est = i[0]
+                taken = i[1]
+                error += taken/est
+            adjustmentFactor = error / len(compList)
+        else:
+            adjustmentFactor = 1
         adjEstimate = estimate * adjustmentFactor
         return adjEstimate
 
