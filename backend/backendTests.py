@@ -134,10 +134,18 @@ def taskCreate():
         "title" : "Train Bryan in the use of clickdown",
         "description": "Bryan is a new member of the team",
         "creation_date": "2021-08-01",
-        "deadline": "2021-08-01"
+        "deadline": "2021-08-14"
     }
     
-    requests.post(route, task1)
+    task2= { 
+        "owner" : "1",
+        "title" : "Read clickdown documentation",
+        "description": "I'm new to this",
+        "creation_date": "2021-08-01",
+    }
+    
+    r = requests.post(route, task1)
+    r = requests.post(route, task2)
     
 if __name__ == "__main__":
     response = ''

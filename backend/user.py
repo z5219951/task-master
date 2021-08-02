@@ -18,7 +18,8 @@ api = Namespace("user", "Operations for user")
 class Users(Resource):
     @api.response(200, 'Successfully retrieved user info')
     @api.response(404, 'Not Found')
-    @api.doc(description="Gets info for a user given their id")
+    @api.doc(description="Gets info for a user given their id. Returns dictionary \
+    {id, password, email, first_name, last_name, phone_number, company,labels, image_path}")
     def get(self, id):
         data = getUserByID(id)
 
@@ -59,7 +60,8 @@ update_payload = api.model('update info', {
 class Users(Resource):
     @api.response(200, 'Successfully updated user info')
     @api.response(400, 'Bad Request')
-    @api.doc(description="Updates info for a user")
+    @api.doc(description="Updates info for a user. Returns dictionary {value} - \
+    true if sucessful, false otherwise")
     @api.expect(update_payload)
     def put(self):
         parser = reqparse.RequestParser()
@@ -123,7 +125,8 @@ class Users(Resource):
 class Users(Resource):
     @api.response(200, 'Successfully uploaded a profile picture')
     @api.response(400, 'Bad Request')
-    @api.doc(description="Receives a picture file and stores it in the backend")
+    @api.doc(description="Receives a picture file and stores it in the backend. \
+    Returns dict {url}, url of picture.")
     def post(self, user_id):
         image = request.files['image']
         filename = secure_filename(image.filename)
@@ -163,7 +166,9 @@ class Users(Resource):
     @api.response(200, 'Sucessfully searched for requests')
     @api.response(400, 'Not implemented')
     @api.expect(search_payload)
-    @api.doc(description="Search for users based on name, email, company, phone")
+    @api.doc(description="Search for users based on name, email, company, phone.\
+    return dict {requestedUser, username}. requestedUser is userId of user found \
+    , username is FIRST LAST of found user")
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('input', required=True)
@@ -216,7 +221,8 @@ class Users(Resource):
 class Users(Resource):
     @api.response(200, 'Projects successfully received')
     @api.response(400, 'Bad request')
-    @api.doc(description="Get all projects for a user")
+    @api.doc(description="Get all projects for a user. Return list of projects \
+    [{id, name, description, tasks, groupid}]")
     def get(self, id):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()

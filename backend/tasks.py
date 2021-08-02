@@ -34,7 +34,8 @@ task_payload = api.model('task', {
 class Users(Resource):
     @api.response(200, 'Successfully created task')
     @api.response(400, 'Bad Request')
-    @api.doc(description="Creates a task with the given info")
+    @api.doc(description="Creates a task with the given info. Returns json dict {id}, \
+    where id is the taskId")
     @api.expect(task_payload)
     def post(self):
         parser = reqparse.RequestParser()
@@ -100,7 +101,9 @@ class Users(Resource):
 class Users(Resource):
     @api.response(200, 'Successfully retrieved task info')
     @api.response(404, 'Not Found')
-    @api.doc(description="Gets all tasks for a user given their id")
+    @api.doc(description="Given a user Id return  a json dict of the task {id, \
+    owner, title,  description, creation_date, deadline, labels, current_state, \
+    time_estimate, assigned_to, file_paths, time_taken}")
     def get(self, id):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -141,7 +144,9 @@ class Users(Resource):
 class Users(Resource):
     @api.response(200, 'Successfully retrieved task info')
     @api.response(404, 'Not Found')
-    @api.doc(description="Gets all tasks for a user given their id")
+    @api.doc(description="Gets all tasks for a user given their id. Returns json \
+    list of tasks dictionaries [{id, owner, title, description, creation_date, \
+    deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken}]")
     def get(self, owner):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -186,7 +191,9 @@ class Users(Resource):
 class Users(Resource):
     @api.response(200, 'Successfully retrieved task info')
     @api.response(404, 'Not Found')
-    @api.doc(description="Gets all tasks assigned to a user")
+    @api.doc(description="Gets all tasks assigned to a user. Returns json \
+    list of tasks dictionaries [{id, owner, title, description, creation_date, \
+    deadline, labels, current_state, time_estimate, assigned_to, file_paths, time_taken}")
     def get(self, owner):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -245,7 +252,8 @@ update_payload = api.model('update task info', {
 class Users(Resource):
     @api.response(200, 'Successfully updated task')
     @api.response(404, 'Not Found')
-    @api.doc(description="Updates a task given its id")
+    @api.doc(description="Updates a task given its id. Return json dictionary {value} \
+    - true if sucessful, false otherwise")
     @api.expect(update_payload)
     def put(self):
         parser = reqparse.RequestParser()
@@ -318,7 +326,7 @@ class Tasks(Resource):
     @api.response(400, 'Unexpected error')
     @api.expect(task_search_payload)
     @api.doc(description="Search for tasks related to given user based on \
-    id, name, label, description and/or deadline")
+    id, name, label, description and/or deadline. Returns json list of tasks")
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('searchTerm')

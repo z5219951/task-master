@@ -80,7 +80,8 @@ class Users(Resource):
     # Use received information to register an account
     @api.response(200, 'New account registered successfully')
     @api.response(400, 'Bad request')
-    @api.doc(description="Register a new account")
+    @api.doc(description="Register a new account. Returns json dict {value},\
+    value is true on success false otherwise")
     @api.expect(register_payload)
     def post(self):
         parser = reqparse.RequestParser()
@@ -138,7 +139,8 @@ forgot_payload = api.model('forgot password', {
 class Users(Resource):
     @api.response(200, 'Successfully found user, recovery email sent')
     @api.response(400, 'Bad request')
-    @api.doc(description="Forgot password")
+    @api.doc(description="Forgot password. Returns json dict {value}, true if \
+    code has been sucessfully sent")
     @api.expect(forgot_payload)
     def post(self):
         parser = reqparse.RequestParser()
@@ -202,7 +204,7 @@ recovery_payload = api.model('recovery code', {
 class Users(Resource):
     @api.response(200, 'Successfully entered recovery code')
     @api.response(400, 'Bad request')
-    @api.doc(description="Enter recovery code")
+    @api.doc(description="Enter recovery code. Returns json dict {value}, true if code matches")
     @api.expect(recovery_payload)
     def post(self):
         parser = reqparse.RequestParser()
@@ -238,7 +240,7 @@ new_pass_payload = api.model('new password', {
 class Users(Resource):
     @api.response(200, 'Successfully reset password')
     @api.response(400, 'Bad request')
-    @api.doc(description="Enter new password")
+    @api.doc(description="Enter new password, return dict {value} true if updated in database")
     @api.expect(new_pass_payload)
     def post(self):
         parser = reqparse.RequestParser()
@@ -274,7 +276,8 @@ login_payload = api.model('login info', {
 class Users(Resource):
     @api.response(200, 'Successfully logged in')
     @api.response(400, 'Bad request')
-    @api.doc(description="Enter email and password")
+    @api.doc(description="Enter email and password. Return json dict {id}, \
+    where id is the userId if successful, empty otherwise")
     @api.expect(login_payload)
     def post(self):
         parser = reqparse.RequestParser()
@@ -427,7 +430,7 @@ update_estimate = api.model('update estimate', {
 })
 @api.route('/estimate', methods=['GET'])
 class Chatbot(Resource):
-    @api.doc(description="Calculates and sends back an updated estimate")
+    @api.doc(description="Calculates and sends back an updated estimate.")
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('owner', required=True)
@@ -475,7 +478,8 @@ class Chatbot(Resource):
 class Busyness(Resource):
     @api.response(200, 'Successfully retrieved user busyness')
     @api.response(400, 'Bad Request')
-    @api.doc(description="Calculates and returns how busy a user is for the next 7 days")
+    @api.doc(description="Calculates and returns how busy a user is for the next 7 days. Returns an integer \
+    for the percentage of busyness")
     def get(self,email):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()

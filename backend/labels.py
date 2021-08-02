@@ -15,7 +15,8 @@ api = Namespace("labels", "Operations for labels")
 class Users(Resource):
     @api.response(200, 'Successfully retrieved label info')
     @api.response(404, 'Not Found')
-    @api.doc(description="Gets all labels for a user given their id")
+    @api.doc(description="Gets all labels for a user given their id. Returns \
+    ")
     def get(self, user):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()

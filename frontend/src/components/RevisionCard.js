@@ -11,8 +11,12 @@ const RevisionCard = (props) => {
   const userId = store.getState().id
   const taskId = props.taskID
   const history = useHistory();
+  const [lastEntry, setLastEntry] = useState(false)
 
   useEffect(() => {
+    if (props.length === props.index) {
+      setLastEntry(true)
+    }
     if (props.revision.revision.assigned_to) {
       axios.get(`http://localhost:5000/user/${props.revision.revision.assigned_to}`).then((res) => {
         props.revision.revision.assigned_to = JSON.parse(res.data).email
@@ -46,7 +50,9 @@ const RevisionCard = (props) => {
           {revision.rollback}
           <div className="card-text">{revision.rollbackTime !== 0 ? <span>Rolled Back</span>: <span>{index === 0 ? 'Created' : 'Modified'}</span>} by {revision.userName} ({revision.userEmail}) 
           <br />{revision.timestamp}</div><br />
+          {lastEntry ? <button className="btn btn-success btn-lg">Current Version</button> :
           <button className="btn btn-success btn-lg" onClick={() => handleRollback()}>Version Rollback</button>
+          }
         </div>
       </div>
     </div>
