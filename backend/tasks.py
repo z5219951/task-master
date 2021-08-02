@@ -16,7 +16,6 @@ bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 api = Namespace("tasks", "Operations for tasks")
 
 # create task
-#Priority and difficulty/indicative load?
 task_payload = api.model('task', {
     "owner": fields.Integer,
     "title": fields.String,
