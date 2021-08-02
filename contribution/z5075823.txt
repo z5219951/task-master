@@ -21,3 +21,6 @@ Implemented backend for file uploads. Bug fixed my implementation with feedback 
 
 Week 8:
 Implemented backend for projects, bugfixed and optimised previous functionality to provide easier access and useability.
+
+Week 9:
+Finalised backend code functionality. Worked on the Report for final submission.
