@@ -30,10 +30,7 @@ class Users(Resource):
         args = parser.parse_args()
 
         name = args.groupName
-        # user_list = args.userList
         user_list = request.get_json()['userList']
-        print(f"type of user_list is: {type(user_list)}")
-        print(f"list is: {user_list}")
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -84,13 +81,10 @@ class Users(Resource):
         group_id = ''
         try:
             data = c.fetchone()
-            print(data)
             group_id = data[0]
             group_name = data[1]
         except:
             return json.dumps(group_list)
-
-        print(f'name fetched is: {group_name}')
 
         while (group_id is not None and group_name is not None):
             id = group_id
@@ -132,9 +126,6 @@ class Users(Resource):
             else:
                 group_id = data[0]
                 group_name = data[1]
-            
-
-        print(f'Completed group list is: {group_list}')
 
         return json.dumps(group_list)
 
@@ -150,7 +141,6 @@ class Users(Resource):
     @api.expect(task_payload)
     def get(self, id):
         project = request.args.get('project')
-        print(project)
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
@@ -159,7 +149,6 @@ class Users(Resource):
                 FROM    tasks;
                 """
         c.execute(query)
-        print(c.fetchall())
 
         if project is None:
             query = f"""
@@ -210,7 +199,6 @@ class Users(Resource):
                 FROM    projects
                 WHERE   groupid = ?;
                 """
-        print(query)
         c.execute(query, [f'{id}'])
         data = c.fetchone()
         project_list = []
@@ -223,12 +211,9 @@ class Users(Resource):
                 'tasks': f'{data[3]}',
                 'groupid': f'{data[4]}'
             }
-            print(project_info)
             project_list.append(project_info)
             data = c.fetchone()
-
-        # print(project_list)
-
+            
         c.close()
         conn.close()
 

@@ -1,5 +1,6 @@
 # standard library imports
 from chatbot import *
+from chatbotHelpers import *
 import json
 import random
 import sys
@@ -91,10 +92,8 @@ class Users(Resource):
         parser.add_argument('phone_number', required=True)
         parser.add_argument('company', required=False, default=None)
         args = parser.parse_args()
-        # print(args)
 
         # if email is already registered, return false
-        # DELETE THIS IF FRONTEND ALREADY CHECKS VALIDITY
         if (email_exists(args.email)):
             return {'message': f'A user with that email already exists',
                     'value': False}, 200
@@ -102,8 +101,7 @@ class Users(Resource):
             return {'message': f'A user with that username already exists',
                     'value': False}, 200
 
-        # at this point, all inputs should be valid
-        # insert values into users table
+        # input validated, so able to insert into users table
         
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -131,8 +129,6 @@ class Users(Resource):
 
         return {'value': True}
 
-
-# TODO: add email system
 # Forgot password
 forgot_payload = api.model('forgot password', {
     "email": fields.String
@@ -148,7 +144,6 @@ class Users(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('email', required=True)
         args = parser.parse_args()
-        # print(args)
 
         email = args.email
         # return  false if no such user
@@ -156,7 +151,6 @@ class Users(Resource):
             return {'value': False},200    
         
         recovery = -1
-        print(email)
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
 
@@ -251,7 +245,6 @@ class Users(Resource):
         parser.add_argument('email', required=True)
         parser.add_argument('new_password', required=True)
         args = parser.parse_args()
-        #print(args)
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -271,7 +264,6 @@ class Users(Resource):
         return {'value': True}
 
 
-# TODO: redo function with proper login system
 # login
 login_payload = api.model('login info', {
     "email": fields.String,
@@ -301,7 +293,6 @@ class Users(Resource):
                 """
         c.execute(query, (f'{args.email}', f'{args.password}'))
         id = c.fetchone()
-        # print(id)
 
         c.close()
         conn.close()
@@ -314,14 +305,11 @@ class Users(Resource):
         }
         return json.dumps(data),200
 
-
-# TODO: redo function with proper logout system
 # logout
 logout_payload = api.model('logout info', {
     "id": fields.Integer
 })
 
-#Do we still need a logout route?
 @api.route('/logout', methods=['POST'])
 class Users(Resource):
     @api.response(200, 'Successfully logged out')
@@ -341,11 +329,10 @@ class Uploads(Resource):
     @api.response(400, 'Bad request')
     @api.doc(description="Gets a file from the backend directory given a path")
     def get(self,path):
-        print(f'path obtained is: {path}')
         return send_from_directory(PurePath(app.config['UPLOADS']), path, as_attachment=False)
 
+#webhook receiver route
 @api.route('/webhook', methods=['POST'])
-#largely deprecated, now exists to support current pipeline.
 class Webhook(Resource):
     @api.doc(description="Receives responses via webhook - also supplies dialogflow with fulfilment messages")
     def post(self):
@@ -371,7 +358,6 @@ class Chatbot(Resource):
                 VALUES (?, ?, ?, ?);
                 """
         c.execute(query, (f'{timestamp}', f'{email}', f'{cRes}', f'{initMsg}'))
-        print(query)
 
         conn.commit()
         c.close()
@@ -431,18 +417,9 @@ class Users(Resource):
         c.close()
         conn.close()
 
-#calculates and sends back an updated estimate given a task
+#calculates and sends back an updated estimate for a given task
+#based on the assignee's historical prediction accuracy
 
-#Account for who's putting in the time estimate vs who the task is assigned to?
-#think about whether estimates are more reflective of a manager's ability to discern task effort or a worker's
-#ability to get stuff done?
-#Should be more indicative of a manager's ability to guestimate time reqs...
-#perceived difficulty
-#owner vs updater
-
-
-#Change owner to assigned to
-#Otherwise this works
 update_estimate = api.model('update estimate', {
     "owner": fields.String,
     "time_estimate": fields.Integer,
@@ -478,42 +455,17 @@ class Chatbot(Resource):
         conn.commit()
         c.close()
         conn.close()    
-        #Get tasks by status loop through them and calculate an estimate factor
+        #Loop through query results and calculate an estimate factor
         error = 0
         for i in compList:
             est = i[0]
             taken = i[1]
             error += taken/est
-            print("error is ", error)
         adjustmentFactor = error / len(i)
-        print("adjustmentFactor is ", adjustmentFactor)
         adjEstimate = estimate * adjustmentFactor
-        print("adjustedEstimate is ", adjEstimate)
         return adjEstimate
 
-#Untested currently??
-#smidge effed, gets syntax error
-@api.route('/chatHistory/<string:email>', methods=['GET'])
-class ChatHistory(Resource):
-    @api.response(200, 'Successfully retrieved history')
-    @api.response(400, 'Bad Request')
-    @api.doc(description="Checks the database for a user's chat history")
-    def get(self,email):
-        conn = sqlite3.connect('clickdown.db')
-        c = conn.cursor()
-
-        query = f"""
-                SELECT  user_msg, chat_response
-                FROM    messages
-                WHERE   email = {email}
-                ORDER BY usr_msg_time
-                """
-        
-        c.execute(query)
-        msgList = c.fetchall()
-        c.close()
-        conn.close()
-        return msgList
+#Calculates user busyness
 
 @api.route('/busy/<string:email>', methods=['GET'])
 class Busyness(Resource):
@@ -524,7 +476,6 @@ class Busyness(Resource):
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
         owner = getOwner(email)
-        #"2021-07-31" - deadline example
 
         query = f"""
                 SELECT  time_estimate, deadline
@@ -535,7 +486,6 @@ class Busyness(Resource):
         
         c.execute(query, [f'{owner}'])
         timeList = c.fetchall()
-        print(timeList)
         c.close()
         conn.close()
         today = datetime.now()
@@ -544,7 +494,7 @@ class Busyness(Resource):
             if (i[1] != 'None'):
                 deadline = i[1]
                 deadline = datetime.strptime(deadline, '%Y-%m-%d')
-                #fenceposting gets real weird here...
+                #for the sake of avoiding fenceposting, opted to return 8 days including current
                 if(deadline >= today - timedelta(1) and deadline <= today + timedelta(7)):
                     busyTotal += i[0]
 

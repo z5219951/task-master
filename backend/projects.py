@@ -185,8 +185,6 @@ class Users(Resource):
             project_list.append(project_info)
             data = c.fetchone()
 
-        # print(project_list)
-
         c.close()
         conn.close()
 
@@ -224,8 +222,6 @@ class Users(Resource):
             }
             project_list.append(project_info)
             data = c.fetchone()
-
-        # print(project_list)
 
         c.close()
         conn.close()

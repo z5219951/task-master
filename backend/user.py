@@ -37,9 +37,7 @@ class Users(Resource):
             'labels': f'{data[8]}',
             'image_path': f'{data[9]}'
         }
-        
-        print(resp)
-        
+
         return json.dumps(resp)
 
 
@@ -76,7 +74,6 @@ class Users(Resource):
         parser.add_argument('labels')
         parser.add_argument('image_path')
         args = parser.parse_args()
-        # print(args)
 
         conn = sqlite3.connect('clickdown.db')
         c = conn.cursor()
@@ -110,10 +107,8 @@ class Users(Resource):
         try:
             c.execute(query, queryParams)
         except Exception as e:
-            print(e)
             c.close()
             conn.close()
-            # split up username and email later
             return {'value': False}
 
         conn.commit()
@@ -130,23 +125,16 @@ class Users(Resource):
     @api.response(400, 'Bad Request')
     @api.doc(description="Receives a picture file and stores it in the backend")
     def post(self, user_id):
-        print(f'upload received user_id is: {user_id}')
         image = request.files['image']
-        print(f'upload received filetype is: {type(image)}')
         filename = secure_filename(image.filename)
 
         if filename == '':
             return {'value': False}
 
         dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'users', str(user_id))
-        # dir = PurePath(Path(__file__).parent.resolve(), 'users', str(user_id))
         os.makedirs(dir, exist_ok=True)
         path = os.path.join(dir, filename)
-        # path = PurePath(dir, filename)
 
-        # path example: '/users/123/picture.png'
-        print(f'path type is: {type(path)}')
-        print(f'path name is: {path}')
         image.save(path)
 
         conn = sqlite3.connect('clickdown.db')
@@ -160,8 +148,6 @@ class Users(Resource):
                 WHERE   id = ?;
                 '''
         c.execute(query, (f'{url}', f'{user_id}'))
-        
-        print(f"stored in database: {url}")
 
         conn.commit()
         c.close()
@@ -256,8 +242,6 @@ class Users(Resource):
             }
             project_list.append(project_info)
             data = c.fetchone()
-
-        # print(project_list)
 
         c.close()
         conn.close()

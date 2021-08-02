@@ -99,7 +99,7 @@ class Tasks(Resource):
         
         return {"value": True}, 200
 
-### Helper Functions ###
+# Helper Functions
 
 # Add entry into the "revisions" table for a new task. Field are initialised
 # as the values intially passed in to create the task
@@ -139,15 +139,8 @@ def revisionsInsert(taskId, revId, userId, revision, rollback):
             INSERT INTO revisions (taskId, revId, userId, timestamp, revision, rollback)
             VALUES (?, ?, ?, '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', ?, ?);
             """
-    print(query)
     c.execute(query, [f'{taskId}', f'{revId}',f'{userId}', f'{revision}', f'{rollback}'])
     
-    # query = f"""
-    #         INSERT INTO revisions (taskId, revId, userId, timestamp, revision, rollback)
-    #         VALUES ('{taskId}', '{revId}', '{userId}', '{dt.datetime.now().strftime("%H:%M on %d %b %Y")}', '{revision}', '{rollback}');
-    #         """
-
-    # c.execute(query)
     conn.commit()
     conn.close()
 
