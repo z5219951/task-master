@@ -76,36 +76,19 @@ def getAllTasks(owner):
         c = conn.cursor()
 
         query = f"""
-                SELECT  id, owner, title, description, creation_date, deadline, labels, current_state, time_estimate, assigned_to
+                SELECT  title
                 FROM    tasks
                 WHERE   owner = ?
                 ORDER BY    deadline NULLS LAST;
                 """
 
         c.execute(query, [f'{owner}'])
-        data = c.fetchone()
-        task_list = []
-
-        while (data is not None):
-                task_info = {
-                'id': f'{data[0]}',
-                'owner': f'{data[1]}',
-                'title': f'{data[2]}',
-                'description': f'{data[3]}',
-                'creation_date': f'{data[4]}',
-                'deadline': f'{data[5]}',
-                'labels': f'{data[6]}',
-                'current_state': f'{data[7]}',
-                'time_estimate': f'{data[8]}',
-                'assigned_to': f'{data[9]}'
-                }
-                task_list.append(task_info)
-                data = c.fetchone()
+        data = c.fetchall()
 
         c.close()
         conn.close()
 
-        return json.dumps(task_list)
+        return data
 
 def getAssignedTasks(owner):
         conn = sqlite3.connect('clickdown.db')

@@ -23,6 +23,22 @@ def parseIntent(intent, dfResponse, email, initMsg):
         startDate = params.fields['date-time'].struct_value.fields['startDate'].string_value.split('T')[0]
         #Single date request
         if(startDate == ""):
+            # #no date edge case
+            if(len(params.fields['date'].list_value)==0):
+                tasks = getAllTasks(owner)
+                dailyTaskList = ''
+                for i in tasks:
+                    dailyTaskList+=i[0] + ", "
+                taskQueryRes = dailyTaskList[0:len(dailyTaskList)-2]
+                if(len(tasks)>1):
+                    response = {'fulfillment_text': "Your tasks are \"{}\"".format(taskQueryRes)}
+                    return response
+                elif(len(tasks)==1):
+                    response = {'fulfillment_text': "Your task for is \"{}\"".format(taskQueryRes)}
+                    return response
+                else:
+                    response = {'fulfillment_text': "You don't have any tasks"}
+                    return response
             singleDate = params.fields['date'].list_value.values[0].string_value.split('T')[0]
             tasks = getTasksOnADate(owner, singleDate)
             dailyTaskList = ''
