@@ -5,7 +5,7 @@ import 'antd/dist/antd.css';
 import './Photo.css'
 import React from 'react'
 
-
+// upload files tool based on Ant Design (https://ant.design/components/upload/#header)
 class UploadFile extends React.Component {
   constructor(props) {
     super(props);

@@ -4,8 +4,7 @@ import './Login.css'
 import axios from 'axios'
 import store from '../store';
 
-
-
+// login page
 class Login extends Component{
   constructor(props) {
     super(props);

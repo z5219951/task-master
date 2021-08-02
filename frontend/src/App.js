@@ -11,7 +11,6 @@ import CreateTask from './pages/CreateTask'
 import ForgetPass from './pages/ForgetPass';
 import VerifyCode from './pages/VerifyCode';
 import RePassWord from './pages/RePassWord';
-import CheckCode from './pages/CheckCode';
 import NavbarControl from './components/NavbarControl'
 import UserRequest from './pages/UserRequest';
 import SearchUser from './pages/SearchUser';
@@ -46,7 +45,6 @@ function App() {
         <Route path='/forget' exact component={ForgetPass} />
         <Route path='/verify' exact component={VerifyCode} />
         <Route path='/newPass' exact component={RePassWord} />
-        <Route path='/checkCode' exact component={CheckCode} />
         <Route path='/home' exact component={Home}/>
         <Route path='/userrequest' exact component={UserRequest} />
         <Route path='/searchuser' exact component={SearchUser} />

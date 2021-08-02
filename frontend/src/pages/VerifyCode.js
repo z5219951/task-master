@@ -4,6 +4,7 @@ import './Login.css'
 import axios from 'axios'
 import store from '../store';
 
+// verify code page
 class VerifyCode extends Component{
   constructor(props) {
     super(props);

@@ -4,6 +4,7 @@ import './Login.css'
 import axios from 'axios'
 import store from '../store';
 
+// reset password
 class RePassWord extends Component{
   constructor(props) {
     super(props);

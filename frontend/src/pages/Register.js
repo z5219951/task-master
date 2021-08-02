@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
 import axios from 'axios'
 
+// register page
 class Register extends Component{
   constructor(props) {
     super(props);
@@ -47,6 +48,7 @@ class Register extends Component{
       let pass = true;
       // password must be number or alphabet,at least one lower case
       // one upper case, one number
+      // check every input fields
       const testForm = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{6,16}$/
       if(!testForm.test(passWord)) {
         this.setState(()=>({

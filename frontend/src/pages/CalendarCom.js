@@ -8,6 +8,7 @@ import { Button, Modal } from 'react-bootstrap';
 import axios from 'axios'
 import store from '../store';
 
+// Clendar page based on Ant design (https://ant.design/components/calendar/)
 class CalendarCom extends Component{
   constructor(props){
     super(props);
@@ -18,6 +19,7 @@ class CalendarCom extends Component{
       latest:new Date()
     }
   }
+  // set tasks to calendar
   getListData=(value) => {
     let listData = [];
     const tasks = this.state.taskLists;

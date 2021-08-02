@@ -5,6 +5,7 @@ import axios from 'axios'
 import { Button,Modal } from 'react-bootstrap';
 import store from '../store';
 
+// create group page
 class CreateGroup extends Component{
     constructor(props) {
         super(props);

@@ -7,6 +7,7 @@ import { Fragment } from 'react';
 import store from '../store';
 import axios from 'axios';
 
+// upload photo tool based on Ant design (https://ant.design/components/upload/#header)
 function getBase64(img, callback) {
   const reader = new FileReader();
   reader.addEventListener('load', () => callback(reader.result));

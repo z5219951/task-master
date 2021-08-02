@@ -7,6 +7,7 @@ import { Button, Modal } from 'react-bootstrap';
 import './UserRequest.css'
 import ViewProfileButton from '../components/ViewProfileButton';
 
+// requests page
 class UserRequest extends Component{
     constructor(props) {
         super(props);

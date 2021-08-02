@@ -5,6 +5,7 @@ import homeImage1 from '../components/images/home_1.png'
 import homeImage2 from '../components/images/home_2.png'
 import homeImage3 from '../components/images/home_3.png'
 
+// home page 
 class Home extends Component{
   constructor(props){
     super(props)

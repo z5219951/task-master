@@ -7,6 +7,7 @@ import { Button, Modal } from 'react-bootstrap';
 import './UserRequest.css'
 import ViewProfileButton from '../components/ViewProfileButton'
 
+// search users page
 class SearchUser extends Component{
     constructor(props) {
         super(props);

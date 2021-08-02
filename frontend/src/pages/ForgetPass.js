@@ -4,6 +4,7 @@ import './Login.css'
 import axios from 'axios'
 import store from '../store';
 
+// forget password page
 class ForgetPass extends Component{
   constructor(props) {
     super(props);
