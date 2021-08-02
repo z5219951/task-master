@@ -411,6 +411,9 @@ class Users(Resource):
                         SET     reminded = 1
                         WHERE   id = {id};
                         """
+                c.execute(query)
+                conn.commit()
+
         c.close()
         conn.close()
 

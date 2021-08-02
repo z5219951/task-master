@@ -9,7 +9,6 @@ const ViewGroupProject = (props) => {
   const [projects, setProjects] = useState('')
   const history = useHistory()
   const group = props.location.state.group
-  console.log(props.location.state.group)
   useEffect(() => {
     // get group projects 
     axios.get(`http://localhost:5000/groups/${group.groupID}/projects`).then((res) => {

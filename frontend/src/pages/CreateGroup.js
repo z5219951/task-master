@@ -26,7 +26,6 @@ class CreateGroup extends Component{
             axios.defaults.crossDomain=true;
             axios.get('http://localhost:5000/friends/lists/'+userId).then((res)=>{
             // store the user id in store
-            console.log(res)
             // const result = JSON.parse(res.data);
             const testResult = JSON.parse(res.data);
             const selectList = new Array(testResult.length).fill(false);
@@ -89,7 +88,6 @@ class CreateGroup extends Component{
         try {
             const userId = Number(store.getState().id);
             selectedMember.push(userId);
-            console.log(selectedMember);
             // post data
             const data = {
                 userId:userId,
@@ -98,7 +96,6 @@ class CreateGroup extends Component{
             }
             axios.defaults.crossDomain=true;
             axios.post('http://localhost:5000/groups/create', data).then((res)=>{
-                console.log(res.data);
                 const result = true;
                 let inform = '';
                 if(result) {

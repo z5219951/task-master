@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import store from '../store';
 import './TaskCard.css'
-import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import axios from 'axios'
 import UploadFile from '../pages/UploadFile'
@@ -20,7 +19,6 @@ const TaskCard = (props) => {
   const [filepath, setFilePath] = useState(tasks.file_paths)
 
   function handleClick() {
-    console.log('clicked')
     history.push({
       pathname: '/updateTask',
       state: { id: tasks.id }

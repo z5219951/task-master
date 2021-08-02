@@ -6,6 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   zoom: 70%;
+  -moz-transform: scale(0.9);
 }
 
 code {

@@ -40,7 +40,6 @@ class VerifyCode extends Component{
       const data = {
         recovery:Number(code),
       }
-      console.log(data)
       // use axios for post data
       axios.defaults.crossDomain=true;
       axios.post('http://localhost:5000/reset_password_code', data).then((res)=>{

@@ -5,7 +5,6 @@ const ViewProfileButton = (props) => {
   const history = useHistory();
 
   function handleClick() {
-    console.log(props.id)
     history.push({
       pathname: '/viewprofile',
       state: { id: props.id }

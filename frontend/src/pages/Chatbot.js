@@ -14,7 +14,6 @@ const Chatbot = () => {
     axios.get(`http://localhost:5000/user/${store.getState().id}`).then((res) => {
     setUser(JSON.parse(res.data))
     }).then(() => {
-      // console.log(user)
     })
 
   },[])
@@ -26,7 +25,6 @@ const Chatbot = () => {
     axios.post('http://localhost:5000/chatbot', msgNew).then((res)=>{
       console.log("Task Created");
       console.log(res);
-      // history.push('./chatHistory');
     })
     
     }

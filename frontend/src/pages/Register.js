@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import './Login.css'
 import axios from 'axios'
-import Photo from './Photo';
 
 class Register extends Component{
   constructor(props) {
@@ -100,7 +99,6 @@ class Register extends Component{
       const data = {email:email,password:passWord,username:user,first_name:firstName,last_name:lastName,phone_number:phone,company:comp};
       axios.defaults.crossDomain=true;
       axios.post('http://localhost:5000/register', data).then((res)=>{
-          console.log(res);
           const result = res.data.value;
           if(result) {
             this.props.history.push('./login')

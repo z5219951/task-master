@@ -39,7 +39,6 @@ class ForgetPass extends Component{
           // check the return information, if true it will enter the code page else 
           // it should request to enter again
           const result = res.data.value;
-          console.log(res.data);
           if (result) {
             const action = {
                 type:'reset_email',

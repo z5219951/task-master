@@ -55,10 +55,8 @@ const CreateTask = () => {
 
     // Create task object and push it to server
     const task = {title: name, description: description, creation_date: currentDate, deadline: dueD, time_estimate: timeEst, current_state: cState, owner: owner, labels: labels, assigned_to: assigned_to, time_taken: timeTaken}
-    console.log(task)
     axios.defaults.crossDomain=true;
     axios.post('http://localhost:5000/tasks/create', task).then(()=>{
-      console.log("Task Created");
       history.push('./taskboard');
     })
   }
@@ -94,7 +92,6 @@ const CreateTask = () => {
     setLabels(JSON.stringify(labels))
     const temp = labels
     temp.map((label) => {
-      console.log(existingLabels, label, existingLabels.includes(label.value))
       if (existingLabels.includes(label.value) === false) {
         const data = {'labels': JSON.stringify(label.value)}
         axios.post(`http://localhost:5000/labels/${store.getState().id}`, data)
@@ -115,7 +112,6 @@ const CreateTask = () => {
   }
   
   function handleAssigned(assigned) {
-    console.log(assigned)
     setAssigned_to(assigned.value)
   }
 

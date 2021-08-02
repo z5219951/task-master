@@ -3,9 +3,9 @@ import axios from 'axios';
 import store from '../store';
 import { useHistory } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
-import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select';
 import Slider from '@material-ui/core/Slider';
+import './UpdateTask.css'
 
 const UpdateTask = (props) => {
   const history = useHistory();
@@ -68,7 +68,6 @@ const UpdateTask = (props) => {
   function handleSubmit () {
 
     const updateTask = {...task}; // Copy task into updateTask
-    console.log(updateTask)
 
     if (name !== '') {
       updateTask.title = name;
@@ -107,7 +106,6 @@ const UpdateTask = (props) => {
     }
 
     updateTask.userId = store.getState().id
-    console.log(updateTask)
     setTask(updateTask)
     handleShow()
     setStartDAlert('')
@@ -128,7 +126,6 @@ const UpdateTask = (props) => {
   },[task])
 
   function handleAssigned(assigned) {
-    console.log(assigned)
     setAssigned_to(assigned.value)
     if (assigned.value === '') {
       setAssigned_to(store.getState().id)
@@ -167,7 +164,6 @@ const UpdateTask = (props) => {
   ];
 
   const handleStatusChange = (event, newValue) => {
-    console.log(newValue)
     if (newValue === 25) {
       setCState('Blocked')
     } else if (newValue === 50) {
@@ -200,7 +196,7 @@ const UpdateTask = (props) => {
       <div className="form-group row mb-5">
         <label htmlFor="cState" className="col-sm-3 col-form-label">Update Completion State</label>
         <div className="col-sm-5">
-          <Slider
+          <Slider className="slider"
           defaultValue={0}
           aria-labelledby="discrete-slider-custom"
           step={null}

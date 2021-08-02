@@ -10,7 +10,6 @@ const ViewMyProjects = () => {
 
   useEffect(() => {
     axios.get(`http://localhost:5000/user/${store.getState().id}/projects`).then((res) => {
-      console.log(JSON.parse(res.data))
       setProjects(JSON.parse(res.data))
     })
   }, [])

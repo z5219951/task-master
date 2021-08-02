@@ -17,22 +17,14 @@ const ViewProfile = (props) => {
   function backClick () {
     history.goBack()
   }
-/*
-  useEffect(() => {
-    setUser({'id': '1', 'username': 'abcdefgh', 'password': 'Abc123', 'email': 'abcd@gmail.com', 'first_name': 'abcd', 'last_name': 'efgh', 'phone_number': '0123', 'company': ''})
-  },[])
 
-  */
   useEffect(() => {
     axios.defaults.crossDomain=true;
     axios.get(`http://localhost:5000/user/${id}`).then((res) => {
-    setUser(JSON.parse(res.data))
-    }).then(() => {
-      // console.log(user)
+      setUser(JSON.parse(res.data))
     })
 
     axios.get(`http://localhost:5000/tasks/assigned/${id}`).then((res) => {
-      console.log(res)
       const taskList = JSON.parse(res.data);
       setAssignedTasks(taskList)
     })

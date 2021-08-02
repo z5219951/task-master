@@ -31,3 +31,12 @@ Week 6:
 Wrote basic dialogflow chatbot and sorted two way communication between chatbot.py and Google Cloud Platform.
 Now working on getting a basic front end together for chatbot so that messages can be sent directly via text field.
 
+Week 7:
+Adapted route logic into helper functions for chatbot so that we wouldn't need to call the API from the API itself.
+
+Week 8:
+Wrote authentication method within chatbot, realised this was insecure and worked with Charles to reimplement chatbot with a custom visual interface (as opposed to Dialogflow's pastable iframe).
+
+Week 9:
+Finished chatbot such that tasks can be looked up by date or by range of dates, connection requests can be accepted/declined and tasks can be added. Wrote routes for dynamic estimates and busyness evaluation.
+

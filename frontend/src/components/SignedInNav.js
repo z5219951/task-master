@@ -14,7 +14,6 @@ const SignedInNav = () => {
   const history = useHistory();
   const [photo, setPhoto] = useState('')
   useEffect(() => {
-    console.log(store.getState().id)
     axios.get(`http://localhost:5000/user/${store.getState().id}`).then((res) => {
       setUser(JSON.parse(res.data))
     })

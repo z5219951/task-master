@@ -1,7 +1,6 @@
 import { useHistory } from "react-router-dom"
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import store from '../store';
 import { Button, Modal } from 'react-bootstrap';
 
 const UpdateProject = (props) => {
@@ -43,7 +42,6 @@ const UpdateProject = (props) => {
    }, [])
 
   useEffect(() => {
-    console.log(taskId)
     if (taskId) {
       taskId.map((id) => {
         axios.get(`http://localhost:5000/tasks/${id}`).then((res) => {
@@ -54,7 +52,6 @@ const UpdateProject = (props) => {
   }, [taskId])
 
   useEffect(() => {
-    console.log(selectedTasksId)
     if (selectedTasksId) {
       selectedTasksId.map((id) => {
         axios.get(`http://localhost:5000/tasks/${id}`).then((res) => {
@@ -94,10 +91,6 @@ const UpdateProject = (props) => {
     }
   }, [taskList])
 
-  useEffect(() => {
-    console.log(connectedTasks)
-  }, [connectedTasks])
-
   function handleSubmit () {
     
     const updateProject = {'id': project.id, 'groupid': project.groupid, 'name': project.name, 'description': project.description, 'tasks': connectedTasks}
@@ -114,7 +107,6 @@ const UpdateProject = (props) => {
     updateProject.tasks = JSON.stringify(connectedTasks)
     project.tasks = connectedTasks
     axios.put(`http://localhost:5000/projects/update`, updateProject).then((res) => {
-      console.log(res)
       handleShow()
     })
   }

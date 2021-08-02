@@ -17,7 +17,6 @@ const Connections = () => {
     friends.map((friend) => {     
       axios.get(`http://localhost:5000/busy/${friend.email}`).then((res) => {
         setBusy(busy => [...busy, res.data])
-        console.log(res.data)
       })
     })  
   }, [friends])
