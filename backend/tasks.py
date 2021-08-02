@@ -325,7 +325,7 @@ class Tasks(Resource):
         parser.add_argument('currentUser', required=True)
         args = parser.parse_args()
         
-        needle = args.searchTerm.lower()
+        needle = args.searchTerm
         userId = args.currentUser
         
         conn = sqlite3.connect('clickdown.db')
@@ -368,23 +368,23 @@ class Tasks(Resource):
             }
             full_task_list.append(task_info)
         
-        res_list = []
-        for task_info in full_task_list:
-            
-            # Seach based on id, name, label, desc, deadline
-            labelList = labels.rawStrToList(task_info.get("labels"))
-            if needle in labelList:
-                res_list.append(task_info)
-                continue
-                
-            if ((task_info.get("id") == needle) or \
-                (needle == task_info.get("deadline")) or \
-                (needle in task_info.get("title").lower()) or \
-                (needle in task_info.get("description").lower())):
-                res_list.append(task_info)
-
-        return json.dumps(res_list), 200
-
+        # Handle boolean search
+        andRefine, orRefine = booleanDecompose(needle)
+        print((andRefine,orRefine))
+        resList = []
+        if len(andRefine) == 0:
+            return json.dumps([]),200
+        else:
+            resList = searchRefine(full_task_list, andRefine[0])
+        
+        for a in andRefine[1:]:
+            resList = searchRefine(resList, a)
+        
+        for o in orRefine:
+            removeList = searchRefine(resList, o)
+            resList = [task for task in resList if task not in removeList]
+        
+        return json.dumps(resList), 200
 
 # upload to a task
 @api.route('/upload/<int:task_id>', methods=['POST'])
@@ -470,3 +470,47 @@ def getTaskbyId(taskId):
     }
     
     return task
+
+# Search for tasks related to needle in given task list
+def searchRefine(taskList, needle):
+    needle = needle.lower()
+    resList = []
+    
+    for task_info in taskList:
+        # Seach based on id, name, label, desc, deadline
+        labelList = labels.rawStrToList(task_info.get("labels"))
+        if needle in labelList:
+            resList.append(task_info)
+            continue
+            
+        if ((task_info.get("id") == needle) or \
+            (needle == task_info.get("deadline")) or \
+            (needle in task_info.get("title").lower()) or \
+            (needle in task_info.get("description").lower())):
+            resList.append(task_info)
+            
+    return resList
+
+# Implementation for converting boolean search term into a list for AND and a 
+# list for NOT
+def booleanDecompose(searchTerm):
+    plusSplit = searchTerm.split("AND")
+    plusTerms = []
+    minusTerms = []
+    
+    for term in enumerate(plusSplit):
+        if "NOT" not in term[1]:
+            plusTerms.append(term[1].strip())
+        
+        else:
+            minusSplit = term[1].split("NOT")
+            
+            for t in enumerate(minusSplit):
+                if (t[1] == ''):
+                    continue
+                if (t[0] == 0):
+                    plusTerms.append(t[1].strip())
+                else:
+                    minusTerms.append(t[1].strip())
+    
+    return plusTerms, minusTerms
