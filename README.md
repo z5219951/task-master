@@ -10,33 +10,41 @@ collaborate with, and search for any tasks within your network of clicker
 collaborators. You can even see an estimate of how busy each of your connected clickers is.
 
 # Setting up and Running the System
-3rd party requirements: Ngrok is needed in order to correctly forward the local deployment to dialogflow for running the chatbot. Ngrok can be downloaded from here: https://ngrok.com/download
-### NGROK (for chatbot functionalities)
+### Virtual Machine
 #### Installation:
-1. Open a terminal where ‘ngrok.exe’ is located
-2. Run $ ./ngrok authtoken 1fO0GH3r1oJj1g1d2NkAhF6Ofhu_2yJz2aRc9WaN7aEgdMQb8
+1. $ sudo apt-get update
+2. $ sudo apt-get upgrade
+3. $ sudo apt install python3-pip
+4. $ sudo apt-get install npm
+5. $ sudo npm install -g yarn
+
+### NGROK (for chatbot functionalities)  
+3rd party requirements: Ngrok is needed in order to correctly forward the local deployment to dialogflow for running the chatbot. Ngrok can be downloaded from here: https://ngrok.com/download
+#### Installation:
+1. Open a terminal in the root directory where ‘ngrok’ is located
+2. $ ./ngrok authtoken 1fO0GH3r1oJj1g1d2NkAhF6Ofhu_2yJz2aRc9WaN7aEgdMQb8
 #### Running the server:
-1. Open a terminal where ‘ngrok.exe’ is located
-2. Run $ ./ngrok http -region=au -hostname=comp3900.au.ngrok.io 5000  
+1. Open a terminal in the root directory where ‘ngrok’ is located
+2. $ ./ngrok http -region=au -hostname=comp3900.au.ngrok.io 5000  
 
 This will expose port 5000 to the public url comp3900.au.ngrok.io which allows Dialogflow to send processed messages.
 ### BACKEND
 #### Installation:
 1. Open a terminal in the ‘/backend’ folder of the repository
-2. Run $ pip3 install -r requirements.txt
-3. Run $ sudo apt-get install sqlite3
+2. $ pip3 install -r requirements.txt
+3. $ sudo apt-get install sqlite3
 #### Running the server:
 1. Open a terminal in the ‘/backend’ directory of the repository
-2. Run $ python3 init_database.py
-3. Run $ python3 server.py
+2. $ python3 init_database.py
+3. $ python3 server.py
 
 ### FRONTEND
 #### Installation:
 1. Open a terminal in the ‘/frontend’ directory of the repository
-2. Run $ yarn install
+2. $ yarn install
 #### Running the application:
 1. Open a terminal in the ‘/frontend’ directory of the repository
-2. Run $ yarn start
+2. $ yarn start
 3. To access the web page, type the following on your web browser:
 http://localhost:3000
 4. To access the API, type the following on your web browser:
